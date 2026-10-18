@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 DEMO_MODE = "false"
-TURNSTILE_SITE_KEY = "0x4AAAAAAFZ-pUdquMgQl3Ih"
+TURNSTILE_SITE_KEY = "0x4AAAAAAFZ_YOsC2GWr9Un_"
 KEY_ISSUER_URL = "https://dpi-config.vercel.app/yncutie"
 KEY_TIER = "Normal"
 SESSION_TTL_MS = "900000"
