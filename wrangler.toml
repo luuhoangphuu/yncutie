@@ -1,0 +1,17 @@
+name = "key-system"
+main = "src/index.js"
+compatibility_date = "2024-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+DEMO_MODE = "false"
+TURNSTILE_SITE_KEY = "0x4AAAAAAFZ-pUdquMgQl3Ih"
+KEY_ISSUER_URL = "https://dpi-config.vercel.app/yncutie"
+KEY_TIER = "Normal"
+SESSION_TTL_MS = "900000"
+RATE_START_PER_HOUR = "5"
+RATE_KEY_PER_HOUR = "3"
+
+routes = [
+  { pattern = "getkeydpiconfig.site", custom_domain = true }
+]
