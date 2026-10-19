@@ -1,5 +1,5 @@
 // ============================================================================
-// Key System Worker v5.0 - Light Mode 2026 + YouTube Link + Link4M API
+// Key System Worker v6.0 - Perfect Integration with DPI-Config API
 // ============================================================================
 
 const CSS = `
@@ -15,7 +15,6 @@ body {
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
   overflow: hidden; position: relative;
 }
-/* Animated Background Blobs */
 .blob { position: absolute; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.5; animation: float 12s infinite ease-in-out alternate; }
 .blob-1 { width: 450px; height: 450px; background: #c7d2fe; top: -10%; left: -10%; }
 .blob-2 { width: 400px; height: 400px; background: #fbcfe8; bottom: -10%; right: -5%; animation-delay: -4s; }
@@ -47,17 +46,15 @@ h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
 }
 .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 8px 24px -6px rgba(79, 70, 229, 0.6); }
 .btn-primary:hover { background: #4338ca; transform: translateY(-2px); box-shadow: 0 12px 28px -6px rgba(79, 70, 229, 0.7); }
-.btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
 .btn-youtube { background: #ff0033; color: #fff; box-shadow: 0 8px 24px -6px rgba(255, 0, 51, 0.4); }
-.btn-youtube:hover { background: #e6002e; transform: translateY(-2px); box-shadow: 0 12px 28px -6px rgba(255, 0, 51, 0.5); }
+.btn-youtube:hover { background: #e6002e; transform: translateY(-2px); }
 .btn-ads { background: linear-gradient(135deg, #f59e0b, #f97316); color: #fff; box-shadow: 0 8px 24px -6px rgba(245, 158, 11, 0.5); }
-.btn-ads:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -6px rgba(245, 158, 11, 0.6); }
+.btn-ads:hover { transform: translateY(-2px); }
 .btn-ghost { background: #fff; color: var(--text-main); border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
 .btn-ghost:hover { background: #f8fafc; border-color: #cbd5e1; }
 
 .warning { background: #fffbeb; border: 1px solid #fde68a; color: #b45309; padding: 14px 16px; border-radius: 16px; font-size: 13px; margin-bottom: 20px; line-height: 1.5; font-weight: 500; display: flex; align-items: flex-start; gap: 8px; }
 
-/* Stepper */
 .stepper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 36px; padding: 0 10px; }
 .step { display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0.4; transition: 0.3s; }
 .step.active { opacity: 1; }
@@ -78,12 +75,13 @@ h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; }
 .copy-btn { padding: 14px 20px; border-radius: 14px; border: none; background: var(--primary); color: #fff; font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
 .copy-btn:hover { background: #4338ca; transform: translateY(-2px); }
 
+.expiry-info { display: inline-flex; align-items: center; gap: 8px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-bottom: 24px; }
+
 @media (max-width: 480px) { .card { padding: 32px 24px; border-radius: 28px; } h1 { font-size: 28px; } .btn { padding: 14px 20px; font-size: 15px; } .key-box { flex-direction: column; } .copy-btn { width: 100%; justify-content: center; } }
 `;
 
 const JS = `
 (function(){
-  // Confetti effect for success page
   if(document.querySelector('.success-icon')) {
     for (let i = 0; i < 50; i++) {
       let el = document.createElement('div');
@@ -97,7 +95,6 @@ const JS = `
     }
   }
 
-  // Copy logic
   document.addEventListener('click', function(e){
     var b = e.target.closest('[data-copy]');
     if(!b) return;
@@ -152,24 +149,24 @@ const redirect = (loc, cookie) => {
 function log(level, msg, extra = {}) { console.log(JSON.stringify({ ts: new Date().toISOString(), level, msg, ...extra })); }
 
 function layout(title, content) {
-  return \`<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>\${title}</title>
+  return `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <link rel="stylesheet" href="/style.css"></head>
   <body>
     <div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div>
-    <div class="container">\${content}</div>
+    <div class="container">${content}</div>
     <script src="/app.js" defer></script>
-  </body></html>\`;
+  </body></html>`;
 }
 
-const stepper = (n) => \`<div class="stepper">
-  <div class="step \${n >= 1 ? 'active' : ''}"><div class="dot">1</div><small>Ủng hộ</small></div>
-  <div class="line \${n >= 2 ? 'active' : ''}"></div>
-  <div class="step \${n >= 2 ? 'active' : ''}"><div class="dot">2</div><small>Vượt Ads</small></div>
-  <div class="line \${n >= 3 ? 'active' : ''}"></div>
-  <div class="step \${n >= 3 ? 'active' : ''}"><div class="dot">3</div><small>Nhận Key</small></div>
-</div>\`;
+const stepper = (n) => `<div class="stepper">
+  <div class="step ${n >= 1 ? 'active' : ''}"><div class="dot">1</div><small>Ủng hộ</small></div>
+  <div class="line ${n >= 2 ? 'active' : ''}"></div>
+  <div class="step ${n >= 2 ? 'active' : ''}"><div class="dot">2</div><small>Vượt Ads</small></div>
+  <div class="line ${n >= 3 ? 'active' : ''}"></div>
+  <div class="step ${n >= 3 ? 'active' : ''}"><div class="dot">3</div><small>Nhận Key</small></div>
+</div>`;
 
 // ============ SESSION ============
 async function hmac(data, secret, action) {
@@ -177,12 +174,12 @@ async function hmac(data, secret, action) {
   const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [action]);
   if (action === 'sign') {
     const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
-    return btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, '');
+    return btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   }
   return key;
 }
 async function encodeSession(data, secret) {
-  const payload = btoa(JSON.stringify(data)).replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, '');
+  const payload = btoa(JSON.stringify(data)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   return payload + '.' + await hmac(payload, secret, 'sign');
 }
 async function decodeSession(token, secret) {
@@ -202,11 +199,11 @@ async function decodeSession(token, secret) {
 }
 function getCookie(request, name) {
   const c = request.headers.get('cookie') || '';
-  const m = c.match(new RegExp('(?:^|;\\\\s*)' + name + '=([^;]+)'));
+  const m = c.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
   return m ? m[1] : null;
 }
 function setCookie(name, value, maxAge) {
-  return \`\${name}=\${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=\${maxAge}; Secure\`;
+  return `${name}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}; Secure`;
 }
 async function getSession(request, env) { return await decodeSession(getCookie(request, 'sess'), env.SESSION_SECRET); }
 async function saveSession(request, env, data) {
@@ -242,7 +239,7 @@ async function verifyTurnstile(token, ip, env) {
 async function shortenUrl(longUrl, env) {
   if (!env.LINK4M_API_TOKEN) return longUrl;
   try {
-    const api = \`https://link4m.co/api-shorten/v2?api=\${env.LINK4M_API_TOKEN}&url=\${encodeURIComponent(longUrl)}\`;
+    const api = `https://link4m.co/api-shorten/v2?api=${env.LINK4M_API_TOKEN}&url=${encodeURIComponent(longUrl)}`;
     const res = await fetch(api);
     const data = await res.json();
     if (data.status === 'success') return data.shortenedUrl;
@@ -254,39 +251,56 @@ async function shortenUrl(longUrl, env) {
   }
 }
 
-// ============ KEY ISSUER ============
+// ============ KEY ISSUER (DPI-CONFIG API) ============
 async function fetchKeyFromIssuer(env) {
   try {
     const res = await fetch(env.KEY_ISSUER_URL, {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/5.0' },
+      method: 'POST', 
+      headers: { 
+        'Content-Type': 'application/json', 
+        'X-API-Key': env.KEY_ISSUER_API_KEY, 
+        'User-Agent': 'KeySystem-Worker/6.0',
+        'Origin': 'https://getkeydpiconfig.site'
+      },
       body: JSON.stringify({ tier: env.KEY_TIER || 'Normal' })
     });
     const data = await res.json().catch(() => null);
-    if (data && data.success === true && data.key) return { ok: true, key: data.key };
+    if (data && data.success === true && data.key) {
+      return { 
+        ok: true, 
+        key: data.key, 
+        expiresAt: data.expires_at, 
+        durationHours: data.duration_hours 
+      };
+    }
+    log('error', 'issuer invalid response', { data });
     return { ok: false };
-  } catch { return { ok: false }; }
+  } catch (e) { 
+    log('error', 'issuer network error');
+    return { ok: false }; 
+  }
 }
 
 // ============ HANDLERS ============
 function home(env) {
-  return html(layout('Nhận Key Miễn Phí', \`
+  return html(layout('Nhận Key Miễn Phí', `
     <div class="card hero">
       <div class="badge">✨ Hệ thống tự động 2026</div>
       <h1>Nhận Key <span class="grad">Tự Động</span></h1>
       <p class="sub">Hoàn thành 2 bước siêu tốc để nhận key bản quyền. Không cần đăng ký, không cần mật khẩu.</p>
       <form method="POST" action="/start">
-        <div class="cf-turnstile" data-sitekey="\${env.TURNSTILE_SITE_KEY}" data-theme="light"></div>
+        <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light"></div>
         <button type="submit" class="btn btn-primary" style="margin-top:20px;">🚀 Bắt đầu nhận Key</button>
       </form>
       <p style="font-size:12px; color:#94a3b8; margin-top:15px; font-weight:500;">Bảo mật bởi Cloudflare Turnstile</p>
-    </div>\`));
+    </div>`));
 }
 
 async function start(request, env) {
   const ip = request.headers.get('cf-connecting-ip') || 'local';
-  if (!checkRateLimit('start:' + ip, 10).ok) return html(layout('Lỗi', \`<div class="card center"><h2>Quá nhiều yêu cầu</h2><p class="sub">Vui lòng thử lại sau 1 giờ.</p></div>\`), 429);
+  if (!checkRateLimit('start:' + ip, 10).ok) return html(layout('Lỗi', `<div class="card center"><h2>Quá nhiều yêu cầu</h2><p class="sub">Vui lòng thử lại sau 1 giờ.</p></div>`), 429);
   const form = await request.formData();
-  if (!(await verifyTurnstile(form.get('cf-turnstile-response'), ip, env))) return html(layout('Lỗi', \`<div class="card center"><h2>Captcha không hợp lệ</h2><a href="/" class="btn btn-primary">Thử lại</a></div>\`), 400);
+  if (!(await verifyTurnstile(form.get('cf-turnstile-response'), ip, env))) return html(layout('Lỗi', `<div class="card center"><h2>Captcha không hợp lệ</h2><a href="/" class="btn btn-primary">Thử lại</a></div>`), 400);
 
   const session = { sid: crypto.randomUUID(), ip, createdAt: Date.now(), subVerified: false, adsVerified: false, keyIssued: null };
   return redirect('/step1', await saveSession(request, env, session));
@@ -296,25 +310,25 @@ async function step1(request, env) {
   const s = await getSession(request, env);
   if (!s) return redirect('/');
   if (s.subVerified) return redirect('/step2');
-  return html(layout('Bước 1: Ủng hộ', \`
+  return html(layout('Bước 1: Ủng hộ', `
     <div class="card">
-      \${stepper(1)}
+      ${stepper(1)}
       <h2>Ủng hộ Kênh YouTube</h2>
       <p class="sub">Vui lòng bấm nút bên dưới để theo dõi kênh YouTube của chúng tôi. Điều này giúp duy trì hệ thống miễn phí.</p>
       <div class="warning">⚠️ Vui lòng tắt VPN (nếu có) để tránh bị đánh dấu gian lận.</div>
-      <a href="\${env.YOUTUBE_CHANNEL_URL}" target="_blank" rel="noopener" class="btn btn-youtube">▶ Theo dõi Kênh YouTube</a>
+      <a href="${env.YOUTUBE_CHANNEL_URL}" target="_blank" rel="noopener" class="btn btn-youtube">▶ Theo dõi Kênh YouTube</a>
       <form method="POST" action="/verify/sub">
-        <div class="cf-turnstile" data-sitekey="\${env.TURNSTILE_SITE_KEY}" data-theme="light"></div>
+        <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light"></div>
         <button type="submit" class="btn btn-primary" style="margin-top:20px;">✅ Tôi đã theo dõi</button>
       </form>
-    </div>\`));
+    </div>`));
 }
 
 async function verifySub(request, env) {
   const s = await getSession(request, env);
   if (!s || s.ip !== (request.headers.get('cf-connecting-ip') || 'local')) return redirect('/');
   const form = await request.formData();
-  if (!(await verifyTurnstile(form.get('cf-turnstile-response'), s.ip, env))) return html(layout('Lỗi', \`<div class="card center"><h2>Captcha không hợp lệ</h2><a href="/step1" class="btn btn-primary">Thử lại</a></div>\`), 400);
+  if (!(await verifyTurnstile(form.get('cf-turnstile-response'), s.ip, env))) return html(layout('Lỗi', `<div class="card center"><h2>Captcha không hợp lệ</h2><a href="/step1" class="btn btn-primary">Thử lại</a></div>`), 400);
   s.subVerified = true; return redirect('/step2', await saveSession(request, env, s));
 }
 
@@ -323,54 +337,67 @@ async function step2(request, env) {
   if (!s || !s.subVerified) return redirect('/');
   if (s.keyIssued) return redirect('/success');
 
-  // Tạo link Link4M động (trỏ về chính domain này sau khi xem xong)
   const targetUrl = new URL('/step2', request.url).toString();
   const adsUrl = await shortenUrl(targetUrl, env);
 
-  return html(layout('Bước 2: Vượt Ads', \`
+  return html(layout('Bước 2: Vượt Ads', `
     <div class="card">
-      \${stepper(2)}
+      ${stepper(2)}
       <h2>Vượt qua Quảng cáo</h2>
       <p class="sub">Nhấn nút bên dưới, hoàn thành 1 quảng cáo ngắn, sau đó quay lại đây xác nhận để nhận key.</p>
-      <a href="\${adsUrl}" target="_blank" rel="noopener" class="btn btn-ads">📺 Mở Link Quảng Cáo</a>
+      <a href="${adsUrl}" target="_blank" rel="noopener" class="btn btn-ads">📺 Mở Link Quảng Cáo</a>
       <div class="warning" style="margin-top: 15px;">⚠️ Không tắt tab khi đang xem quảng cáo, tiến trình sẽ bị hủy.</div>
       <form method="POST" action="/verify/ads">
-        <div class="cf-turnstile" data-sitekey="\${env.TURNSTILE_SITE_KEY}" data-theme="light"></div>
+        <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light"></div>
         <button type="submit" class="btn btn-primary" style="margin-top:20px;">🎁 Nhận Key Ngay</button>
       </form>
-    </div>\`));
+    </div>`));
 }
 
 async function verifyAds(request, env) {
   const s = await getSession(request, env);
   if (!s || !s.subVerified) return redirect('/');
-  if (!checkRateLimit('key:' + s.ip, 5).ok) return html(layout('Lỗi', \`<div class="card center"><h2>Đã đạt giới hạn</h2><p class="sub">Bạn đã nhận tối đa key trong 1 giờ.</p></div>\`), 429);
+  if (!checkRateLimit('key:' + s.ip, 5).ok) return html(layout('Lỗi', `<div class="card center"><h2>Đã đạt giới hạn</h2><p class="sub">Bạn đã nhận tối đa key trong 1 giờ.</p></div>`), 429);
 
   const form = await request.formData();
-  if (!(await verifyTurnstile(form.get('cf-turnstile-response'), s.ip, env))) return html(layout('Lỗi', \`<div class="card center"><h2>Captcha không hợp lệ</h2><a href="/step2" class="btn btn-primary">Thử lại</a></div>\`), 400);
+  if (!(await verifyTurnstile(form.get('cf-turnstile-response'), s.ip, env))) return html(layout('Lỗi', `<div class="card center"><h2>Captcha không hợp lệ</h2><a href="/step2" class="btn btn-primary">Thử lại</a></div>`), 400);
 
   const issued = await fetchKeyFromIssuer(env);
-  if (!issued.ok) return html(layout('Lỗi', \`<div class="card center"><h2>Hệ thống đang bận</h2><p class="sub">Không thể lấy key lúc này, vui lòng thử lại sau.</p><a href="/step2" class="btn btn-primary">Thử lại</a></div>\`), 502);
+  if (!issued.ok) return html(layout('Lỗi', `<div class="card center"><h2>Hệ thống đang bận</h2><p class="sub">Không thể lấy key lúc này, vui lòng thử lại sau.</p><a href="/step2" class="btn btn-primary">Thử lại</a></div>`), 502);
 
-  s.adsVerified = true; s.keyIssued = issued.key;
+  s.adsVerified = true; 
+  s.keyIssued = issued.key;
+  s.keyDuration = issued.durationHours || 8;
+  s.keyExpiresAt = issued.expiresAt || new Date(Date.now() + s.keyDuration * 3600000).toISOString();
+  
   return redirect('/success', await saveSession(request, env, s));
 }
 
 async function success(request, env) {
   const s = await getSession(request, env);
   if (!s || !s.keyIssued) return redirect('/');
-  return html(layout('Thành công', \`
+  
+  const expireDate = new Date(s.keyExpiresAt);
+  const timeStr = expireDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+  const dateStr = expireDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+
+  return html(layout('Thành công', `
     <div class="card center">
-      \${stepper(3)}
+      ${stepper(3)}
       <div class="success-icon">✓</div>
       <h2>Lấy Key Thành Công!</h2>
-      <p class="sub">Key đã được tự động copy vào bộ nhớ tạm. Bạn có thể dán ngay vào ứng dụng.</p>
+      
+      <div class="expiry-info">
+        ⏰ Hạn sử dụng: <b>${s.keyDuration} giờ</b> (Đến ${timeStr} - ${dateStr})
+      </div>
+
+      <p class="sub" style="margin-bottom:10px;">Key đã được tự động copy vào bộ nhớ tạm.</p>
       <div class="key-box">
-        <span id="keyText">\${s.keyIssued}</span>
+        <span id="keyText">${s.keyIssued}</span>
         <button class="copy-btn" data-copy="keyText" data-auto="1">📋 Copy</button>
       </div>
       <a href="/reset" class="btn btn-ghost">🔄 Nhận Key Khác</a>
-    </div>\`));
+    </div>`));
 }
 
 async function reset(request) { return redirect('/', setCookie('sess', '', 0)); }
@@ -390,7 +417,7 @@ export default {
       if (p === '/verify/ads' && m === 'POST') return verifyAds(request, env);
       if (p === '/success' && m === 'GET') return success(request, env);
       if (p === '/reset' && m === 'GET') return reset(request);
-      return html(layout('Lỗi 404', \`<div class="card center"><h2>Không tìm thấy trang</h2><a href="/" class="btn btn-primary">Về trang chủ</a></div>\`), 404);
+      return html(layout('Lỗi 404', `<div class="card center"><h2>Không tìm thấy trang</h2><a href="/" class="btn btn-primary">Về trang chủ</a></div>`), 404);
     } catch (e) { log('error', e.message); return new Response('Internal Error', { status: 500 }); }
   }
 };
