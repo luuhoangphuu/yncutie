@@ -17,3 +17,7 @@ YOUTUBE_CHANNEL_URL = "https://youtube.com/@zwicxsharereg?si=uxYYTwFUXLYijhmz"
 routes = [
   { pattern = "getkeydpiconfig.site", custom_domain = true }
 ]
+
+[[kv_namespaces]]
+binding = "ANNOUNCEMENT_KV"
+id = "50fe066cc0f6491e939bd29ad778bda8"
