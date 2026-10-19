@@ -1,20 +1,23 @@
 // ============================================================================
-// Key System Worker v11.1 - Add VIP Key Selection
+// Key System Worker v12.0 - Fix Error 1101 + 3-Min Check + Matrix UI
 // ============================================================================
 
 const CHECKPOINT_CSS = `
 :root { color-scheme: dark; }
 *{margin:0;padding:0;box-sizing:border-box}
-body {
-  font-family: 'Inter', -apple-system, sans-serif; background: #02040a; color: #94a3b8;
-  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
-  overflow: hidden; position: relative; font-size: 14px;
-}
-.bg-grid { position: fixed; inset: -50%; z-index: 0; background-image: linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px); background-size: 60px 60px; transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px); animation: gridMove 10s linear infinite; mask-image: radial-gradient(circle at center, black 20%, transparent 70%); -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 70%); }
-@keyframes gridMove { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #02040a; color: #94a3b8; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; overflow: hidden; position: relative; font-size: 14px; }
+#matrix { position: fixed; inset: 0; z-index: 0; opacity: 0.15; pointer-events: none; }
 .bg-glow { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at 20% 30%, rgba(14, 165, 233, 0.15), transparent 40%), radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.1), transparent 40%); }
 .container { position: relative; z-index: 10; width: 100%; max-width: 1150px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; }
 @media (max-width: 900px) { .container { grid-template-columns: 1fr; gap: 30px; } }
+
+/* Top Bar */
+.top-bar { position: fixed; top: 0; left: 0; width: 100%; padding: 15px 30px; z-index: 50; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 100%); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.top-logo { font-size: 14px; font-weight: 800; color: #f8fafc; letter-spacing: 2px; display: flex; align-items: center; gap: 8px; }
+.top-logo span { color: #0ea5e9; }
+.top-timer { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #0ea5e9; background: rgba(14, 165, 233, 0.1); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(14, 165, 233, 0.3); box-shadow: 0 0 15px rgba(14, 165, 233, 0.2); }
+
+/* Left Side */
 .left { display: flex; flex-direction: column; justify-content: center; position: relative; }
 .badge-security { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #0ea5e9; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 3px; }
 .badge-security .dot { width: 6px; height: 6px; background: #0ea5e9; border-radius: 50%; box-shadow: 0 0 10px #0ea5e9; animation: blink 1.5s infinite; }
@@ -31,26 +34,16 @@ body {
 .challenge-box:hover { border-color: rgba(14, 165, 233, 0.5); box-shadow: 0 30px 70px rgba(0,0,0,0.8), inset 0 0 50px rgba(14, 165, 233, 0.1); }
 .cf-turnstile { margin-bottom: 20px; display: flex; justify-content: center; }
 .status-text { text-align: center; font-size: 14px; color: #64748b; transition: color 0.3s; font-weight: 500; line-height: 1.5; }
-.stepper { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; padding: 0 5px; }
-.step { display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; }
-.step-circle { width: 32px; height: 32px; border-radius: 10px; transform: rotate(45deg); background: #0f172a; border: 2px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: all 0.5s; z-index: 2; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
-.step-circle::after { content: ''; transform: rotate(-45deg); font-weight: bold; font-size: 16px; color: #fff; }
-.step.completed .step-circle { background: rgba(16, 185, 129, 0.15); border-color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 0 10px rgba(16, 185, 129, 0.5); }
-.step.completed .step-circle::after { content: '✓'; color: #10b981; text-shadow: 0 0 10px #10b981; }
-.step.active .step-circle { background: rgba(14, 165, 233, 0.15); border-color: #0ea5e9; box-shadow: 0 0 25px rgba(14, 165, 233, 0.6), inset 0 0 10px rgba(14, 165, 233, 0.5); animation: pulse 2s infinite; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(14, 165, 233, 0); } 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); } }
-.step-line { flex: 1; height: 2px; background: #1e293b; margin: 0 10px; margin-bottom: 26px; transition: all 0.5s; z-index: 1; position: relative; }
-.step-line::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: #10b981; transition: width 0.5s ease; }
-.step-line.completed::after { width: 100%; box-shadow: 0 0 10px #10b981; }
-.step-line.active::after { width: 50%; background: linear-gradient(90deg, #10b981, #0ea5e9); box-shadow: 0 0 10px #0ea5e9; }
-.step-label { font-size: 12px; font-weight: 700; color: #475569; transition: all 0.3s; white-space: nowrap; text-transform: uppercase; letter-spacing: 1px; }
-.step.completed .step-label, .step.active .step-label { color: #e2e8f0; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+
+/* Right Side (HUD) */
 .right { display: flex; flex-direction: column; gap: 16px; }
 .card { background: rgba(10, 15, 30, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid #1e293b; border-radius: 16px; padding: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
 .card-value { font-size: 34px; font-weight: 800; color: #f8fafc; font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 20px rgba(255,255,255,0.3); line-height: 1; }
 .card-value small { font-size: 14px; color: #64748b; font-weight: 600; margin-left: 4px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* Terminal */
 .terminal { background: #000000; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0ea5e9; height: 160px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 0 30px rgba(0,0,0,0.9); position: relative; }
 .terminal::before { content: 'root@cloudflare:~#'; position: absolute; bottom: 10px; left: 16px; color: #10b981; font-weight: bold; opacity: 0.5; }
 .log-line { opacity: 0; animation: typeIn 0.3s forwards; line-height: 1.4; z-index: 1; }
@@ -58,11 +51,15 @@ body {
 .log-line.warn { color: #f59e0b; }
 .log-line.error { color: #ef4444; }
 @keyframes typeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
+/* Radar SVG */
 .radar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto; }
 .radar-svg { width: 100%; height: 100%; animation: spin 4s linear infinite; transform-origin: center; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .radar-ping { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
 @keyframes ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
+
+/* Modal */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 100; display: none; align-items: center; justify-content: center; }
 .modal-box { background: rgba(15, 23, 42, 0.95); border: 1px solid #ef4444; border-radius: 24px; padding: 40px 30px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 30px 80px rgba(239, 68, 68, 0.3); transform: scale(0.9); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 @keyframes popIn { to { transform: scale(1); } }
@@ -74,23 +71,26 @@ body {
 `;
 
 const CHECKPOINT_JS = `
-const canvas = document.getElementById('network'); const ctx = canvas.getContext('2d');
+// Matrix Rain
+const canvas = document.getElementById('matrix'); const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-let particles = Array.from({length: 50}, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 }));
-function drawNetwork() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach((p, i) => {
-    p.x += p.vx; p.y += p.vy;
-    if(p.x < 0 || p.x > canvas.width) p.vx *= -1; if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
-    ctx.fillStyle = 'rgba(14, 165, 233, 0.6)'; ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
-    for(let j = i + 1; j < particles.length; j++) {
-      let p2 = particles[j]; let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-      if(dist < 180) { ctx.strokeStyle = 'rgba(14, 165, 233, ' + (1 - dist/180) * 0.15 + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
-    }
-  });
-  requestAnimationFrame(drawNetwork);
+const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const alphabet = katakana.split('');
+const fontSize = 16; const columns = canvas.width / fontSize; const drops = [];
+for (let x = 0; x < columns; x++) drops[x] = 1;
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(2, 4, 10, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#0ea5e9'; ctx.font = fontSize + 'px monospace';
+  for (let i = 0; i < drops.length; i++) {
+    const text = alphabet[Math.floor(Math.random() * alphabet.length)];
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
 }
-drawNetwork();
+setInterval(drawMatrix, 50);
+
+// Real Timer & Logs
 let timerInterval; let startTime; let isVerifying = false;
 function startRealTimer() {
   startTime = performance.now();
@@ -101,6 +101,7 @@ function startRealTimer() {
     document.getElementById('realTimer').textContent = elapsed.toFixed(3);
   }, 10);
 }
+
 const logs = ["[SYS] Initializing Quantum Gateway...","[NET] Establishing TLS 1.3 handshake...","[NET] Route optimized via Anycast Edge (SGP).","[SEC] Analyzing browser fingerprint (Canvas/WebGL)...","[WAF] Scanning for DDoS, SQLi, and XSS patterns...","[BOT] Evaluating mouse movements and touch events...","[CHK] Ready for human verification."];
 let logIndex = 0;
 function addLog(text, type) {
@@ -109,6 +110,7 @@ function addLog(text, type) {
   terminal.appendChild(line); terminal.scrollTop = terminal.scrollHeight;
 }
 setInterval(() => { if(logIndex < logs.length) { addLog(logs[logIndex]); logIndex++; } }, 600);
+
 function onTurnstileSuccess(token) {
   if (isVerifying) return; isVerifying = true;
   startRealTimer();
@@ -117,6 +119,7 @@ function onTurnstileSuccess(token) {
   const stepVerify = document.querySelector('.step:nth-child(5)');
   stepVerify.classList.add('active'); stepVerify.classList.remove('completed');
   addLog("[AUTH] Token received. Transmitting to secure enclave...", 'warn');
+  
   fetch('/api/verify-bot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token }) }).then(res => res.json()).then(data => {
     clearInterval(timerInterval);
     if(data.success) {
@@ -133,12 +136,15 @@ function onTurnstileSuccess(token) {
 }
 function showError(msg) { document.getElementById('modalMsg').innerHTML = msg; document.getElementById('errorModal').style.display = 'flex'; addLog("[ERR] " + msg, 'error'); }
 function reloadPage() { window.location.reload(); }
+
+// 3 Phút Countdown
+let timeLeft = 180;
 setInterval(() => {
-  const bars = document.querySelectorAll('.bar');
-  bars.forEach((bar, index) => {
-    if(index > bars.length - 15) { bar.style.height = Math.floor(Math.random() * 80 + 20) + '%'; bar.style.background = '#0ea5e9'; bar.style.boxShadow = '0 0 10px #0ea5e9'; setTimeout(() => { bar.style.background = '#1e293b'; bar.style.boxShadow = 'none'; }, 200); }
-  });
-}, 100);
+  if(timeLeft > 0) timeLeft--;
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  document.getElementById('countdown').textContent = 'Phiên hết hạn sau: ' + m + ':' + (s < 10 ? '0' : '') + s;
+}, 1000);
 `;
 
 const APP_CSS = `
@@ -187,8 +193,6 @@ h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
 .copy-btn { padding: 14px 20px; border-radius: 14px; border: none; background: var(--primary); color: #fff; font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
 .copy-btn:hover { background: #4338ca; transform: translateY(-2px); }
 .expiry-info { display: inline-flex; align-items: center; gap: 8px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-bottom: 24px; }
-
-/* VIP Selector */
 .tier-selector { display: flex; gap: 10px; margin-bottom: 24px; background: #f8fafc; padding: 6px; border-radius: 16px; border: 1px solid #e2e8f0; }
 .tier-option { flex: 1; text-align: center; padding: 10px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; position: relative; overflow: hidden; }
 .tier-option input { display: none; }
@@ -196,13 +200,12 @@ h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
 .tier-option .tier-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 4px; color: #fff; }
 .tier-option[data-tier="VIP"] .tier-badge { background: #f59e0b; }
 .tier-option[data-tier="Normal"] .tier-badge { background: #10b981; }
-
+.error-box { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 16px; border-radius: 16px; margin-bottom: 20px; font-size: 14px; font-weight: 500; text-align: center; }
 @media (max-width: 480px) { .card { padding: 32px 24px; border-radius: 28px; } h1 { font-size: 28px; } .btn { padding: 14px 20px; font-size: 15px; } .key-box { flex-direction: column; } .copy-btn { width: 100%; justify-content: center; } }
 `;
 
 const APP_JS = `
 (function(){
-  // Tier selection logic
   const tierOptions = document.querySelectorAll('.tier-option');
   const tierInput = document.getElementById('tierInput');
   if (tierOptions.length > 0) {
@@ -214,7 +217,6 @@ const APP_JS = `
       });
     });
   }
-
   if(document.querySelector('.success-icon')) {
     for (let i = 0; i < 50; i++) {
       let el = document.createElement('div');
@@ -249,6 +251,10 @@ const html = (s, st = 200) => withHeaders(new Response(s, { status: st, headers:
 const redirect = (loc, cookie) => { const h = { 'Location': loc }; if (cookie) h['Set-Cookie'] = cookie; return withHeaders(new Response('', { status: 302, headers: h })); };
 function log(level, msg, extra = {}) { console.log(JSON.stringify({ ts: new Date().toISOString(), level, msg, ...extra })); }
 
+// FIX LỖI 1101: Hàm btoa an toàn cho tiếng Việt và ký tự đặc biệt
+function safeBtoa(str) { return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function safeAtob(str) { return decodeURIComponent(escape(atob(str.replace(/-/g, '+').replace(/_/g, '/')))); }
+
 // ============ GIAO DIỆN TRẠM KIỂM TRA ============
 function renderCheckpoint(env) {
   return html(`<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="color-scheme" content="dark"><title>Quantum Firewall | Xác minh</title>
@@ -256,8 +262,12 @@ function renderCheckpoint(env) {
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>${CHECKPOINT_CSS}</style></head>
   <body>
-    <div class="bg-grid"></div><div class="bg-glow"></div>
-    <canvas id="network" style="position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.3;"></canvas>
+    <canvas id="matrix"></canvas>
+    <div class="bg-glow"></div>
+    <div class="top-bar">
+      <div class="top-logo">CLOUDFLARE <span>WAF</span></div>
+      <div class="top-timer" id="countdown">Phiên hết hạn sau: 3:00</div>
+    </div>
     <div class="container">
       <div class="left">
         <div class="badge-security"><div class="dot"></div> Quantum Firewall v4.2</div>
@@ -266,15 +276,6 @@ function renderCheckpoint(env) {
         <div class="challenge-box">
           <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
           <div class="status-text" id="statusText">Nếu thấy ô <b>Verify you are human</b>, bấm vào đó. Không cần tải lại trang.</div>
-        </div>
-        <div class="stepper">
-          <div class="step completed"><div class="step-circle"></div><div class="step-label">Kết nối TLS</div></div>
-          <div class="step-line completed"></div>
-          <div class="step completed"><div class="step-circle"></div><div class="step-label">Lọc tại edge</div></div>
-          <div class="step-line completed"></div>
-          <div class="step active"><div class="step-circle"></div><div class="step-label">Xác minh trình duyệt</div></div>
-          <div class="step-line"></div>
-          <div class="step"><div class="step-circle"></div><div class="step-label">Vào trang sau</div></div>
         </div>
       </div>
       <div class="right">
@@ -344,14 +345,19 @@ async function hmac(data, secret, action) {
   if (action === 'sign') { const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data)); return btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
   return key;
 }
-async function encodeSession(data, secret) { const payload = btoa(JSON.stringify(data)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); return payload + '.' + await hmac(payload, secret, 'sign'); }
+async function encodeSession(data, secret) {
+  if (!secret) throw new Error("Missing SESSION_SECRET");
+  const payload = safeBtoa(JSON.stringify(data));
+  return payload + '.' + await hmac(payload, secret, 'sign');
+}
 async function decodeSession(token, secret) {
-  if (!token || token.length > 4096) return null; const parts = token.split('.'); if (parts.length !== 2) return null;
+  if (!token || token.length > 4096 || !secret) return null; 
+  const parts = token.split('.'); if (parts.length !== 2) return null;
   try {
     const enc = new TextEncoder(); const key = await hmac('', secret, 'import');
     const sigBytes = Uint8Array.from(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
     const ok = await crypto.subtle.verify('HMAC', key, sigBytes, enc.encode(parts[0])); if (!ok) return null;
-    const data = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/'))); if (Date.now() > data.expiresAt) return null; return data;
+    const data = JSON.parse(safeAtob(parts[0])); if (Date.now() > data.expiresAt) return null; return data;
   } catch { return null; }
 }
 function getCookie(request, name) { const c = request.headers.get('cookie') || ''; const m = c.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)')); return m ? m[1] : null; }
@@ -369,7 +375,7 @@ async function verifyTurnstile(token, ip, env) {
     const d = await r.json();
     if (!d.success) {
       log('warn', 'turnstile verify failed', { codes: d['error-codes'] });
-      if (d['error-codes'].includes('missing-input-secret') || d['error-codes'].includes('invalid-input-secret')) return { success: false, error: "LỖI HỆ THỐNG: Secret Key không hợp lệ hoặc chưa được nhập. (missing-input-secret)" };
+      if (d['error-codes'].includes('missing-input-secret') || d['error-codes'].includes('invalid-input-secret')) return { success: false, error: "LỖI HỆ THỐNG: Secret Key không hợp lệ hoặc chưa được nhập trên Cloudflare." };
       if (d['error-codes'].includes('timeout-or-duplicate')) return { success: false, error: "Captcha đã hết hạn hoặc được sử dụng. Vui lòng thử lại." };
       return { success: false, error: "Captcha không hợp lệ (" + d['error-codes'][0] + ")" };
     }
@@ -384,7 +390,7 @@ async function shortenUrl(longUrl, env) {
 
 async function fetchKeyFromIssuer(tier, env) {
   try {
-    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/11.1', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: tier }) });
+    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/12.0', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: tier }) });
     const data = await res.json().catch(() => null);
     if (data && data.success === true && data.key) return { ok: true, key: data.key, expiresAt: data.expires_at, durationHours: data.duration_hours };
     return { ok: false };
@@ -392,13 +398,15 @@ async function fetchKeyFromIssuer(tier, env) {
 }
 
 // ============ ROUTER & API ============
-function home(env) {
+function home(env, errorMsg) {
   return renderApp('Nhận Key Miễn Phí', `
     <div class="card hero">
       <div class="badge">✨ Hệ thống tự động 2026</div>
       <h1>Nhận Key <span class="grad">Tự Động</span></h1>
       <p class="sub">Chọn loại Key bạn muốn nhận, sau đó hoàn thành 2 bước siêu tốc.</p>
       
+      ${errorMsg ? `<div class="error-box">⚠ ${errorMsg}</div>` : ''}
+
       <div class="tier-selector">
         <label class="tier-option selected" data-tier="Normal">
           <input type="radio" name="tier" value="Normal" checked>
@@ -421,14 +429,14 @@ function home(env) {
 
 async function start(request, env) {
   const ip = request.headers.get('cf-connecting-ip') || 'local';
-  if (!checkRateLimit('start:' + ip, 10).ok) return renderApp('Lỗi', `<div class="card center"><h2>Quá nhiều yêu cầu</h2><p class="sub">Vui lòng thử lại sau 1 giờ.</p></div>`);
+  if (!checkRateLimit('start:' + ip, 10).ok) return redirect('/?error=' + encodeURIComponent('Quá nhiều yêu cầu. Vui lòng thử lại sau 1 giờ.'));
+  
   const form = await request.formData();
   const verify = await verifyTurnstile(form.get('cf-turnstile-response'), ip, env);
-  if (!verify.success) return renderApp('Lỗi', `<div class="card center"><h2>Captcha không hợp lệ</h2><p class="sub">${verify.error}</p><a href="/" class="btn btn-primary">Thử lại</a></div>`);
+  if (!verify.success) return redirect('/?error=' + encodeURIComponent(verify.error));
   
   const selectedTier = form.get('tier') || 'Normal';
   const session = { sid: crypto.randomUUID(), ip, createdAt: Date.now(), subVerified: false, adsVerified: false, keyIssued: null, tier: selectedTier };
-  
   return redirect('/step1', await saveSession(request, env, session));
 }
 
@@ -484,7 +492,8 @@ async function verifyCheckpoint(request, env) {
       return new Response(JSON.stringify({ success: false, error: verify.error }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
     const passToken = crypto.randomUUID();
-    const headers = new Headers({ 'Content-Type': 'application/json', 'Set-Cookie': `bot_passed=${passToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=900; Secure` });
+    // Set cookie for 3 minutes (180 seconds)
+    const headers = new Headers({ 'Content-Type': 'application/json', 'Set-Cookie': `bot_passed=${passToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=180; Secure` });
     return new Response(JSON.stringify({ success: true }), { headers });
   } catch (e) {
     log('error', 'checkpoint exception', { msg: e.message });
@@ -500,9 +509,15 @@ export default {
       if (p === '/style.css') return withHeaders(new Response(APP_CSS, { headers: { 'Content-Type': 'text/css' } }));
       if (p === '/app.js') return withHeaders(new Response(APP_JS, { headers: { 'Content-Type': 'application/javascript' } }));
       if (p === '/api/verify-bot' && m === 'POST') return verifyCheckpoint(request, env);
-      if (!botPassed && p !== '/api/verify-bot') return renderCheckpoint(env);
       
-      if (p === '/' && m === 'GET') return home(env);
+      if (!botPassed && p !== '/api/verify-bot') {
+        return renderCheckpoint(env);
+      }
+      
+      if (p === '/' && m === 'GET') {
+        const err = url.searchParams.get('error');
+        return home(env, err);
+      }
       if (p === '/start' && m === 'POST') return start(request, env);
       if (p === '/step1' && m === 'GET') return step1(request, env);
       if (p === '/verify/sub' && m === 'POST') return verifySub(request, env);
@@ -512,6 +527,10 @@ export default {
       if (p === '/reset' && m === 'GET') return reset(request);
       
       return renderApp('Lỗi 404', `<div class="card center"><h2>Không tìm thấy trang</h2><a href="/" class="btn btn-primary">Về trang chủ</a></div>`);
-    } catch (e) { log('error', e.message); return new Response('Internal Error', { status: 500 }); }
+    } catch (e) { 
+      log('error', 'FATAL ERROR', { msg: e.message, stack: e.stack }); 
+      // Trả về trang lỗi thân thiện thay vì crash Worker (Lỗi 1101)
+      return renderApp('Lỗi Hệ Thống', `<div class="card center"><h2>Hệ thống gặp sự cố</h2><p class="sub">Đã có lỗi xảy ra trong quá trình xử lý. Vui lòng thử lại sau.</p><a href="/" class="btn btn-primary">Về trang chủ</a></div>`); 
+    }
   }
 };
