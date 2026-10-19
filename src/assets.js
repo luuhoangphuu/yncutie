@@ -1,7 +1,7 @@
 export const CSS_CHECKPOINT = `
 :root { color-scheme: dark; --bg: #09090b; --text: #f4f4f5; --text-muted: #a1a1aa; --primary: #ffffff; --brand: #ff0055; --border: #27272a; --metal: linear-gradient(135deg, #f4f4f5 0%, #a1a1aa 50%, #52525b 100%); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%); }
+body { background: var(--bg); color: var(--text); cursor: default; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%); }
 #snow-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 .spotlight { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.04), transparent 40%); }
 
@@ -68,7 +68,7 @@ h1 span { background: var(--metal); -webkit-background-clip: text; background-cl
 export const CSS_APP = `
 :root { color-scheme: dark; --bg: #09090b; --text: #f4f4f5; --text-muted: #a1a1aa; --primary: #ffffff; --brand: #e4e4e7; --border: #27272a; --metal: linear-gradient(135deg, #f4f4f5 0%, #a1a1aa 50%, #52525b 100%); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.02) 0%, transparent 70%); }
+body { background: var(--bg); color: var(--text); cursor: default; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.02) 0%, transparent 70%); }
 #snow-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 .spotlight { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.04), transparent 40%); }
 .bg-shapes { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: 0.03; }
@@ -129,7 +129,7 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .key-input-group label { font-size: 14px; font-weight: 600; color: #a1a1aa; }
 .key-badge { background: rgba(255,255,255,0.1); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
 
-.btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 18px 24px; border-radius: 16px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; text-decoration: none; transition: all 0.4s; position: relative; overflow: hidden; transform: translateZ(25px); }
+.btn { cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 18px 24px; border-radius: 16px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; text-decoration: none; transition: all 0.4s; position: relative; overflow: hidden; transform: translateZ(25px); }
 .btn::after { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(0,0,0,0.1); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s; }
 .btn:active::after { width: 400px; height: 400px; transition: 0s; }
 .btn-primary { background: var(--metal); color: #000; box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.2); }
@@ -210,27 +210,28 @@ export const CSS_MOBILE = `
 `;
 
 export const CSS_MODAL = `
-.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
 .modal-overlay.show { display: flex; opacity: 1; }
-.modal-box { background: rgba(24, 24, 27, 0.95); backdrop-filter: blur(30px) saturate(150%); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 24px; width: 100%; max-width: 420px; padding: 28px; box-shadow: 0 30px 80px -12px rgba(0, 0, 0, 0.9), 0 0 60px rgba(255, 255, 255, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.05); transform: translateY(20px) scale(0.95); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
+.modal-box { background: #121214; border: 1px solid #27272a; border-radius: 24px; width: 100%; max-width: 420px; padding: 30px; box-shadow: 0 30px 80px -12px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 255, 255, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.05); transform: translateY(20px) scale(0.95); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
 .modal-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, #f59e0b, transparent); box-shadow: 0 0 20px #f59e0b; }
 .modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .modal-title { font-size: 16px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
-.modal-close-icon { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #a1a1aa; cursor: pointer; transition: all 0.3s; }
-.modal-close-icon:hover { background: rgba(255, 255, 255, 0.15); color: #fff; transform: rotate(90deg); box-shadow: 0 0 15px rgba(255, 255, 255, 0.2); }
-.modal-content { background: rgba(9, 9, 11, 0.8); border-radius: 16px; padding: 22px; margin-bottom: 22px; font-size: 14px; line-height: 1.7; color: #e4e4e7; border: 1px solid rgba(255, 255, 255, 0.08); position: relative; box-shadow: inset 0 2px 10px rgba(0,0,0,0.3); }
-.modal-content p { margin-bottom: 8px; }
+.modal-close-icon { background: #18181b; border: 1px solid #333; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #a1a1aa; cursor: pointer; transition: all 0.3s; }
+.modal-close-icon:hover { background: #27272a; color: #fff; transform: rotate(90deg); }
+.modal-content { background: #09090b; border-radius: 16px; padding: 24px; margin-bottom: 24px; font-size: 14px; line-height: 1.7; color: #e4e4e7; border: 1px solid #27272a; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+.modal-content p { margin-bottom: 10px; }
 .modal-content p:last-child { margin-bottom: 0; }
 .modal-content b { color: #fff; font-weight: 800; }
-.modal-actions { display: flex; flex-direction: column; gap: 10px; }
-.btn-snooze { background: linear-gradient(135deg, #f4f4f5 0%, #a1a1aa 50%, #52525b 100%); color: #000; padding: 15px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15); position: relative; overflow: hidden; }
+.modal-actions { display: flex; flex-direction: column; gap: 12px; }
+.btn-snooze { background: linear-gradient(135deg, #f4f4f5 0%, #a1a1aa 50%, #52525b 100%); color: #000; padding: 16px; border-radius: 14px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1); position: relative; overflow: hidden; }
 .btn-snooze::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: left 0.6s; }
-.btn-snooze:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 255, 255, 0.3); }
+.btn-snooze:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 255, 255, 0.2); }
 .btn-snooze:hover::before { left: 100%; }
-.btn-close { background: transparent; color: #a1a1aa; padding: 15px; border-radius: 12px; font-weight: 700; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; transition: all 0.3s; }
-.btn-close:hover { background: rgba(255, 255, 255, 0.05); color: #fff; border-color: rgba(255, 255, 255, 0.3); }
+.btn-close { background: transparent; color: #a1a1aa; padding: 16px; border-radius: 14px; font-weight: 700; border: 1px solid #27272a; cursor: pointer; transition: all 0.3s; }
+.btn-close:hover { background: #18181b; color: #fff; border-color: #52525b; }
 `;
+
 
 
 export const CSS_ADMIN = `
@@ -427,19 +428,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // ============ PREMIUM EFFECTS ============
 export const CSS_PREMIUM = `
-/* Custom Cursor */
-@media (hover: hover) and (pointer: fine) {
-  body, a, button, .btn, .glass-card { cursor: none !important; }
-  .cursor-dot, .cursor-ring { display: block; }
-}
-@media (hover: none), (pointer: coarse) {
-  .cursor-dot, .cursor-ring { display: none !important; }
-}
-.cursor-dot { position: fixed; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); mix-blend-mode: difference; box-shadow: 0 0 10px rgba(255,255,255,0.8); display: none; transition: transform 0.1s; }
-.cursor-ring { position: fixed; width: 40px; height: 40px; border: 1.5px solid rgba(255,255,255,0.4); border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); display: none; transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s; }
-body.cursor-hover .cursor-ring { width: 60px; height: 60px; border-color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.08); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
-body.cursor-click .cursor-dot { transform: translate(-50%, -50%) scale(2); }
-
 /* Top Progress Bar */
 .progress-bar { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: linear-gradient(90deg, #555, #fff, #555); box-shadow: 0 0 15px #fff, 0 0 30px rgba(255,255,255,0.5); z-index: 10000; transition: width 0.1s linear; }
 
@@ -512,43 +500,6 @@ h1::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; he
 
 export const JS_PREMIUM = `
 // ============ PREMIUM EFFECTS JS ============
-
-// 1. Custom Cursor
-(function() {
-  if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
-  const dot = document.createElement('div');
-  dot.className = 'cursor-dot';
-  const ring = document.createElement('div');
-  ring.className = 'cursor-ring';
-  document.body.appendChild(dot);
-  document.body.appendChild(ring);
-  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
-  let ringX = mouseX, ringY = mouseY;
-  document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-    dot.style.left = mouseX + 'px';
-    dot.style.top = mouseY + 'px';
-  });
-  function animateRing() {
-    ringX += (mouseX - ringX) * 0.15;
-    ringY += (mouseY - ringY) * 0.15;
-    ring.style.left = ringX + 'px';
-    ring.style.top = ringY + 'px';
-    requestAnimationFrame(animateRing);
-  }
-  animateRing();
-  document.addEventListener('mouseover', (e) => {
-    const t = e.target.closest('a, button, .btn, .tier-option, .glass-card, .device-item, .pricing div');
-    if (t) document.body.classList.add('cursor-hover');
-  });
-  document.addEventListener('mouseout', (e) => {
-    const t = e.target.closest('a, button, .btn, .tier-option, .glass-card, .device-item, .pricing div');
-    if (t) document.body.classList.remove('cursor-hover');
-  });
-  document.addEventListener('mousedown', () => document.body.classList.add('cursor-click'));
-  document.addEventListener('mouseup', () => document.body.classList.remove('cursor-click'));
-})();
 
 // 2. Top Progress Bar
 (function() {
