@@ -276,6 +276,18 @@ export function renderHome(env, error, notice, quota) {
         btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="30 10"/></svg> Đang khởi tạo...';
         btn.style.background = 'rgba(255,255,255,0.5)';
       });
+      
+      // Hiệu ứng đếm số cho Lượt còn lại (Chỉ đếm số do Server trả về)
+      const limitEl = document.getElementById('dev-limit');
+      if(limitEl) {
+        const finalVal = parseInt(limitEl.innerText);
+        let currentVal = 0;
+        const timer = setInterval(() => {
+          if(currentVal >= finalVal) { clearInterval(timer); limitEl.innerText = finalVal; return; }
+          currentVal++;
+          limitEl.innerText = currentVal;
+        }, 100);
+      }
     </script>
     <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
   `);
