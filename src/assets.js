@@ -133,16 +133,21 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 .skeleton { background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; height: 24px; width: 100%; }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-/* PREMIUM FOOTER */
-.footer { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 14px; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 40px; position: relative; z-index: 10; background: rgba(255,255,255,0.5); backdrop-filter: blur(10px); }
-.footer p { margin-bottom: 16px; font-weight: 500; }
-.footer div { display: flex; justify-content: center; gap: 24px; }
-.footer a { color: var(--text); text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 12px; background: #fff; border: 1px solid #e2e8f0; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-.footer a:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-.footer a.zalo { color: #0068FF; border-color: #b3d4ff; }
-.footer a.zalo:hover { background: #f0f7ff; box-shadow: 0 10px 20px rgba(0,104,255,0.15); }
-.footer a.yt { color: #FF0000; border-color: #ffb3b3; }
-.footer a.yt:hover { background: #fff0f0; box-shadow: 0 10px 20px rgba(255,0,0,0.15); }
+/* PREMIUM FOOTER 2026 */
+.footer { text-align: center; padding: 40px 20px; position: relative; z-index: 10; background: linear-gradient(180deg, transparent, rgba(255,255,255,0.6)); border-top: 1px solid rgba(0,0,0,0.04); margin-top: auto; }
+.footer p { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 24px; letter-spacing: 0.5px; }
+.footer p b { color: var(--text); font-weight: 800; font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-background-clip: text; color: transparent; }
+.footer div { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+.footer a { position: relative; display: inline-flex; align-items: center; gap: 10px; padding: 12px 24px; border-radius: 16px; font-size: 14px; font-weight: 700; text-decoration: none; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); overflow: hidden; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+.footer a svg { transition: transform 0.3s; }
+.footer a:hover { transform: translateY(-5px) scale(1.02); }
+.footer a:hover svg { transform: scale(1.2) rotate(-10deg); }
+.footer a::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent); transform: skewX(-20deg); transition: 0.5s; }
+.footer a:hover::before { left: 150%; }
+.footer a.zalo { color: #0068FF; border-color: rgba(0, 104, 255, 0.2); box-shadow: 0 4px 15px rgba(0, 104, 255, 0.1); }
+.footer a.zalo:hover { box-shadow: 0 15px 30px rgba(0, 104, 255, 0.2), inset 0 0 20px rgba(0, 104, 255, 0.05); border-color: #0068FF; }
+.footer a.yt { color: #FF0000; border-color: rgba(255, 0, 0, 0.2); box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1); }
+.footer a.yt:hover { box-shadow: 0 15px 30px rgba(255, 0, 0, 0.2), inset 0 0 20px rgba(255, 0, 0, 0.05); border-color: #FF0000; }
 
 /* TOAST & FLOATING */
 .toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
@@ -212,7 +217,7 @@ window.showToast = function(message, type = 'success') {
   })();
   const toast = document.createElement('div');
   toast.className = 'toast ' + type;
-  toast.innerHTML = (type === 'success' ? '<i data-lucide="check-circle"></i>' : '<i data-lucide="alert-circle"></i>') + ' ' + message;
+  toast.innerHTML = (type === 'success' ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>') + ' ' + message;
   container.appendChild(toast);
   if(window.lucide) lucide.createIcons();
   setTimeout(() => { toast.style.animation = 'toastOut 0.3s forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
@@ -227,24 +232,18 @@ document.addEventListener('click', function(e) {
   });
 });
 
-// 5. Real Live Stats (Lưu bằng LocalStorage)
+// 5. Real Live Stats
 function updateLiveStats() {
   let baseKeys = parseInt(localStorage.getItem('dpi_keys') || '14235');
   let baseUsers = parseInt(localStorage.getItem('dpi_users') || '142');
-  
-  // Tăng nhẹ mỗi khi load trang hoặc theo thời gian
   if(Math.random() > 0.5) baseKeys += Math.floor(Math.random() * 2);
   baseUsers = 142 + Math.floor(Math.random() * 15);
-  
-  localStorage.setItem('dpi_keys', baseKeys);
-  localStorage.setItem('dpi_users', baseUsers);
-  
+  localStorage.setItem('dpi_keys', baseKeys); localStorage.setItem('dpi_users', baseUsers);
   const kEl = document.getElementById('stat-keys'); const uEl = document.getElementById('stat-users');
   if(kEl) kEl.innerText = baseKeys.toLocaleString('vi-VN');
   if(uEl) uEl.innerText = baseUsers;
 }
-setInterval(updateLiveStats, 5000);
-updateLiveStats();
+setInterval(updateLiveStats, 5000); updateLiveStats();
 
 // 6. Real-time VN Clock
 setInterval(() => {
