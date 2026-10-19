@@ -39,7 +39,7 @@ export default {
           <p class="sub" style="text-align:center;">Vui lòng theo dõi kênh để duy trì hệ thống miễn phí.</p>
           <a href="${env.YOUTUBE_CHANNEL_URL}" target="_blank" class="btn btn-youtube" style="margin-bottom:20px;">▶ Mở YouTube</a>
           <form method="POST" action="/verify/sub">
-            <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
+            <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
             <button type="submit" class="btn btn-primary">Xác nhận đã theo dõi</button>
           </form>
         `));
@@ -59,7 +59,7 @@ export default {
           <p class="sub" style="text-align:center;">Nhấn mở Ads, hoàn thành và quay lại để nhận Key.</p>
           <a href="https://link4m.com/your_link" target="_blank" class="btn btn-ads" style="margin-bottom:20px;">📺 Mở Link4M</a>
           <form method="POST" action="/verify/ads" onsubmit="showSkeleton();">
-            <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
+            <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
             <button type="submit" class="btn btn-primary">Nhận Key Ngay</button>
           </form>
         `));

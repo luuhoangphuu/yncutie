@@ -5,7 +5,6 @@ const layout = (title, content) => `<!DOCTYPE html><html lang="vi"><head><meta c
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>${CSS}</style></head>
 <body>
-  <div class="bg-anim"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
   ${content}
   <script>${JS}</script>
 </body></html>`;
@@ -15,7 +14,7 @@ export function renderCheckpoint(env) {
     <div class="glass-card" style="max-width: 500px; text-align: center;">
       <h1 style="margin-bottom:20px;">Xác minh <span class="grad">Bảo mật</span></h1>
       <p class="sub">Hệ thống đang kiểm tra kết nối của bạn để chống lại Bot và DDoS.</p>
-      <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
+      <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" data-callback="onTurnstileSuccess" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
       <div class="terminal" id="term"></div>
     </div>
     <script>
@@ -60,7 +59,7 @@ export function renderHome(env, error) {
 
         <form method="POST" action="/start">
           <input type="hidden" name="tier" id="tierInput" value="Normal">
-          <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
+          <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
           <button type="submit" class="btn btn-primary">🚀 Bắt đầu nhận Key</button>
         </form>
         <p style="font-size:12px; color:var(--text-muted); margin-top:15px;">Bảo mật bởi Cloudflare Turnstile</p>
@@ -84,9 +83,9 @@ export function renderHome(env, error) {
         </div>
         <div class="stat-card" style="flex-direction:column; align-items:flex-start;">
           <h4 style="margin-bottom:12px; font-size:14px;">📖 Quy trình 3 bước</h4>
-          <p style="font-size:13px; line-height:1.6; margin-bottom:8px;"><b style="color:#fff">1.</b> Chọn hạng Key và xác minh Captcha.</p>
-          <p style="font-size:13px; line-height:1.6; margin-bottom:8px;"><b style="color:#fff">2.</b> Theo dõi Kênh YouTube để ủng hộ.</p>
-          <p style="font-size:13px; line-height:1.6;"><b style="color:#fff">3.</b> Vượt Ads Link4M và nhận Key.</p>
+          <p style="font-size:13px; line-height:1.6; margin-bottom:8px;"><b style="color:#0f172a">1.</b> Chọn hạng Key và xác minh Captcha.</p>
+          <p style="font-size:13px; line-height:1.6; margin-bottom:8px;"><b style="color:#0f172a">2.</b> Theo dõi Kênh YouTube để ủng hộ.</p>
+          <p style="font-size:13px; line-height:1.6;"><b style="color:#0f172a">3.</b> Vượt Ads Link4M và nhận Key.</p>
         </div>
       </div>
     </div>
