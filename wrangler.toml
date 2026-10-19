@@ -1,4 +1,4 @@
-name = "key-system"
+name = "yncutie"
 main = "src/index.js"
 compatibility_date = "2024-10-01"
 compatibility_flags = ["nodejs_compat"]
@@ -9,8 +9,10 @@ TURNSTILE_SITE_KEY = "0x4AAAAAAFa3bTkpwmMAKSah"
 KEY_ISSUER_URL = "https://dpi-config.vercel.app/yncutie"
 KEY_TIER = "Normal"
 SESSION_TTL_MS = "900000"
-RATE_START_PER_HOUR = "5"
-RATE_KEY_PER_HOUR = "3"
+RATE_START_PER_HOUR = "10"
+RATE_KEY_PER_HOUR = "5"
+LINK4M_API_TOKEN = "6a60d6600dc2015814000655"
+YOUTUBE_CHANNEL_URL = "https://youtube.com/@zwicxsharereg?si=uxYYTwFUXLYijhmz"
 
 routes = [
   { pattern = "getkeydpiconfig.site", custom_domain = true }
