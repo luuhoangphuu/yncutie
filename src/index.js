@@ -1,90 +1,136 @@
 // ============================================================================
-// Key System Worker v9.0 - Ultimate Cyberpunk Checkpoint + Light App
+// Key System Worker v10.0 - AI Quantum Security Checkpoint + Light App
 // ============================================================================
 
 const CHECKPOINT_CSS = `
 :root { color-scheme: dark; }
 *{margin:0;padding:0;box-sizing:border-box}
 body {
-  font-family: 'Inter', -apple-system, sans-serif; background: #050a14; color: #94a3b8;
+  font-family: 'Inter', -apple-system, sans-serif; background: #030712; color: #94a3b8;
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
-  overflow: hidden; position: relative;
+  overflow: hidden; position: relative; font-size: 14px;
 }
-.bg-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px); background-size: 40px 40px; z-index: 0; }
-.bg-glow { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.1), transparent 60%); z-index: 0; }
+/* Background Effects */
+.bg-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px); background-size: 30px 30px; z-index: 0; }
+.bg-glow { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.15), transparent 60%); z-index: 0; }
+.node-network { position: fixed; inset: 0; z-index: 1; opacity: 0.2; pointer-events: none; }
 
-.container { position: relative; z-index: 10; width: 100%; max-width: 1100px; display: flex; gap: 40px; }
-@media (max-width: 900px) { .container { flex-direction: column; } }
+.container { position: relative; z-index: 10; width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; }
+@media (max-width: 900px) { .container { grid-template-columns: 1fr; gap: 20px; } }
 
-.left { flex: 1; max-width: 550px; }
-.badge-security { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #38bdf8; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(56,189,248,0.5); }
-.badge-security::before { content: ''; display: block; width: 20px; height: 2px; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; }
-h1 { font-size: 42px; font-weight: 800; color: #f8fafc; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em; text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
-.desc { font-size: 16px; line-height: 1.6; color: #94a3b8; margin-bottom: 30px; }
+/* Left Side: Challenge */
+.left { display: flex; flex-direction: column; justify-content: center; }
+.badge-security { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #0ea5e9; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px rgba(14,165,233,0.5); }
+.badge-security::before { content: ''; display: block; width: 30px; height: 2px; background: #0ea5e9; box-shadow: 0 0 10px #0ea5e9; }
+h1 { font-size: 46px; font-weight: 800; color: #f8fafc; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; text-shadow: 0 4px 30px rgba(0,0,0,0.8); }
+.desc { font-size: 16px; line-height: 1.6; color: #94a3b8; margin-bottom: 30px; max-width: 90%; }
 
-.challenge-box { background: #0b1120; border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; padding: 24px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(56, 189, 248, 0.05); transition: all 0.3s; }
-.challenge-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #38bdf8, transparent); opacity: 0.8; }
-.challenge-box:hover { border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 30px rgba(56, 189, 248, 0.1); }
-.cf-turnstile { margin-bottom: 15px; display: flex; justify-content: center; }
-.status-text { text-align: center; font-size: 13px; color: #64748b; margin-top: 15px; transition: color 0.3s; }
+.challenge-box { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 16px; padding: 30px; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 30px rgba(56, 189, 248, 0.05); transition: all 0.3s; }
+.challenge-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #0ea5e9, transparent); opacity: 0.8; animation: scan 3s linear infinite; }
+@keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+.challenge-box:hover { border-color: rgba(56, 189, 248, 0.6); box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(56, 189, 248, 0.1); }
+.cf-turnstile { margin-bottom: 20px; display: flex; justify-content: center; }
+.status-text { text-align: center; font-size: 13px; color: #64748b; transition: color 0.3s; font-weight: 500; line-height: 1.5; }
 
+/* Stepper */
 .stepper { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; padding: 0 10px; }
-.step { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.step-circle { width: 24px; height: 24px; border-radius: 50%; background: #0b1120; border: 2px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: all 0.5s; }
-.step.completed .step-circle { background: #064e3b; border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
-.step.completed .step-circle::after { content: '✓'; color: #10b981; font-size: 12px; font-weight: bold; }
-.step.active .step-circle { background: #0c4a6e; border-color: #38bdf8; box-shadow: 0 0 20px rgba(56, 189, 248, 0.6); animation: pulse 1.5s infinite; }
-.step-line { flex: 1; height: 2px; background: #1e293b; margin: 0 10px; margin-bottom: 24px; transition: all 0.5s; }
+.step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
+.step-circle { width: 28px; height: 28px; border-radius: 8px; transform: rotate(45deg); background: #0f172a; border: 2px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: all 0.5s; z-index: 2; }
+.step-circle::after { content: ''; transform: rotate(-45deg); font-weight: bold; font-size: 14px; color: #fff; }
+.step.completed .step-circle { background: rgba(16, 185, 129, 0.2); border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+.step.completed .step-circle::after { content: '✓'; color: #10b981; }
+.step.active .step-circle { background: rgba(14, 165, 233, 0.2); border-color: #0ea5e9; box-shadow: 0 0 20px rgba(14, 165, 233, 0.6); animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(14, 165, 233, 0); } 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); } }
+.step-line { flex: 1; height: 2px; background: #1e293b; margin: 0 10px; margin-bottom: 24px; transition: all 0.5s; z-index: 1; }
 .step-line.completed { background: #10b981; box-shadow: 0 0 10px #10b981; }
-.step-line.active { background: linear-gradient(90deg, #10b981, #38bdf8); box-shadow: 0 0 10px #38bdf8; }
-.step-label { font-size: 12px; font-weight: 600; color: #475569; transition: all 0.3s; }
-.step.completed .step-label, .step.active .step-label { color: #cbd5e1; text-shadow: 0 0 8px rgba(255,255,255,0.3); }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(56, 189, 248, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); } }
+.step-line.active { background: linear-gradient(90deg, #10b981, #0ea5e9); box-shadow: 0 0 10px #0ea5e9; }
+.step-label { font-size: 12px; font-weight: 600; color: #475569; transition: all 0.3s; white-space: nowrap; }
+.step.completed .step-label, .step.active .step-label { color: #e2e8f0; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
 
-.right { flex: 1; display: flex; flex-direction: column; gap: 16px; }
-.card { background: #0b1120; border: 1px solid #1e293b; border-radius: 16px; padding: 24px; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 13px; font-weight: 600; color: #64748b; }
-.card-value { font-size: 32px; font-weight: 800; color: #f8fafc; font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
-.card-value small { font-size: 16px; color: #64748b; font-weight: 600; margin-left: 4px; }
+/* Right Side: HUD */
+.right { display: flex; flex-direction: column; gap: 16px; }
+.card { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(10px); border: 1px solid #1e293b; border-radius: 16px; padding: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+.card-value { font-size: 32px; font-weight: 800; color: #f8fafc; font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+.card-value small { font-size: 14px; color: #64748b; font-weight: 600; margin-left: 4px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-/* Terminal Log */
-.terminal { background: #000000; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #38bdf8; height: 120px; overflow: hidden; display: flex; flex-direction: column; gap: 6px; }
-.log-line { opacity: 0; animation: fadeIn 0.3s forwards; }
+/* Terminal */
+.terminal { background: #000000; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0ea5e9; height: 140px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
+.log-line { opacity: 0; animation: typeIn 0.3s forwards; line-height: 1.4; }
 .log-line.success { color: #10b981; }
-@keyframes fadeIn { to { opacity: 1; } }
+.log-line.warn { color: #f59e0b; }
+@keyframes typeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
-/* Radar */
-.radar-container { width: 100px; height: 100px; position: relative; margin: 0 auto; border-radius: 50%; border: 1px solid rgba(56, 189, 248, 0.3); background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%); box-shadow: 0 0 20px rgba(56, 189, 248, 0.1); }
-.radar-sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0%, rgba(56, 189, 248, 0.5) 25%, transparent 25%); animation: sweep 2s linear infinite; }
-.radar-dot { position: absolute; top: 30%; left: 60%; width: 4px; height: 4px; background: #38bdf8; border-radius: 50%; box-shadow: 0 0 10px #38bdf8; animation: blink 2s infinite; }
-@keyframes sweep { 100% { transform: rotate(360deg); } }
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+/* Radar SVG */
+.radar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto; }
+.radar-svg { width: 100%; height: 100%; animation: spin 4s linear infinite; transform-origin: center; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.radar-ping { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+@keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
 
-/* Error Modal */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; }
-.modal-box { background: #0f172a; border: 1px solid #ef4444; border-radius: 16px; padding: 30px; text-align: center; max-width: 400px; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.2); }
-.modal-icon { color: #ef4444; font-size: 40px; margin-bottom: 15px; }
-.modal-title { color: #f8fafc; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
-.modal-msg { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
-.modal-btn { background: #ef4444; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-.modal-btn:hover { background: #dc2626; }
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: center; justify-content: center; }
+.modal-box { background: rgba(15, 23, 42, 0.9); border: 1px solid #ef4444; border-radius: 20px; padding: 40px 30px; text-align: center; max-width: 420px; box-shadow: 0 20px 60px rgba(239, 68, 68, 0.2); transform: scale(0.9); animation: popIn 0.3s forwards; }
+@keyframes popIn { to { transform: scale(1); } }
+.modal-icon { color: #ef4444; font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 20px rgba(239,68,68,0.5); }
+.modal-title { color: #f8fafc; font-size: 22px; font-weight: 800; margin-bottom: 12px; }
+.modal-msg { color: #94a3b8; font-size: 15px; margin-bottom: 24px; line-height: 1.5; }
+.modal-btn { background: #ef4444; color: #fff; border: none; padding: 14px 30px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; width: 100%; }
+.modal-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(239,68,68,0.3); }
 `;
 
 const CHECKPOINT_JS = `
+// 1. Hiệu ứng Node Network (Mạng nhện)
+const canvas = document.getElementById('network');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+let particles = Array.from({length: 40}, () => ({
+  x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+  vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5
+}));
+function drawNetwork() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach((p, i) => {
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    ctx.fillStyle = 'rgba(14, 165, 233, 0.5)'; ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
+    for(let j = i + 1; j < particles.length; j++) {
+      let p2 = particles[j]; let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+      if(dist < 150) { ctx.strokeStyle = 'rgba(14, 165, 233, ' + (1 - dist/150) * 0.2 + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+    }
+  });
+  requestAnimationFrame(drawNetwork);
+}
+drawNetwork();
+
+// 2. Đồng hồ đếm thời gian thật
+let timerInterval;
+let startTime;
+function startRealTimer() {
+  startTime = performance.now();
+  document.getElementById('realTimer').style.color = '#0ea5e9';
+  timerInterval = setInterval(() => {
+    const elapsed = (performance.now() - startTime) / 1000;
+    document.getElementById('realTimer').textContent = elapsed.toFixed(3);
+  }, 10);
+}
+
+// 3. Log chạy chữ
 const logs = [
-  "> Khởi tạo kết nối TLS 1.3...",
-  "> Đang lấy chứng chỉ Edge...",
-  "> Kiểm tra danh tiếng IP...",
-  "> Phân tích dấu vết trình duyệt...",
-  "> Quét các mẫu DDoS...",
-  "> Hệ thống sẵn sàng xác minh."
+  "[SYS] Khởi tạo kết nối TLS 1.3...",
+  "[NET] Kết nối thành công tới Edge Server (Anycast).",
+  "[SEC] Đang phân tích vân tay trình duyệt (Canvas/WebGL)...",
+  "[WAF] Quét các mẫu tấn công DDoS và SQLi...",
+  "[BOT] Kiểm tra chuyển động chuột và cảm ứng...",
+  "[CHK] Hệ thống sẵn sàng xác minh Captcha."
 ];
 let logIndex = 0;
-function addLog(text, isSuccess) {
+function addLog(text, type) {
   const terminal = document.getElementById('terminal');
   const line = document.createElement('div');
-  line.className = 'log-line' + (isSuccess ? ' success' : '');
+  line.className = 'log-line ' + (type || '');
   line.textContent = text;
   terminal.appendChild(line);
   terminal.scrollTop = terminal.scrollHeight;
@@ -94,27 +140,33 @@ setInterval(() => {
     addLog(logs[logIndex]);
     logIndex++;
   }
-}, 600);
+}, 800);
 
+// 4. Xử lý khi Captcha thành công
 function onTurnstileSuccess(token) {
-  document.getElementById('statusText').style.color = '#38bdf8';
-  document.getElementById('statusText').innerHTML = 'Đang thiết lập kết nối an toàn...';
+  startRealTimer(); // Bắt đầu đếm giây
+  
+  document.getElementById('statusText').style.color = '#0ea5e9';
+  document.getElementById('statusText').innerHTML = 'Đang xác thực dữ liệu sinh trắc học...';
   
   const stepVerify = document.querySelector('.step:nth-child(5)');
   stepVerify.classList.add('active');
   stepVerify.classList.remove('completed');
   
-  addLog("> Token Captcha hợp lệ. Đang xác thực...", false);
+  addLog("[AUTH] Nhận được Token. Đang gửi tới máy chủ...", 'warn');
 
   fetch('/api/verify-bot', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token: token })
   }).then(res => res.json()).then(data => {
+    clearInterval(timerInterval); // Dừng đồng hồ
+    const finalTime = ((performance.now() - startTime) / 1000).toFixed(3);
+    
     if(data.success) {
-      addLog("> XÁC MINH THÀNH CÔNG!", true);
+      addLog("[OK] XÁC MINH THÀNH CÔNG. ĐANG CHUYỂN HƯỚNG...", 'success');
       document.getElementById('statusText').style.color = '#10b981';
-      document.getElementById('statusText').innerHTML = '<b>Xác minh thành công! Đang vào cửa hàng...</b>';
+      document.getElementById('statusText').innerHTML = '<b>Xác minh thành công! Đang vào trang sau...</b>';
       
       stepVerify.classList.add('completed');
       stepVerify.classList.remove('active');
@@ -125,11 +177,12 @@ function onTurnstileSuccess(token) {
       steps[3].classList.add('active');
       steps[3].classList.remove('completed');
       
-      setTimeout(() => { window.location.href = '/'; }, 1000);
+      setTimeout(() => { window.location.href = '/'; }, 1200);
     } else {
-      showError(data.error || 'Xác thực thất bại. Vui lòng thử lại.');
+      showError(data.error || 'Xác thực thất bại.');
     }
   }).catch(() => {
+    clearInterval(timerInterval);
     showError('Lỗi kết nối mạng. Vui lòng thử lại.');
   });
 }
@@ -137,23 +190,22 @@ function onTurnstileSuccess(token) {
 function showError(msg) {
   document.getElementById('modalMsg').textContent = msg;
   document.getElementById('errorModal').style.display = 'flex';
-  addLog("> LỖI: " + msg, false);
+  addLog("[ERR] " + msg, 'warn');
 }
 
-function reloadPage() {
-  window.location.reload();
-}
+function reloadPage() { window.location.reload(); }
 
+// 5. Hiệu ứng Graph nhịp tim
 setInterval(() => {
   const bars = document.querySelectorAll('.bar');
   bars.forEach((bar, index) => {
-    if(index > bars.length - 15) {
+    if(index > bars.length - 10) {
       bar.style.height = Math.floor(Math.random() * 80 + 20) + '%';
-      bar.classList.add('active');
-      setTimeout(() => bar.classList.remove('active'), 200);
+      bar.style.background = '#0ea5e9';
+      setTimeout(() => { bar.style.background = '#1e293b'; }, 200);
     }
   });
-}, 150);
+}, 100);
 `;
 
 const APP_CSS = `
@@ -257,12 +309,14 @@ function renderCheckpoint(env) {
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>${CHECKPOINT_CSS}</style></head>
   <body>
+    <canvas id="network" class="node-network"></canvas>
     <div class="bg-grid"></div><div class="bg-glow"></div>
+    
     <div class="container">
       <div class="left">
-        <div class="badge-security">Trạm kiểm tra bảo mật</div>
-        <h1>Xác minh nhanh trước<br>khi vào cửa hàng</h1>
-        <p class="desc">Cloudflare đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
+        <div class="badge-security">AI Security Gateway</div>
+        <h1>Xác minh nhanh trước<br>khi vào trang sau</h1>
+        <p class="desc">Hệ thống đang kiểm tra kết nối của bạn bằng Trí tuệ Nhân tạo để chặn bot và spam. Thường chỉ mất vài giây.</p>
         
         <div class="challenge-box">
           <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
@@ -276,31 +330,37 @@ function renderCheckpoint(env) {
           <div class="step-line completed"></div>
           <div class="step active"><div class="step-circle"></div><div class="step-label">Xác minh trình duyệt</div></div>
           <div class="step-line"></div>
-          <div class="step"><div class="step-circle"></div><div class="step-label">Vào cửa hàng</div></div>
+          <div class="step"><div class="step-circle"></div><div class="step-label">Vào trang sau</div></div>
         </div>
       </div>
 
       <div class="right">
         <div class="card">
-          <div class="card-header"><span>Thời gian xác minh</span><span class="card-value">1.1<small>giây</small></span></div>
+          <div class="card-header"><span>Thời gian xác minh thực tế</span><span class="card-value" id="realTimer">0.000<small>s</small></span></div>
           <div class="graph" id="graph"></div>
         </div>
 
         <div class="grid-2">
-          <div class="card">
-            <div class="radar-container">
-              <div class="radar-sweep"></div>
-              <div class="radar-dot"></div>
+          <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:15px;">
+            <div class="radar-wrapper">
+              <svg class="radar-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#1e293b" stroke-width="1"/>
+                <circle cx="50" cy="50" r="30" fill="none" stroke="#1e293b" stroke-width="1"/>
+                <circle cx="50" cy="50" r="15" fill="none" stroke="#1e293b" stroke-width="1"/>
+                <path d="M50,50 L50,5 A45,45 0 0,1 95,50 Z" fill="rgba(14, 165, 233, 0.2)"/>
+                <circle cx="50" cy="50" r="2" fill="#0ea5e9"/>
+                <circle cx="70" cy="30" r="3" fill="#10b981" class="radar-ping"/>
+              </svg>
             </div>
             <div style="text-align:center; margin-top:10px;">
-              <div style="font-size:12px; color:#64748b; margin-bottom:4px;">Quét lưu lượng</div>
-              <div style="font-size:14px; font-weight:700; color:#f8fafc;">Đang bảo vệ</div>
-              <div style="font-size:11px; color:#38bdf8;">WAF • Bot • DDoS</div>
+              <div style="font-size:11px; color:#64748b; margin-bottom:4px;">Quét lưu lượng</div>
+              <div style="font-size:13px; font-weight:700; color:#f8fafc;">Đang bảo vệ</div>
+              <div style="font-size:10px; color:#0ea5e9;">WAF • Bot • DDoS</div>
             </div>
           </div>
           <div class="card">
             <div class="card-header"><span>Độ trễ tới edge</span><span class="card-value">464<small>ms</small></span></div>
-            <div style="font-size:12px; color:#64748b; margin-top:10px;">Giao thức<br><b style="color:#f8fafc;">HTTP/3 (QUIC)</b></div>
+            <div style="font-size:11px; color:#64748b; margin-top:10px;">Giao thức<br><b style="color:#f8fafc;">HTTP/3 (QUIC)</b></div>
           </div>
         </div>
 
@@ -310,7 +370,7 @@ function renderCheckpoint(env) {
     
     <div class="modal-overlay" id="errorModal">
       <div class="modal-box">
-        <div class="modal-icon">!</div>
+        <div class="modal-icon">⚠</div>
         <div class="modal-title">Xác minh thất bại</div>
         <div class="modal-msg" id="modalMsg">Đã xảy ra lỗi.</div>
         <button class="modal-btn" onclick="reloadPage()">Thử lại</button>
@@ -377,7 +437,7 @@ async function shortenUrl(longUrl, env) {
 
 async function fetchKeyFromIssuer(env) {
   try {
-    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/9.0', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: env.KEY_TIER || 'Normal' }) });
+    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/10.0', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: env.KEY_TIER || 'Normal' }) });
     const data = await res.json().catch(() => null);
     if (data && data.success === true && data.key) return { ok: true, key: data.key, expiresAt: data.expires_at, durationHours: data.duration_hours };
     return { ok: false };
