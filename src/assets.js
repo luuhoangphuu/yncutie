@@ -11,7 +11,6 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; animation: pulse 2s infinite; }
 .time-badge { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: var(--primary); background: rgba(79, 70, 229, 0.1); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(79, 70, 229, 0.2); font-family: 'JetBrains Mono', monospace; box-shadow: 0 0 15px rgba(79,70,229,0.1); }
 @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
-
 .container-check { position: relative; z-index: 10; width: 100%; max-width: 1200px; margin: 60px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 0 40px; align-items: center; }
 @media (max-width: 900px) { .container-check { grid-template-columns: 1fr; gap: 40px; padding: 0 20px; margin: 30px auto; } }
 .left { display: flex; flex-direction: column; animation: fadeInUp 0.8s ease-out; }
@@ -76,7 +75,6 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .triangle { width: 0; height: 0; border-left: 100px solid transparent; border-right: 100px solid transparent; border-bottom: 180px solid var(--primary); border-top: none; background: transparent !important; bottom: -10%; right: -5%; animation: float 15s infinite ease-in-out alternate-reverse; }
 .square { width: 150px; height: 150px; top: 40%; right: 10%; animation: float 18s infinite ease-in-out alternate; }
 @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-40px) rotate(20deg); } }
-
 .wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; position: relative; z-index: 10; }
 .container { position: relative; z-index: 10; width: 100%; max-width: 1000px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 30px; animation: fadeInUp 0.6s ease-out; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -88,8 +86,6 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; letter-spacing: -0.03em; }
 .grad { background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 20px rgba(236,72,153,0.3); }
 .sub { color: var(--text-muted); font-size: 15px; line-height: 1.6; margin-bottom: 30px; font-weight: 500; }
-
-/* NEW SLIDING TIER SELECTOR */
 .tier-selector { position: relative; display: flex; background: rgba(0,0,0,0.04); padding: 6px; border-radius: 20px; margin-bottom: 24px; border: 1px solid rgba(0,0,0,0.05); }
 .tier-slider { position: absolute; top: 6px; left: 6px; width: calc(50% - 6px); height: calc(100% - 12px); background: #fff; border-radius: 14px; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); box-shadow: 0 4px 15px rgba(0,0,0,0.08), 0 0 10px rgba(79,70,229,0.1); z-index: 1; }
 .tier-option { flex: 1; text-align: center; padding: 14px; cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text-muted); transition: color 0.3s; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -99,7 +95,6 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 .tier-badge { font-size: 11px; padding: 3px 8px; border-radius: 6px; background: #e2e8f0; color: #64748b; transition: all 0.3s; }
 .tier-option.selected .tier-badge { background: var(--primary); color: #fff; box-shadow: 0 0 10px var(--primary); }
 .tier-option[data-tier="VIP"].selected .tier-badge { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-
 .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 18px 24px; border-radius: 16px; border: none; font-weight: 700; font-size: 16px; cursor: pointer; text-decoration: none; transition: all 0.3s; position: relative; overflow: hidden; }
 .btn::after { content: ''; position: absolute; top: 50%; left: 50%; width: 300px; height: 300px; background: rgba(255,255,255,0.2); border-radius: 50%; transform: translate(-50%, -50%) scale(0); transition: transform 0.5s; }
 .btn:active::after { transform: translate(-50%, -50%) scale(1); transition: 0s; }
@@ -132,7 +127,6 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 .key-box span { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; color: var(--primary); word-break: break-all; letter-spacing: 2px; text-align: center; text-shadow: 0 0 15px rgba(79,70,229,0.3); }
 .skeleton { background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; height: 24px; width: 100%; }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
 .footer { text-align: center; padding: 40px 20px; position: relative; z-index: 10; background: linear-gradient(180deg, transparent, rgba(255,255,255,0.6)); border-top: 1px solid rgba(0,0,0,0.04); margin-top: auto; }
 .footer p { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 24px; letter-spacing: 0.5px; }
 .footer p b { color: var(--text); font-weight: 800; font-family: 'JetBrains Mono', monospace; background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-background-clip: text; color: transparent; }
@@ -147,18 +141,15 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 .footer a.zalo:hover { box-shadow: 0 15px 30px rgba(0, 104, 255, 0.2), inset 0 0 20px rgba(0, 104, 255, 0.05); border-color: #0068FF; }
 .footer a.yt { color: #FF0000; border-color: rgba(255, 0, 0, 0.2); box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1); }
 .footer a.yt:hover { box-shadow: 0 15px 30px rgba(255, 0, 0, 0.2), inset 0 0 20px rgba(255, 0, 0, 0.05); border-color: #FF0000; }
-
 .toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
 .toast { background: #0f172a; color: #fff; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); opacity: 0; transform: translateY(20px); animation: toastIn 0.3s forwards; }
 .toast.success { border-left: 4px solid #10b981; }
 .toast.error { border-left: 4px solid #ef4444; }
 @keyframes toastIn { to { opacity: 1; transform: translateY(0); } }
 @keyframes toastOut { to { opacity: 0; transform: translateY(20px); } }
-
 .float-support { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #0068FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 10px 25px rgba(0, 104, 255, 0.5); z-index: 100; cursor: pointer; transition: transform 0.3s; text-decoration: none; animation: floatBtn 3s infinite ease-in-out; }
 .float-support:hover { transform: scale(1.1); }
 @keyframes floatBtn { 0% { transform: translateY(0); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
-
 .faq { margin-top: 40px; }
 .faq-item { background: #fff; border: 1px solid var(--border); border-radius: 16px; margin-bottom: 10px; overflow: hidden; transition: all 0.3s; }
 .faq-item:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
@@ -170,7 +161,6 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 `;
 
 export const JS = `
-// 1. Particle Network
 const canvas = document.createElement('canvas');
 canvas.id = 'network-bg';
 document.body.prepend(canvas);
@@ -199,7 +189,6 @@ function drawNetwork() {
 }
 window.addEventListener('resize', initCanvas); initCanvas(); drawNetwork();
 
-// 2. Spotlight Effect
 const spotlight = document.createElement('div');
 spotlight.className = 'spotlight';
 document.body.prepend(spotlight);
@@ -208,7 +197,6 @@ document.addEventListener('mousemove', (e) => {
   spotlight.style.setProperty('--mouse-y', e.clientY + 'px');
 });
 
-// 3. Toast Notification
 window.showToast = function(message, type = 'success') {
   const container = document.querySelector('.toast-container') || (() => {
     const c = document.createElement('div'); c.className = 'toast-container'; document.body.appendChild(c); return c;
@@ -221,7 +209,6 @@ window.showToast = function(message, type = 'success') {
   setTimeout(() => { toast.style.animation = 'toastOut 0.3s forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
 };
 
-// 4. Copy Logic
 document.addEventListener('click', function(e) {
   var b = e.target.closest('[data-copy]'); if(!b) return;
   var t = document.getElementById(b.dataset.copy); if(!t) return;
@@ -230,7 +217,6 @@ document.addEventListener('click', function(e) {
   });
 });
 
-// 5. Real-time VN Clock
 setInterval(() => {
   const clockEl = document.getElementById('vn-clock');
   if(clockEl) {
@@ -239,7 +225,6 @@ setInterval(() => {
   }
 }, 1000);
 
-// 6. Terminal Typing
 setTimeout(() => {
   const term = document.getElementById('terminal');
   if(term) {
@@ -248,7 +233,6 @@ setTimeout(() => {
   }
 }, 500);
 
-// 7. Realistic Heartbeat
 const barCount = 50; let graphData = new Array(barCount).fill(10);
 setInterval(() => {
   const bars = document.querySelectorAll('.bar'); if(bars.length === 0) return;

@@ -146,7 +146,7 @@ export function renderHome(env, error) {
           <div class="stat-info"><h4><span class="status-dot"></span> Hệ thống ổn định</h4><p>Độ trễ API: 24ms • Uptime: 99.9%</p></div>
         </div>
         
-        <!-- THẺ THÔNG TIN THỰC TẾ (THAY THẾ LIVE STATS ẢO) -->
+        <!-- THẺ THÔNG TIN THỰC TẾ -->
         <div class="stat-card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #bbf7d0;">
           <div class="stat-icon" style="background:#22c55e; color:#fff; box-shadow: 0 0 15px rgba(34,197,94,0.4);"><i data-lucide="monitor-smartphone"></i></div>
           <div class="stat-info">
