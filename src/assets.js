@@ -56,51 +56,7 @@ h1::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; he
 .bar { flex: 1; background: #333; border-radius: 3px; transition: height 0.15s ease-out, background 0.15s; }
 .bar.active { background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
 .radar-wrapper { display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 10px; }
-.radar-container { 
-  width: 120px; height: 120px; 
-  position: relative; border-radius: 50%; 
-  border: 1px solid rgba(255,255,255,0.2); 
-  overflow: hidden; 
-  background: #050505; 
-  box-shadow: inset 0 0 30px rgba(255,255,255,0.05), 0 0 20px rgba(255,255,255,0.1); 
-}
-.radar-grid { 
-  position: absolute; inset: 0; 
-  background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px); 
-  background-size: 20px 20px; 
-  border-radius: 50%;
-}
-.radar-circle { 
-  position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); pointer-events: none; 
-}
-.radar-circle.c1 { inset: 20%; }
-.radar-circle.c2 { inset: 40%; }
-.radar-sweep { 
-  position: absolute; inset: 0; 
-  background: conic-gradient(from 0deg, transparent 0%, rgba(255,255,255,0.4) 15%, transparent 15.1%); 
-  animation: spin 2s linear infinite; border-radius: 50%; z-index: 2;
-}
-@keyframes spin { 100% { transform: rotate(360deg); } }
 
-/* Các chấm mục tiêu */
-.radar-target { 
-  position: absolute; width: 6px; height: 6px; background: #fff; border-radius: 50%; 
-  box-shadow: 0 0 10px #fff, 0 0 20px rgba(255,255,255,0.8); 
-  animation: radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite; 
-  z-index: 3; 
-}
-@keyframes radarPing { 
-  0% { transform: scale(1); opacity: 1; box-shadow: 0 0 10px #fff; } 
-  50% { transform: scale(3); opacity: 0; box-shadow: 0 0 20px #fff; } 
-  100% { transform: scale(1); opacity: 0; } 
-}
-
-.radar-target.t1 { top: 30%; left: 70%; animation-delay: 0s; }
-.radar-target.t2 { top: 70%; left: 30%; animation-delay: 0.6s; width: 5px; height: 5px; }
-.radar-target.t3 { top: 50%; left: 20%; animation-delay: 1.2s; width: 4px; height: 4px; }
-
-.radar-info h4 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-.radar-info p { font-size: 13px; font-weight: 600; color: #a1a1aa; }
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; }
 .stat-item { background: #111; padding: 20px; text-align: center; }
 .stat-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
@@ -132,6 +88,22 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .header-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; transform: translateZ(20px); transition: text-shadow 0.3s; }
 .header-title:hover { text-shadow: 0 0 20px rgba(255,255,255,0.6); }
 .header-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; transform: translateZ(15px); }
+
+
+.radar-container { width: 130px; height: 130px; position: relative; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); overflow: hidden; background: #050505; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; }
+.radar-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 20px 20px; }
+.radar-circle { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,0.08); }
+.radar-circle.c1 { width: 60%; height: 60%; }
+.radar-circle.c2 { width: 30%; height: 30%; }
+.radar-sweep { position: absolute; inset: 0; background: conic-gradient(from 0deg, transparent 60%, rgba(255,255,255,0.4) 100%); animation: spin 2s linear infinite; border-radius: 50%; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.radar-target { position: absolute; width: 6px; height: 6px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff, 0 0 20px #fff; z-index: 10; }
+.radar-target.t1 { top: 25%; left: 65%; animation: ping 2s infinite 0s; }
+.radar-target.t2 { top: 65%; left: 30%; animation: ping 2s infinite 0.6s; width: 5px; height: 5px; }
+.radar-target.t3 { top: 45%; left: 20%; animation: ping 2s infinite 1.2s; width: 4px; height: 4px; }
+@keyframes ping { 0% { transform: scale(1); opacity: 1; box-shadow: 0 0 10px #fff; } 80%, 100% { transform: scale(3); opacity: 0; box-shadow: 0 0 20px #fff; } }
+.radar-info h4 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+.radar-info p { font-size: 13px; font-weight: 600; color: #a1a1aa; }
 
 /* TELEGRAM BANNER */
 .telegram-banner { background: #000; border-radius: 16px; padding: 20px; color: #fff; margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border); transform: translateZ(10px); }
@@ -267,10 +239,10 @@ export const CSS_MODAL = `
 .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
 .modal-overlay.show { display: flex; opacity: 1; }
 .modal-box { background: #121214; border: 1px solid #27272a; border-radius: 24px; width: 100%; max-width: 420px; padding: 30px; box-shadow: 0 30px 80px -12px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 255, 255, 0.05), inset 0 0 0 1px rgba(255, 255, 255, 0.05); transform: translateY(20px) scale(0.95); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
-.modal-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, #f59e0b, transparent); box-shadow: 0 0 20px #f59e0b; }
+.modal-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, #e4e4e7, transparent); box-shadow: 0 0 20px #e4e4e7; }
 .modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-title { font-size: 16px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+.modal-title { font-size: 16px; font-weight: 800; color: #e4e4e7; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 20px rgba(228, 228, 231, 0.4); }
 .modal-close-icon { background: #18181b; border: 1px solid #333; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #a1a1aa; cursor: pointer; transition: all 0.3s; }
 .modal-close-icon:hover { background: #27272a; color: #fff; transform: rotate(90deg); }
 .modal-content { background: #09090b; border-radius: 16px; padding: 24px; margin-bottom: 24px; font-size: 14px; line-height: 1.7; color: #e4e4e7; border: 1px solid #27272a; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
