@@ -91,7 +91,8 @@ export function renderCheckpoint(env) {
   `);
 }
 
-export function renderHome(env, error) {
+// Nhận thêm tham số notice để hiển thị thông báo
+export function renderHome(env, error, notice) {
   return layoutApp('GETKEYDPICONFIG.SITE', `
     <div class="container">
       <!-- CỘT TRÁI: LẤY KEY -->
@@ -100,15 +101,16 @@ export function renderHome(env, error) {
           <div class="header-title"><i data-lucide="key" style="color:var(--brand);"></i> Lấy Key Miễn Phí</div>
           <div class="header-desc">Chào mừng bạn đến với hệ thống của GETKEYDPICONFIG.SITE.</div>
           
-          <!-- THÔNG BÁO -->
+          <!-- THÔNG BÁO TỪ ADMIN (Nếu có) -->
+          ${notice ? `
           <div class="announcement" id="announcementBanner">
             <div class="announcement-icon"><i data-lucide="bell" style="width:20px;"></i></div>
             <div class="announcement-content">
-              <h5>THÔNG BÁO QUAN TRỌNG</h5>
-              <p>Hệ thống vừa cập nhật giao diện Dark Titanium mới. Nếu có lỗi vui lòng báo Admin qua Zalo. Chúc bạn lấy Key thành công!</p>
+              <h5>THÔNG BÁO TỪ ADMIN</h5>
+              <p style="white-space: pre-wrap;">${notice}</p>
             </div>
             <button class="announcement-close" onclick="document.getElementById('announcementBanner').style.display='none'"><i data-lucide="x" style="width:16px;"></i></button>
-          </div>
+          </div>` : ''}
 
           <div class="telegram-banner">
             <h4>Cộng đồng GETKEYDPICONFIG</h4>
@@ -231,29 +233,52 @@ export function renderStep(title, stepNum, content) {
   `);
 }
 
+// Trang Admin
 export function renderAdmin() {
   return layoutApp('Admin Panel', `
     <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-color: var(--brand);">
       <div class="header-title" style="color: var(--brand);"><i data-lucide="terminal" style="color:var(--brand);"></i> HỆ THỐNG QUẢN TRỊ ẨN</div>
-      <div class="header-desc">Chào mừng Admin. Đây là trang quản trị nội bộ, không được public.</div>
+      <div class="header-desc">Cập nhật thông báo hiển thị trên trang chủ.</div>
       
-      <div class="terminal-box" style="height: 300px; color: #fff; border-color: var(--brand);">
-        <div class="term-line" style="color: var(--brand);">> Truy cập thành công vào hệ thống lõi.</div>
-        <div class="term-line">> IP của bạn đã được ghi nhận.</div>
-        <div class="term-line">> Trạng thái Server: Hoạt động bình thường.</div>
-        <div class="term-line">> Số lượng Key phát ra hôm nay: 124 (Mock data).</div>
-        <div class="term-line">> Số lượng IP bị chặn: 4 (Mock data).</div>
-        <div class="term-line" style="color: #ef4444;">> CẢNH BÁO: Không chia sẻ đường dẫn này cho bất kỳ ai.</div>
-        <div class="term-line" style="color: #10b981;">> Sẵn sàng nhận lệnh...</div>
-        <div class="term-line" style="margin-top:20px;"><span style="color:var(--brand);">admin@getkeydpiconfig:~#</span> <span class="cursor" style="animation: blink 1s step-end infinite;">_</span></div>
-      </div>
-
-      <div style="margin-top:20px; display:flex; gap:10px;">
-        <a href="/" class="btn btn-primary" style="flex:1;"><i data-lucide="arrow-left"></i> Về trang chủ</a>
-        <button class="btn btn-admin" style="flex:1;" onclick="showToast('Chức năng đang phát triển!', 'success')">Quản lý Key</button>
-      </div>
+      <form id="adminForm" style="display:flex; flex-direction:column; gap:15px;">
+        <input type="password" id="adminPass" placeholder="Nhập mật khẩu Admin..." style="padding:15px; border-radius:12px; border:1px solid #333; background:#000; color:#fff; font-size:15px;">
+        <textarea id="adminNotice" rows="5" placeholder="Nhập nội dung thông báo..." style="padding:15px; border-radius:12px; border:1px solid #333; background:#000; color:#fff; font-size:15px; resize:none;"></textarea>
+        <button type="submit" class="btn btn-primary">Cập nhật thông báo</button>
+      </form>
+      
+      <div id="adminResult" style="margin-top:20px; text-align:center; font-weight:700;"></div>
+      <a href="/" class="btn btn-ghost" style="margin-top:20px; border:1px solid #333; color:#fff;"><i data-lucide="arrow-left"></i> Về trang chủ</a>
     </div>
-    <style>@keyframes blink { 50% { opacity: 0; } }</style>
+    
+    <script>
+      document.getElementById('adminForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const password = document.getElementById('adminPass').value;
+        const notice = document.getElementById('adminNotice').value;
+        const resDiv = document.getElementById('adminResult');
+        
+        resDiv.style.color = '#a1a1aa';
+        resDiv.innerText = 'Đang xử lý...';
+        
+        try {
+          const res = await fetch('/api/admin/notice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password, notice })
+          });
+          const data = await res.json();
+          if (data.success) {
+            resDiv.style.color = '#10b981';
+            resDiv.innerText = '✅ Đã cập nhật thông báo thành công!';
+          } else {
+            throw new Error(data.error);
+          }
+        } catch (err) {
+          resDiv.style.color = '#ef4444';
+          resDiv.innerText = '❌ Lỗi: ' + err.message;
+        }
+      });
+    </script>
   `);
 }
 

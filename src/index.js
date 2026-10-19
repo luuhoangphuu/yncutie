@@ -12,9 +12,24 @@ export default {
     const botPassed = getCookie(request, 'bot_passed');
 
     try {
-      // TRANG ADMIN ẨN
+      // 1. TRANG ADMIN ẨN
       if (p === '/ynsociuu/lhp' && m === 'GET') {
         return html(renderAdmin());
+      }
+
+      // 2. API LƯU THÔNG BÁO (Chỉ Admin mới có quyền)
+      if (p === '/api/admin/notice' && m === 'POST') {
+        const { password, notice } = await request.json();
+        // Mật khẩu Admin: lhp_admin_2026
+        if (password !== 'lhp_admin_2026') {
+          return new Response(JSON.stringify({ success: false, error: 'Mật khẩu Admin không đúng!' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+        }
+        if (env.ANNOUNCEMENT_KV) {
+          await env.ANNOUNCEMENT_KV.put('notice', notice);
+          return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
+        } else {
+          return new Response(JSON.stringify({ success: false, error: 'Chưa cấu hình Cloudflare KV. Vui lòng làm theo hướng dẫn.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+        }
       }
 
       if (p === '/api/verify-bot' && m === 'POST') {
@@ -27,7 +42,15 @@ export default {
 
       const s = await getSession(request, env);
 
-      if (p === '/' && m === 'GET') return html(renderHome(env, url.searchParams.get('error')));
+      // 3. TRANG CHỦ (Đọc thông báo từ KV)
+      if (p === '/' && m === 'GET') {
+        let notice = '';
+        if (env.ANNOUNCEMENT_KV) {
+          try { notice = await env.ANNOUNCEMENT_KV.get('notice') || ''; } catch(e) {}
+        }
+        return html(renderHome(env, url.searchParams.get('error'), notice));
+      }
+      
       if (p === '/faq' && m === 'GET') return html(renderFAQ());
       
       if (p === '/start' && m === 'POST') {
@@ -123,6 +146,6 @@ export default {
       }
 
       return new Response('Not Found', { status: 404 });
-    } catch (e) { return html(renderHome(env, "Hệ thống bảo trì: " + e.message)); }
+    } catch (e) { return html(renderHome(env, "Hệ thống bảo trì: " + e.message, '')); }
   }
 };
