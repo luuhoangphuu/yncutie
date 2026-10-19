@@ -1,103 +1,154 @@
 // ============================================================================
-// Key System Worker v10.1 - Fix Checkpoint Error + Debug Details
+// Key System Worker v11.0 - Quantum Cyber-Defense UI + Detailed Debug
 // ============================================================================
 
 const CHECKPOINT_CSS = `
 :root { color-scheme: dark; }
 *{margin:0;padding:0;box-sizing:border-box}
 body {
-  font-family: 'Inter', -apple-system, sans-serif; background: #030712; color: #94a3b8;
+  font-family: 'Inter', -apple-system, sans-serif; background: #02040a; color: #94a3b8;
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
   overflow: hidden; position: relative; font-size: 14px;
 }
-.bg-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px); background-size: 30px 30px; z-index: 0; }
-.bg-glow { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.15), transparent 60%); z-index: 0; }
-.node-network { position: fixed; inset: 0; z-index: 1; opacity: 0.2; pointer-events: none; }
 
-.container { position: relative; z-index: 10; width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; }
-@media (max-width: 900px) { .container { grid-template-columns: 1fr; gap: 20px; } }
+/* 3D Perspective Grid Background */
+.bg-grid {
+  position: fixed; inset: -50%; z-index: 0;
+  background-image: 
+    linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
+  background-size: 60px 60px;
+  transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+  animation: gridMove 10s linear infinite;
+  mask-image: radial-gradient(circle at center, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 70%);
+}
+@keyframes gridMove { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
 
-.left { display: flex; flex-direction: column; justify-content: center; }
-.badge-security { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #0ea5e9; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px rgba(14,165,233,0.5); }
-.badge-security::before { content: ''; display: block; width: 30px; height: 2px; background: #0ea5e9; box-shadow: 0 0 10px #0ea5e9; }
-h1 { font-size: 46px; font-weight: 800; color: #f8fafc; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.02em; text-shadow: 0 4px 30px rgba(0,0,0,0.8); }
-.desc { font-size: 16px; line-height: 1.6; color: #94a3b8; margin-bottom: 30px; max-width: 90%; }
+/* Glow Effects */
+.bg-glow {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(14, 165, 233, 0.15), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.1), transparent 40%);
+}
 
-.challenge-box { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 16px; padding: 30px; position: relative; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 0 30px rgba(56, 189, 248, 0.05); transition: all 0.3s; }
-.challenge-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #0ea5e9, transparent); opacity: 0.8; animation: scan 3s linear infinite; }
-@keyframes scan { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-.challenge-box:hover { border-color: rgba(56, 189, 248, 0.6); box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(56, 189, 248, 0.1); }
+.container { position: relative; z-index: 10; width: 100%; max-width: 1150px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; }
+@media (max-width: 900px) { .container { grid-template-columns: 1fr; gap: 30px; } }
+
+/* Left Side */
+.left { display: flex; flex-direction: column; justify-content: center; position: relative; }
+.badge-security { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #0ea5e9; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 3px; }
+.badge-security .dot { width: 6px; height: 6px; background: #0ea5e9; border-radius: 50%; box-shadow: 0 0 10px #0ea5e9; animation: blink 1.5s infinite; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* Glitch Effect */
+.glitch { position: relative; font-size: 48px; font-weight: 800; color: #f8fafc; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em; text-shadow: 0 4px 30px rgba(0,0,0,0.8); }
+.glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8; }
+.glitch::before { left: 2px; text-shadow: -2px 0 #ef4444; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 3s infinite linear alternate-reverse; }
+.glitch::after { left: -2px; text-shadow: -2px 0 #0ea5e9; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim2 2.5s infinite linear alternate-reverse; }
+@keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 83px, 0); } 20% { clip: rect(62px, 9999px, 14px, 0); } 40% { clip: rect(33px, 9999px, 98px, 0); } 60% { clip: rect(88px, 9999px, 45px, 0); } 80% { clip: rect(12px, 9999px, 77px, 0); } 100% { clip: rect(55px, 9999px, 23px, 0); } }
+@keyframes glitch-anim2 { 0% { clip: rect(65px, 9999px, 100px, 0); } 20% { clip: rect(12px, 9999px, 55px, 0); } 40% { clip: rect(88px, 9999px, 23px, 0); } 60% { clip: rect(34px, 9999px, 77px, 0); } 80% { clip: rect(90px, 9999px, 12px, 0); } 100% { clip: rect(45px, 9999px, 62px, 0); } }
+
+.desc { font-size: 16px; line-height: 1.7; color: #94a3b8; margin-bottom: 30px; max-width: 90%; }
+
+/* Challenge Box */
+.challenge-box { 
+  background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(14, 165, 233, 0.2); border-radius: 20px; padding: 35px 30px; position: relative; overflow: hidden; 
+  box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 0 40px rgba(14, 165, 233, 0.05); transition: all 0.3s; 
+}
+.challenge-box::before { content: ''; position: absolute; inset: 0; border-radius: 20px; padding: 2px; background: linear-gradient(135deg, rgba(14, 165, 233, 0.5), transparent, rgba(16, 185, 129, 0.5)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+.challenge-box:hover { border-color: rgba(14, 165, 233, 0.5); box-shadow: 0 30px 70px rgba(0,0,0,0.8), inset 0 0 50px rgba(14, 165, 233, 0.1); }
 .cf-turnstile { margin-bottom: 20px; display: flex; justify-content: center; }
-.status-text { text-align: center; font-size: 13px; color: #64748b; transition: color 0.3s; font-weight: 500; line-height: 1.5; }
+.status-text { text-align: center; font-size: 14px; color: #64748b; transition: color 0.3s; font-weight: 500; line-height: 1.5; }
 
-.stepper { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; padding: 0 10px; }
-.step { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
-.step-circle { width: 28px; height: 28px; border-radius: 8px; transform: rotate(45deg); background: #0f172a; border: 2px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: all 0.5s; z-index: 2; }
-.step-circle::after { content: ''; transform: rotate(-45deg); font-weight: bold; font-size: 14px; color: #fff; }
-.step.completed .step-circle { background: rgba(16, 185, 129, 0.2); border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
-.step.completed .step-circle::after { content: '✓'; color: #10b981; }
-.step.active .step-circle { background: rgba(14, 165, 233, 0.2); border-color: #0ea5e9; box-shadow: 0 0 20px rgba(14, 165, 233, 0.6); animation: pulse 2s infinite; }
+/* Stepper */
+.stepper { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; padding: 0 5px; }
+.step { display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; }
+.step-circle { width: 32px; height: 32px; border-radius: 10px; transform: rotate(45deg); background: #0f172a; border: 2px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: all 0.5s; z-index: 2; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+.step-circle::after { content: ''; transform: rotate(-45deg); font-weight: bold; font-size: 16px; color: #fff; }
+.step.completed .step-circle { background: rgba(16, 185, 129, 0.15); border-color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), inset 0 0 10px rgba(16, 185, 129, 0.5); }
+.step.completed .step-circle::after { content: '✓'; color: #10b981; text-shadow: 0 0 10px #10b981; }
+.step.active .step-circle { background: rgba(14, 165, 233, 0.15); border-color: #0ea5e9; box-shadow: 0 0 25px rgba(14, 165, 233, 0.6), inset 0 0 10px rgba(14, 165, 233, 0.5); animation: pulse 2s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(14, 165, 233, 0); } 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); } }
-.step-line { flex: 1; height: 2px; background: #1e293b; margin: 0 10px; margin-bottom: 24px; transition: all 0.5s; z-index: 1; }
-.step-line.completed { background: #10b981; box-shadow: 0 0 10px #10b981; }
-.step-line.active { background: linear-gradient(90deg, #10b981, #0ea5e9); box-shadow: 0 0 10px #0ea5e9; }
-.step-label { font-size: 12px; font-weight: 600; color: #475569; transition: all 0.3s; white-space: nowrap; }
+.step-line { flex: 1; height: 2px; background: #1e293b; margin: 0 10px; margin-bottom: 26px; transition: all 0.5s; z-index: 1; position: relative; }
+.step-line::after { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 0%; background: #10b981; transition: width 0.5s ease; }
+.step-line.completed::after { width: 100%; box-shadow: 0 0 10px #10b981; }
+.step-line.active::after { width: 50%; background: linear-gradient(90deg, #10b981, #0ea5e9); box-shadow: 0 0 10px #0ea5e9; }
+.step-label { font-size: 12px; font-weight: 700; color: #475569; transition: all 0.3s; white-space: nowrap; text-transform: uppercase; letter-spacing: 1px; }
 .step.completed .step-label, .step.active .step-label { color: #e2e8f0; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
 
+/* Right Side (HUD) */
 .right { display: flex; flex-direction: column; gap: 16px; }
-.card { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(10px); border: 1px solid #1e293b; border-radius: 16px; padding: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
-.card-value { font-size: 32px; font-weight: 800; color: #f8fafc; font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+.card { 
+  background: rgba(10, 15, 30, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
+  border: 1px solid #1e293b; border-radius: 16px; padding: 20px; position: relative; overflow: hidden; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+}
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+.card-value { font-size: 34px; font-weight: 800; color: #f8fafc; font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 20px rgba(255,255,255,0.3); line-height: 1; }
 .card-value small { font-size: 14px; color: #64748b; font-weight: 600; margin-left: 4px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-.terminal { background: #000000; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0ea5e9; height: 140px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); }
-.log-line { opacity: 0; animation: typeIn 0.3s forwards; line-height: 1.4; }
+/* Terminal */
+.terminal { 
+  background: #000000; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; 
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0ea5e9; height: 160px; overflow: hidden; 
+  display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 0 30px rgba(0,0,0,0.9); position: relative;
+}
+.terminal::before { content: 'root@cloudflare:~#'; position: absolute; bottom: 10px; left: 16px; color: #10b981; font-weight: bold; opacity: 0.5; }
+.log-line { opacity: 0; animation: typeIn 0.3s forwards; line-height: 1.4; z-index: 1; }
 .log-line.success { color: #10b981; }
 .log-line.warn { color: #f59e0b; }
 .log-line.error { color: #ef4444; }
 @keyframes typeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
+/* Radar SVG */
 .radar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto; }
 .radar-svg { width: 100%; height: 100%; animation: spin 4s linear infinite; transform-origin: center; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .radar-ping { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
-@keyframes ping { 75%, 100% { transform: scale(2); opacity: 0; } }
+@keyframes ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: center; justify-content: center; }
-.modal-box { background: rgba(15, 23, 42, 0.9); border: 1px solid #ef4444; border-radius: 20px; padding: 40px 30px; text-align: center; max-width: 420px; box-shadow: 0 20px 60px rgba(239, 68, 68, 0.2); transform: scale(0.9); animation: popIn 0.3s forwards; }
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 100; display: none; align-items: center; justify-content: center; }
+.modal-box { background: rgba(15, 23, 42, 0.95); border: 1px solid #ef4444; border-radius: 24px; padding: 40px 30px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 30px 80px rgba(239, 68, 68, 0.3); transform: scale(0.9); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 @keyframes popIn { to { transform: scale(1); } }
-.modal-icon { color: #ef4444; font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 20px rgba(239,68,68,0.5); }
-.modal-title { color: #f8fafc; font-size: 22px; font-weight: 800; margin-bottom: 12px; }
-.modal-msg { color: #94a3b8; font-size: 15px; margin-bottom: 24px; line-height: 1.5; }
-.modal-btn { background: #ef4444; color: #fff; border: none; padding: 14px 30px; border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; width: 100%; }
-.modal-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(239,68,68,0.3); }
+.modal-icon { color: #ef4444; font-size: 54px; margin-bottom: 20px; text-shadow: 0 0 30px rgba(239,68,68,0.6); }
+.modal-title { color: #f8fafc; font-size: 24px; font-weight: 800; margin-bottom: 12px; }
+.modal-msg { color: #94a3b8; font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
+.modal-btn { background: #ef4444; color: #fff; border: none; padding: 16px 30px; border-radius: 14px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s; width: 100%; text-transform: uppercase; letter-spacing: 1px; }
+.modal-btn:hover { background: #dc2626; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(239,68,68,0.4); }
 `;
 
 const CHECKPOINT_JS = `
+// 1. Background Network Canvas
 const canvas = document.getElementById('network');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-let particles = Array.from({length: 40}, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5 }));
+let particles = Array.from({length: 50}, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 }));
 function drawNetwork() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   particles.forEach((p, i) => {
     p.x += p.vx; p.y += p.vy;
     if(p.x < 0 || p.x > canvas.width) p.vx *= -1; if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
-    ctx.fillStyle = 'rgba(14, 165, 233, 0.5)'; ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = 'rgba(14, 165, 233, 0.6)'; ctx.beginPath(); ctx.arc(p.x, p.y, 1.5, 0, Math.PI*2); ctx.fill();
     for(let j = i + 1; j < particles.length; j++) {
       let p2 = particles[j]; let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-      if(dist < 150) { ctx.strokeStyle = 'rgba(14, 165, 233, ' + (1 - dist/150) * 0.2 + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
+      if(dist < 180) { ctx.strokeStyle = 'rgba(14, 165, 233, ' + (1 - dist/180) * 0.15 + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
     }
   });
   requestAnimationFrame(drawNetwork);
 }
 drawNetwork();
 
+// 2. Real Timer & Logs
 let timerInterval; let startTime; let isVerifying = false;
 function startRealTimer() {
   startTime = performance.now();
   document.getElementById('realTimer').style.color = '#0ea5e9';
+  document.getElementById('realTimer').style.textShadow = '0 0 20px rgba(14, 165, 233, 0.8)';
   timerInterval = setInterval(() => {
     const elapsed = (performance.now() - startTime) / 1000;
     document.getElementById('realTimer').textContent = elapsed.toFixed(3);
@@ -105,12 +156,13 @@ function startRealTimer() {
 }
 
 const logs = [
-  "[SYS] Khởi tạo kết nối TLS 1.3...",
-  "[NET] Kết nối thành công tới Edge Server (Anycast).",
-  "[SEC] Đang phân tích vân tay trình duyệt (Canvas/WebGL)...",
-  "[WAF] Quét các mẫu tấn công DDoS và SQLi...",
-  "[BOT] Kiểm tra chuyển động chuột và cảm ứng...",
-  "[CHK] Hệ thống sẵn sàng xác minh Captcha."
+  "[SYS] Initializing Quantum Gateway...",
+  "[NET] Establishing TLS 1.3 handshake...",
+  "[NET] Route optimized via Anycast Edge (SGP).",
+  "[SEC] Analyzing browser fingerprint (Canvas/WebGL)...",
+  "[WAF] Scanning for DDoS, SQLi, and XSS patterns...",
+  "[BOT] Evaluating mouse movements and touch events...",
+  "[CHK] Ready for human verification."
 ];
 let logIndex = 0;
 function addLog(text, type) {
@@ -121,10 +173,11 @@ function addLog(text, type) {
   terminal.appendChild(line);
   terminal.scrollTop = terminal.scrollHeight;
 }
-setInterval(() => { if(logIndex < logs.length) { addLog(logs[logIndex]); logIndex++; } }, 800);
+setInterval(() => { if(logIndex < logs.length) { addLog(logs[logIndex]); logIndex++; } }, 600);
 
+// 3. Turnstile Callback
 function onTurnstileSuccess(token) {
-  if (isVerifying) return; // Chặn double click
+  if (isVerifying) return; 
   isVerifying = true;
   
   startRealTimer();
@@ -133,7 +186,7 @@ function onTurnstileSuccess(token) {
   
   const stepVerify = document.querySelector('.step:nth-child(5)');
   stepVerify.classList.add('active'); stepVerify.classList.remove('completed');
-  addLog("[AUTH] Nhận được Token. Đang gửi tới máy chủ...", 'warn');
+  addLog("[AUTH] Token received. Transmitting to secure enclave...", 'warn');
 
   fetch('/api/verify-bot', {
     method: 'POST',
@@ -143,8 +196,9 @@ function onTurnstileSuccess(token) {
     clearInterval(timerInterval);
     
     if(data.success) {
-      addLog("[OK] XÁC MINH THÀNH CÔNG. ĐANG CHUYỂN HƯỚNG...", 'success');
+      addLog("[OK] VERIFICATION SUCCESSFUL. REDIRECTING...", 'success');
       document.getElementById('statusText').style.color = '#10b981';
+      document.getElementById('statusText').style.textShadow = '0 0 10px rgba(16, 185, 129, 0.5)';
       document.getElementById('statusText').innerHTML = '<b>Xác minh thành công! Đang vào trang sau...</b>';
       
       stepVerify.classList.add('completed'); stepVerify.classList.remove('active');
@@ -171,10 +225,11 @@ function reloadPage() { window.location.reload(); }
 setInterval(() => {
   const bars = document.querySelectorAll('.bar');
   bars.forEach((bar, index) => {
-    if(index > bars.length - 10) {
+    if(index > bars.length - 15) {
       bar.style.height = Math.floor(Math.random() * 80 + 20) + '%';
       bar.style.background = '#0ea5e9';
-      setTimeout(() => { bar.style.background = '#1e293b'; }, 200);
+      bar.style.boxShadow = '0 0 10px #0ea5e9';
+      setTimeout(() => { bar.style.background = '#1e293b'; bar.style.boxShadow = 'none'; }, 200);
     }
   });
 }, 100);
@@ -267,22 +322,26 @@ function log(level, msg, extra = {}) { console.log(JSON.stringify({ ts: new Date
 
 // ============ GIAO DIỆN TRẠM KIỂM TRA ============
 function renderCheckpoint(env) {
-  return html(`<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="color-scheme" content="dark"><title>Trạm kiểm tra bảo mật</title>
+  return html(`<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="color-scheme" content="dark"><title>Quantum Firewall | Xác minh</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>${CHECKPOINT_CSS}</style></head>
   <body>
-    <canvas id="network" class="node-network"></canvas>
-    <div class="bg-grid"></div><div class="bg-glow"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    <canvas id="network" style="position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.3;"></canvas>
+    
     <div class="container">
       <div class="left">
-        <div class="badge-security">AI Security Gateway</div>
-        <h1>Xác minh nhanh trước<br>khi vào trang sau</h1>
+        <div class="badge-security"><div class="dot"></div> Quantum Firewall v4.2</div>
+        <h1 class="glitch" data-text="Xác minh nhanh trước khi vào trang sau">Xác minh nhanh<br>trước khi vào trang sau</h1>
         <p class="desc">Hệ thống đang kiểm tra kết nối của bạn bằng Trí tuệ Nhân tạo để chặn bot và spam. Thường chỉ mất vài giây.</p>
+        
         <div class="challenge-box">
           <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
           <div class="status-text" id="statusText">Nếu thấy ô <b>Verify you are human</b>, bấm vào đó. Không cần tải lại trang.</div>
         </div>
+
         <div class="stepper">
           <div class="step completed"><div class="step-circle"></div><div class="step-label">Kết nối TLS</div></div>
           <div class="step-line completed"></div>
@@ -293,11 +352,13 @@ function renderCheckpoint(env) {
           <div class="step"><div class="step-circle"></div><div class="step-label">Vào trang sau</div></div>
         </div>
       </div>
+
       <div class="right">
         <div class="card">
           <div class="card-header"><span>Thời gian xác minh thực tế</span><span class="card-value" id="realTimer">0.000<small>s</small></span></div>
           <div class="graph" id="graph"></div>
         </div>
+
         <div class="grid-2">
           <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:15px;">
             <div class="radar-wrapper">
@@ -305,9 +366,10 @@ function renderCheckpoint(env) {
                 <circle cx="50" cy="50" r="45" fill="none" stroke="#1e293b" stroke-width="1"/>
                 <circle cx="50" cy="50" r="30" fill="none" stroke="#1e293b" stroke-width="1"/>
                 <circle cx="50" cy="50" r="15" fill="none" stroke="#1e293b" stroke-width="1"/>
-                <path d="M50,50 L50,5 A45,45 0 0,1 95,50 Z" fill="rgba(14, 165, 233, 0.2)"/>
+                <path d="M50,50 L50,5 A45,45 0 0,1 95,50 Z" fill="rgba(14, 165, 233, 0.3)"/>
                 <circle cx="50" cy="50" r="2" fill="#0ea5e9"/>
                 <circle cx="70" cy="30" r="3" fill="#10b981" class="radar-ping"/>
+                <circle cx="30" cy="75" r="2" fill="#0ea5e9" class="radar-ping" style="animation-delay: 0.5s"/>
               </svg>
             </div>
             <div style="text-align:center; margin-top:10px;">
@@ -321,9 +383,11 @@ function renderCheckpoint(env) {
             <div style="font-size:11px; color:#64748b; margin-top:10px;">Giao thức<br><b style="color:#f8fafc;">HTTP/3 (QUIC)</b></div>
           </div>
         </div>
+
         <div class="terminal" id="terminal"></div>
       </div>
     </div>
+    
     <div class="modal-overlay" id="errorModal">
       <div class="modal-box">
         <div class="modal-icon">⚠</div>
@@ -332,8 +396,9 @@ function renderCheckpoint(env) {
         <button class="modal-btn" onclick="reloadPage()">Thử lại</button>
       </div>
     </div>
+
     <script>
-      for(let i=0; i<30; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; document.getElementById('graph').appendChild(bar); }
+      for(let i=0; i<30; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; bar.style.flex = '1'; bar.style.background = '#1e293b'; bar.style.margin = '0 1px'; bar.style.borderRadius = '2px'; document.getElementById('graph').appendChild(bar); }
       ${CHECKPOINT_JS}
     </script>
   </body></html>`);
@@ -384,7 +449,7 @@ async function verifyTurnstile(token, ip, env) {
     const d = await r.json();
     if (!d.success) {
       log('warn', 'turnstile verify failed', { codes: d['error-codes'] });
-      if (d['error-codes'].includes('invalid-input-secret')) return { success: false, error: "LỖI HỆ THỐNG: Secret Key không hợp lệ. Vui lòng kiểm tra lại Cloudflare." };
+      if (d['error-codes'].includes('missing-input-secret') || d['error-codes'].includes('invalid-input-secret')) return { success: false, error: "LỖI HỆ THỐNG: Secret Key không hợp lệ hoặc chưa được nhập. (missing-input-secret)" };
       if (d['error-codes'].includes('timeout-or-duplicate')) return { success: false, error: "Captcha đã hết hạn hoặc được sử dụng. Vui lòng thử lại." };
       return { success: false, error: "Captcha không hợp lệ (" + d['error-codes'][0] + ")" };
     }
@@ -401,7 +466,7 @@ async function shortenUrl(longUrl, env) {
 
 async function fetchKeyFromIssuer(env) {
   try {
-    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/10.0', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: env.KEY_TIER || 'Normal' }) });
+    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/11.0', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: env.KEY_TIER || 'Normal' }) });
     const data = await res.json().catch(() => null);
     if (data && data.success === true && data.key) return { ok: true, key: data.key, expiresAt: data.expires_at, durationHours: data.duration_hours };
     return { ok: false };
