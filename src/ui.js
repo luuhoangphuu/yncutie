@@ -91,17 +91,14 @@ export function renderCheckpoint(env) {
   `);
 }
 
-// Nhận thêm tham số notice để hiển thị thông báo
 export function renderHome(env, error, notice) {
   return layoutApp('GETKEYDPICONFIG.SITE', `
     <div class="container">
-      <!-- CỘT TRÁI: LẤY KEY -->
       <div>
         <div class="glass-card">
           <div class="header-title"><i data-lucide="key" style="color:var(--brand);"></i> Lấy Key Miễn Phí</div>
           <div class="header-desc">Chào mừng bạn đến với hệ thống của GETKEYDPICONFIG.SITE.</div>
           
-          <!-- THÔNG BÁO TỪ ADMIN (Nếu có) -->
           ${notice ? `
           <div class="announcement" id="announcementBanner">
             <div class="announcement-icon"><i data-lucide="bell" style="width:20px;"></i></div>
@@ -133,16 +130,15 @@ export function renderHome(env, error, notice) {
             <label class="tier-option" data-tier="VIP"><input type="radio" name="tier" value="VIP"><i data-lucide="crown" style="width:18px;"></i> VIP <span class="tier-badge">2H</span></label>
           </div>
 
-          ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600; text-align:center;">${error}</div>` : ''}
+          ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600; text-align:center; animation: slideDown 0.3s ease-out;">${error}</div>` : ''}
 
-          <form method="POST" action="/start">
+          <form method="POST" action="/start" id="startForm">
             <input type="hidden" name="tier" id="tierInput" value="Normal">
-            <button type="submit" class="btn btn-primary"><i data-lucide="download"></i> Lấy Key Ngay</button>
+            <button type="submit" class="btn btn-primary" id="startBtn"><i data-lucide="download"></i> Lấy Key Ngay</button>
           </form>
         </div>
       </div>
 
-      <!-- CỘT PHẢI: THÔNG TIN & THIẾT BỊ -->
       <div>
         <div class="glass-card">
           <div style="font-size:12px; font-weight:700; color:#a1a1aa; text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
@@ -158,7 +154,7 @@ export function renderHome(env, error, notice) {
             </div>
             <div class="device-item">
               <div class="device-label">CÒN LẠI HÔM NAY</div>
-              <div class="device-val" id="dev-limit">5</div>
+              <div class="device-val" id="dev-limit">0</div>
               <div class="device-sub">Giới hạn: 5 key / IP. Reset lúc <span id="dev-reset">00h 00p</span> (GMT+7)</div>
             </div>
             <div class="device-item">
@@ -193,10 +189,6 @@ export function renderHome(env, error, notice) {
               <div><span>👉 Key 7 ngày</span> <b>50k</b></div>
               <div><span>👉 Key 30 ngày</span> <b>150k</b></div>
             </div>
-            <ul class="info-list" style="margin-top:12px;">
-              <li style="color:#ef4444; font-weight:700;">‼ Vui lòng chọn đúng loại Key trước khi vượt.</li>
-            </ul>
-            
             <div style="display:flex; gap:12px; margin-top:20px;">
                <a href="https://zalo.me/0996492296" target="_blank" style="flex:1; padding:12px; border-radius:12px; border:1px solid #333; text-decoration:none; color:#fff; font-weight:600; text-align:center; display:flex; justify-content:center; gap:8px; background:#000; transition:0.3s;"><i data-lucide="message-circle"></i> Zalo</a>
                <a href="https://youtube.com/@zwicxsharereg" target="_blank" style="flex:1; padding:12px; border-radius:12px; border:1px solid #333; text-decoration:none; color:#fff; font-weight:600; text-align:center; display:flex; justify-content:center; gap:8px; background:#000; transition:0.3s;"><i data-lucide="youtube"></i> YouTube</a>
@@ -216,6 +208,11 @@ export function renderHome(env, error, notice) {
           slider.style.transform = 'translateX(' + (index * 100) + '%)';
         });
       });
+      document.getElementById('startForm').addEventListener('submit', () => {
+        const btn = document.getElementById('startBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="30 10"/></svg> Đang khởi tạo...';
+      });
     </script>
   `);
 }
@@ -233,7 +230,6 @@ export function renderStep(title, stepNum, content) {
   `);
 }
 
-// Trang Admin
 export function renderAdmin() {
   return layoutApp('Admin Panel', `
     <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-color: var(--brand);">
@@ -241,9 +237,9 @@ export function renderAdmin() {
       <div class="header-desc">Cập nhật thông báo hiển thị trên trang chủ.</div>
       
       <form id="adminForm" style="display:flex; flex-direction:column; gap:15px;">
-        <input type="password" id="adminPass" placeholder="Nhập mật khẩu Admin..." style="padding:15px; border-radius:12px; border:1px solid #333; background:#000; color:#fff; font-size:15px;">
-        <textarea id="adminNotice" rows="5" placeholder="Nhập nội dung thông báo..." style="padding:15px; border-radius:12px; border:1px solid #333; background:#000; color:#fff; font-size:15px; resize:none;"></textarea>
-        <button type="submit" class="btn btn-primary">Cập nhật thông báo</button>
+        <input type="password" id="adminPass" placeholder="Nhập mật khẩu Admin..." required style="padding:15px; border-radius:12px; border:1px solid #333; background:#000; color:#fff; font-size:15px; outline:none;">
+        <textarea id="adminNotice" rows="5" placeholder="Nhập nội dung thông báo..." required style="padding:15px; border-radius:12px; border:1px solid #333; background:#000; color:#fff; font-size:15px; resize:none; outline:none;"></textarea>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Cập nhật thông báo</button>
       </form>
       
       <div id="adminResult" style="margin-top:20px; text-align:center; font-weight:700;"></div>
@@ -256,9 +252,12 @@ export function renderAdmin() {
         const password = document.getElementById('adminPass').value;
         const notice = document.getElementById('adminNotice').value;
         const resDiv = document.getElementById('adminResult');
+        const btn = document.getElementById('submitBtn');
         
+        btn.disabled = true;
+        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="30 10"/></svg> Đang lưu...';
         resDiv.style.color = '#a1a1aa';
-        resDiv.innerText = 'Đang xử lý...';
+        resDiv.innerText = 'Đang kết nối tới Cloudflare KV...';
         
         try {
           const res = await fetch('/api/admin/notice', {
@@ -269,16 +268,20 @@ export function renderAdmin() {
           const data = await res.json();
           if (data.success) {
             resDiv.style.color = '#10b981';
-            resDiv.innerText = '✅ Đã cập nhật thông báo thành công!';
+            resDiv.innerText = '✅ Đã lưu thông báo thành công! Hãy về trang chủ để xem.';
+            btn.innerHTML = '<i data-lucide="check"></i> Đã cập nhật';
           } else {
-            throw new Error(data.error);
+            throw new Error(data.error || 'Lỗi không xác định');
           }
         } catch (err) {
           resDiv.style.color = '#ef4444';
           resDiv.innerText = '❌ Lỗi: ' + err.message;
+          btn.disabled = false;
+          btn.innerHTML = 'Cập nhật thông báo';
         }
       });
     </script>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
   `);
 }
 

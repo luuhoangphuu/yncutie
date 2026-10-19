@@ -6,29 +6,58 @@ async function saveSession(req, env, data) { data.expiresAt = Date.now() + 90000
 const html = (s) => new Response(s, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 const redirect = (loc, cookie) => { const h = { 'Location': loc }; if(cookie) h['Set-Cookie'] = cookie; return new Response('', { status: 302, headers: h }); };
 
+// Hàm lấy thông báo: Ưu tiên KV, fallback sang Cache
+async function getNotice(env) {
+  if (env.ANNOUNCEMENT_KV) {
+    try {
+      const n = await env.ANNOUNCEMENT_KV.get('notice');
+      if (n !== null) return n;
+    } catch (e) { console.error('KV get error:', e); }
+  }
+  // Fallback Cache API
+  try {
+    const cached = await caches.default.match('https://internal.notice');
+    if (cached) return await cached.text();
+  } catch (e) {}
+  return '';
+}
+
+// Hàm lưu thông báo: Ghi cả KV và Cache để đảm bảo
+async function saveNotice(env, notice) {
+  let success = false;
+  if (env.ANNOUNCEMENT_KV) {
+    try {
+      await env.ANNOUNCEMENT_KV.put('notice', notice);
+      success = true;
+    } catch (e) { console.error('KV put error:', e); }
+  }
+  // Luôn ghi vào cache làm backup
+  try {
+    await caches.default.put('https://internal.notice', new Response(notice, { headers: { 'Cache-Control': 'max-age=86400' } }));
+    success = true;
+  } catch (e) { console.error('Cache put error:', e); }
+  return success;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url); const p = url.pathname; const m = request.method;
     const botPassed = getCookie(request, 'bot_passed');
 
     try {
-      // 1. TRANG ADMIN ẨN
-      if (p === '/ynsociuu/lhp' && m === 'GET') {
-        return html(renderAdmin());
-      }
+      if (p === '/ynsociuu/lhp' && m === 'GET') return html(renderAdmin());
 
-      // 2. API LƯU THÔNG BÁO (Chỉ Admin mới có quyền)
       if (p === '/api/admin/notice' && m === 'POST') {
         const { password, notice } = await request.json();
-        // Mật khẩu Admin: lhp_admin_2026
-        if (password !== 'lhp_admin_2026') {
+        const adminPass = env.ADMIN_PASSWORD || 'lhp_admin_2026';
+        if (password !== adminPass) {
           return new Response(JSON.stringify({ success: false, error: 'Mật khẩu Admin không đúng!' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
         }
-        if (env.ANNOUNCEMENT_KV) {
-          await env.ANNOUNCEMENT_KV.put('notice', notice);
+        const saved = await saveNotice(env, notice);
+        if (saved) {
           return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
         } else {
-          return new Response(JSON.stringify({ success: false, error: 'Chưa cấu hình Cloudflare KV. Vui lòng làm theo hướng dẫn.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+          return new Response(JSON.stringify({ success: false, error: 'Không thể lưu thông báo. Kiểm tra lại cấu hình KV.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
         }
       }
 
@@ -42,12 +71,8 @@ export default {
 
       const s = await getSession(request, env);
 
-      // 3. TRANG CHỦ (Đọc thông báo từ KV)
       if (p === '/' && m === 'GET') {
-        let notice = '';
-        if (env.ANNOUNCEMENT_KV) {
-          try { notice = await env.ANNOUNCEMENT_KV.get('notice') || ''; } catch(e) {}
-        }
+        const notice = await getNotice(env);
         return html(renderHome(env, url.searchParams.get('error'), notice));
       }
       
@@ -108,28 +133,16 @@ export default {
       if (p === '/ads-return' && m === 'GET') {
         if(!s || !s.sub) return redirect('/');
         const reqToken = url.searchParams.get('token');
-        
-        if (!reqToken || !s.adsToken || reqToken !== s.adsToken) {
-           return redirect('/?error=' + encodeURIComponent('Cảnh báo: Phát hiện hành vi Bypass Ads! Vui lòng làm lại.'));
-        }
-
+        if (!reqToken || !s.adsToken || reqToken !== s.adsToken) return redirect('/?error=' + encodeURIComponent('Cảnh báo: Phát hiện hành vi Bypass Ads!'));
         const timeTaken = (Date.now() - s.adsStartTime) / 1000;
-        if (timeTaken < 5) {
-           return redirect('/?error=' + encodeURIComponent('Cảnh báo: Bạn vượt Ads quá nhanh! Vui lòng thực hiện lại.'));
-        }
-
-        s.ads += 1;
-        s.adsToken = null;
-        
+        if (timeTaken < 5) return redirect('/?error=' + encodeURIComponent('Cảnh báo: Bạn vượt Ads quá nhanh!'));
+        s.ads += 1; s.adsToken = null;
         const required = s.tier === 'VIP' ? 2 : 1;
-        if (s.ads < required) {
-          return redirect('/step2', await saveSession(request, env, s));
-        } else {
-          const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY }, body: JSON.stringify({ tier: s.tier }) });
-          const data = await res.json();
-          if(data.success) { s.key = data.key; s.duration = data.duration_hours; return redirect('/success', await saveSession(request, env, s)); }
-          return redirect('/?error=' + encodeURIComponent("Lỗi API nhà cung cấp."));
-        }
+        if (s.ads < required) return redirect('/step2', await saveSession(request, env, s));
+        const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY }, body: JSON.stringify({ tier: s.tier }) });
+        const data = await res.json();
+        if(data.success) { s.key = data.key; s.duration = data.duration_hours; return redirect('/success', await saveSession(request, env, s)); }
+        return redirect('/?error=' + encodeURIComponent("Lỗi API nhà cung cấp."));
       }
 
       if (p === '/success' && m === 'GET') {
@@ -146,6 +159,6 @@ export default {
       }
 
       return new Response('Not Found', { status: 404 });
-    } catch (e) { return html(renderHome(env, "Hệ thống bảo trì: " + e.message, '')); }
+    } catch (e) { console.error(e); return html(renderHome(env, "Hệ thống bảo trì: " + e.message, '')); }
   }
 };

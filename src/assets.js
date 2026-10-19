@@ -86,19 +86,29 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .header-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
 .header-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
 
+/* SKELETON */
+.skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.skeleton-text { height: 14px; width: 100%; margin-bottom: 8px; }
+.skeleton-text:last-child { width: 70%; }
+.skeleton-btn { height: 50px; width: 100%; margin-top: 10px; }
+
 /* ANNOUNCEMENT BANNER */
-.announcement { background: rgba(255, 0, 85, 0.1); border: 1px solid rgba(255, 0, 85, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px; position: relative; display: flex; align-items: flex-start; gap: 12px; }
-.announcement-icon { color: var(--brand); margin-top: 2px; }
-.announcement-content h5 { color: var(--brand); font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.announcement { background: linear-gradient(135deg, rgba(255, 0, 85, 0.15), rgba(255, 0, 85, 0.05)); border: 1px solid rgba(255, 0, 85, 0.4); border-radius: 12px; padding: 16px; margin-bottom: 20px; position: relative; display: flex; align-items: flex-start; gap: 12px; animation: slideDown 0.5s ease-out; box-shadow: 0 0 20px rgba(255,0,85,0.1); }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+.announcement-icon { color: var(--brand); margin-top: 2px; animation: pulse 2s infinite; }
+.announcement-content h5 { color: var(--brand); font-size: 14px; font-weight: 700; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
 .announcement-content p { color: #fff; font-size: 13px; line-height: 1.5; }
 .announcement-close { position: absolute; top: 12px; right: 12px; background: none; border: none; color: #fff; cursor: pointer; opacity: 0.5; transition: 0.3s; }
-.announcement-close:hover { opacity: 1; }
+.announcement-close:hover { opacity: 1; transform: rotate(90deg); }
 
 /* TELEGRAM BANNER */
 .telegram-banner { background: #111; border-radius: 16px; padding: 20px; color: #fff; margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border); }
 .telegram-banner h4 { font-size: 16px; font-weight: 700; }
-.telegram-btn { background: #fff; color: #000; padding: 12px; border-radius: 12px; font-weight: 800; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
+.telegram-btn { background: #fff; color: #000; padding: 12px; border-radius: 12px; font-weight: 800; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.3s; position: relative; overflow: hidden; }
+.telegram-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent); transition: 0.5s; }
 .telegram-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2); }
+.telegram-btn:hover::before { left: 100%; }
 
 /* 4-STEPPER */
 .stepper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
@@ -125,16 +135,17 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .key-badge { background: rgba(255,255,255,0.1); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
 
 .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 18px 24px; border-radius: 16px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; text-decoration: none; transition: all 0.4s; position: relative; overflow: hidden; }
+.btn::after { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; background: rgba(0,0,0,0.1); border-radius: 50%; transform: translate(-50%, -50%); transition: width 0.6s, height 0.6s; }
+.btn:active::after { width: 400px; height: 400px; transition: 0s; }
 .btn-primary { background: #ffffff; color: #000; box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.3); }
 .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 35px -5px rgba(255, 255, 255, 0.5); }
-.btn-admin { background: transparent; border: 1px solid var(--brand); color: var(--brand); margin-top: 10px; }
-.btn-admin:hover { background: rgba(255,0,85,0.1); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
 /* DEVICE INFO CARD */
 .device-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .device-item { background: #111; border: 1px solid #333; border-radius: 16px; padding: 16px; }
 .device-label { font-size: 11px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; margin-bottom: 8px; }
-.device-val { font-size: 20px; font-weight: 800; color: #fff; }
+.device-val { font-size: 20px; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
 .device-sub { font-size: 12px; color: #a1a1aa; margin-top: 4px; line-height: 1.4; }
 .device-sub b { color: #fff; }
 
@@ -145,7 +156,8 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .info-list li { margin-bottom: 8px; }
 .info-list b { color: #fff; }
 .pricing { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-weight: 600; color: #fff; }
-.pricing div { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #000; border-radius: 8px; border: 1px solid #333; }
+.pricing div { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #000; border-radius: 8px; border: 1px solid #333; transition: all 0.3s; }
+.pricing div:hover { border-color: var(--brand); background: rgba(255,0,85,0.05); }
 
 /* FOOTER */
 .footer { text-align: center; padding: 40px 20px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto; position: relative; z-index: 10; }
@@ -154,12 +166,22 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .footer a { color: #fff; font-weight: 700; text-decoration: none; }
 
 /* FLOATING WIDGET */
-.float-widget { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3); z-index: 100; cursor: pointer; transition: transform 0.3s; text-decoration: none; }
+.float-widget { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3); z-index: 100; cursor: pointer; transition: transform 0.3s; text-decoration: none; animation: floatBtn 3s infinite ease-in-out; }
 .float-widget:hover { transform: scale(1.1); }
+@keyframes floatBtn { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
 .float-dot { position: absolute; top: 0; right: 0; width: 14px; height: 14px; background: #ef4444; border-radius: 50%; border: 2px solid #000; }
+
+/* TOAST */
+.toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+.toast { background: #0f172a; color: #fff; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0; transform: translateY(20px); animation: toastIn 0.3s forwards; border: 1px solid #333; }
+.toast.success { border-left: 4px solid #10b981; }
+.toast.error { border-left: 4px solid #ef4444; }
+@keyframes toastIn { to { opacity: 1; transform: translateY(0); } }
+@keyframes toastOut { to { opacity: 0; transform: translateY(20px); } }
 `;
 
 export const JS = `
+// 1. Snowfall (Dày và đẹp hơn)
 const canvas = document.createElement('canvas');
 canvas.id = 'snow-bg';
 document.body.prepend(canvas);
@@ -168,14 +190,16 @@ let width, height, snowflakes;
 function initCanvas() {
   width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight;
   snowflakes = [];
-  const count = Math.floor(width * height / 12000);
+  const count = Math.floor(width * height / 8000); // Nhiều tuyết hơn
   for (let i = 0; i < count; i++) {
-    snowflakes.push({ x: Math.random() * width, y: Math.random() * height, radius: Math.random() * 2 + 1, speedY: (Math.random() - 0.5) * 1, speedX: Math.random() * 1 - 0.5, sway: Math.random() * 2, swayPhase: Math.random() * Math.PI * 2 });
+    snowflakes.push({ x: Math.random() * width, y: Math.random() * height, radius: Math.random() * 2.5 + 0.5, speedY: (Math.random() - 0.5) * 1.2, speedX: Math.random() * 1.5 - 0.75, sway: Math.random() * 3, swayPhase: Math.random() * Math.PI * 2, opacity: Math.random() * 0.5 + 0.3 });
   }
 }
 function drawSnow() {
-  ctx.clearRect(0, 0, width, height); ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'; ctx.shadowBlur = 5; ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+  ctx.clearRect(0, 0, width, height);
   snowflakes.forEach(p => {
+    ctx.fillStyle = 'rgba(255, 255, 255, ' + p.opacity + ')';
+    ctx.shadowBlur = 5; ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
     ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
     p.y += p.speedY; p.x += p.speedX + Math.sin(p.swayPhase) * p.sway; p.swayPhase += 0.02;
     if (p.y > height + 10) { p.y = -10; p.x = Math.random() * width; }
@@ -186,9 +210,22 @@ function drawSnow() {
 }
 window.addEventListener('resize', initCanvas); initCanvas(); drawSnow();
 
+// 2. Spotlight
 const spotlight = document.createElement('div'); spotlight.className = 'spotlight'; document.body.prepend(spotlight);
 document.addEventListener('mousemove', (e) => { spotlight.style.setProperty('--mouse-x', e.clientX + 'px'); spotlight.style.setProperty('--mouse-y', e.clientY + 'px'); });
 
+// 3. Device Info + Animated Counter
+function animateValue(obj, start, end, duration) {
+  if (!obj) return;
+  let startTimestamp = null;
+  const step = (timestamp) => {
+    if (!startTimestamp) startTimestamp = timestamp;
+    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    obj.innerHTML = Math.floor(progress * (end - start) + start);
+    if (progress < 1) window.requestAnimationFrame(step);
+  };
+  window.requestAnimationFrame(step);
+}
 function updateDeviceInfo() {
   const now = new Date();
   const vnTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
@@ -203,14 +240,15 @@ function updateDeviceInfo() {
   let lastTime = localStorage.getItem('last_time') || 'Chưa có';
   let retries = parseInt(localStorage.getItem('retry_count') || '0');
 
-  const elLimit = document.getElementById('dev-limit'); if(elLimit) elLimit.innerText = limit;
-  const elSuccess = document.getElementById('dev-success'); if(elSuccess) elSuccess.innerText = success;
+  const elLimit = document.getElementById('dev-limit'); if(elLimit) animateValue(elLimit, 0, limit, 800);
+  const elSuccess = document.getElementById('dev-success'); if(elSuccess) animateValue(elSuccess, 0, success, 800);
   const elLast = document.getElementById('dev-last'); if(elLast) elLast.innerText = lastTime;
   const elRetry = document.getElementById('dev-retry'); if(elRetry) elRetry.innerText = retries;
   const elReset = document.getElementById('dev-reset'); if(elReset) elReset.innerText = hoursLeft + 'h ' + minsLeft + 'p';
 }
 updateDeviceInfo();
 
+// 4. Clock
 setInterval(() => {
   const clockEl = document.getElementById('vn-clock');
   if(clockEl) {
@@ -219,6 +257,7 @@ setInterval(() => {
   }
 }, 1000);
 
+// 5. Terminal Typing
 setTimeout(() => {
   const term = document.getElementById('terminal');
   if(term) {
@@ -227,6 +266,7 @@ setTimeout(() => {
   }
 }, 500);
 
+// 6. Heartbeat
 const barCount = 50; let graphData = new Array(barCount).fill(10);
 setInterval(() => {
   const bars = document.querySelectorAll('.bar'); if(bars.length === 0) return;
@@ -236,6 +276,7 @@ setInterval(() => {
   bars.forEach((bar, i) => { bar.style.height = graphData[i] + '%'; if(graphData[i] > 40) bar.classList.add('active'); else bar.classList.remove('active'); });
 }, 100);
 
+// 7. Toast Notification
 window.showToast = function(message, type = 'success') {
   const container = document.querySelector('.toast-container') || (() => { const c = document.createElement('div'); c.className = 'toast-container'; document.body.appendChild(c); return c; })();
   const toast = document.createElement('div'); toast.className = 'toast ' + type;
@@ -244,6 +285,7 @@ window.showToast = function(message, type = 'success') {
   setTimeout(() => { toast.style.animation = 'toastOut 0.3s forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
 };
 
+// 8. Copy
 document.addEventListener('click', function(e) {
   var b = e.target.closest('[data-copy]'); if(!b) return;
   var t = document.getElementById(b.dataset.copy); if(!t) return;
