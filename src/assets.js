@@ -1,6 +1,5 @@
-// --- CSS CHECKPOINT (Giữ nguyên bảo mật) ---
 export const CSS_CHECKPOINT = `
-:root { color-scheme: light only; --bg: #e5e7eb; --text: #111827; --text-muted: #4b5563; --primary: #475569; --accent: #facc15; --border: rgba(0,0,0,0.08); }
+:root { color-scheme: light only; --bg: #e5e7eb; --text: #111827; --text-muted: #4b5563; --primary: #475569; --accent: #94a3b8; --border: rgba(0,0,0,0.08); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
 #snow-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
@@ -64,17 +63,16 @@ h1 span { background: linear-gradient(135deg, #64748b, #1e293b); -webkit-backgro
 .stat-val { font-size: 15px; font-weight: 800; color: #111827; }
 `;
 
-// --- CSS APP (SUNNY MOD HUB) ---
 export const CSS_APP = `
-:root { color-scheme: light only; --bg: #f8fafc; --text: #0f172a; --text-muted: #64748b; --primary: #475569; --accent: #facc15; --card-bg: rgba(255, 255, 255, 0.85); --card-border: rgba(255, 255, 255, 0.9); }
+:root { color-scheme: light only; --bg: #f1f5f9; --text: #0f172a; --text-muted: #64748b; --primary: #475569; --accent: #94a3b8; --card-bg: rgba(255, 255, 255, 0.85); --card-border: rgba(255, 255, 255, 0.9); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
 #snow-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-.spotlight { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(250, 204, 21, 0.05), transparent 40%); }
+.spotlight { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.6), transparent 40%); }
 .bg-shapes { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: 0.03; }
-.shape { position: absolute; border: 6px solid #000; pointer-events: none; }
+.shape { position: absolute; border: 6px solid #475569; pointer-events: none; }
 .circle { width: 200px; height: 200px; border-radius: 50%; top: -10%; left: -5%; animation: float 12s infinite ease-in-out alternate; }
-.triangle { width: 0; height: 0; border-left: 100px solid transparent; border-right: 100px solid transparent; border-bottom: 180px solid #000; border-top: none; background: transparent !important; bottom: -10%; right: -5%; animation: float 15s infinite ease-in-out alternate-reverse; }
+.triangle { width: 0; height: 0; border-left: 100px solid transparent; border-right: 100px solid transparent; border-bottom: 180px solid #475569; border-top: none; background: transparent !important; bottom: -10%; right: -5%; animation: float 15s infinite ease-in-out alternate-reverse; }
 .square { width: 150px; height: 150px; top: 40%; right: 10%; animation: float 18s infinite ease-in-out alternate; }
 @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-40px) rotate(20deg); } }
 
@@ -88,10 +86,10 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .header-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
 
 /* TELEGRAM BANNER */
-.telegram-banner { background: #0f172a; border-radius: 16px; padding: 20px; color: #fff; margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px; }
+.telegram-banner { background: #1e293b; border-radius: 16px; padding: 20px; color: #fff; margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px; }
 .telegram-banner h4 { font-size: 16px; font-weight: 700; }
-.telegram-btn { background: #facc15; color: #000; padding: 12px; border-radius: 12px; font-weight: 700; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
-.telegram-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(250, 204, 21, 0.3); }
+.telegram-btn { background: #64748b; color: #fff; padding: 12px; border-radius: 12px; font-weight: 700; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
+.telegram-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(100, 116, 139, 0.3); background: #475569; }
 
 /* 4-STEPPER */
 .stepper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
@@ -99,7 +97,7 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .step-line { position: absolute; top: 16px; left: 50%; width: 100%; height: 2px; background: #e2e8f0; z-index: 0; }
 .step:last-child .step-line { display: none; }
 .step-circle { width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #64748b; z-index: 1; transition: 0.3s; }
-.step.active .step-circle { background: #facc15; border-color: #facc15; color: #000; box-shadow: 0 0 15px rgba(250, 204, 21, 0.4); }
+.step.active .step-circle { background: #475569; border-color: #475569; color: #fff; box-shadow: 0 0 15px rgba(71, 85, 105, 0.4); }
 .step-label { font-size: 12px; font-weight: 600; color: #64748b; text-align: center; }
 .step.active .step-label { color: #0f172a; }
 
@@ -109,8 +107,9 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .key-badge { background: #e2e8f0; color: #475569; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
 
 .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 18px 24px; border-radius: 16px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; text-decoration: none; transition: all 0.4s; position: relative; overflow: hidden; }
-.btn-primary { background: #facc15; color: #000; box-shadow: 0 10px 25px -5px rgba(250, 204, 21, 0.4); }
-.btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 35px -5px rgba(250, 204, 21, 0.6); }
+.btn-primary { background: linear-gradient(135deg, #64748b, #334155, #64748b); background-size: 200% auto; color: #fff; box-shadow: 0 10px 25px -5px rgba(71, 85, 105, 0.4); animation: gradientMove 3s linear infinite; }
+.btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 35px -5px rgba(71, 85, 105, 0.6); }
+@keyframes gradientMove { to { background-position: 200% center; } }
 
 /* DEVICE INFO CARD */
 .device-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -127,7 +126,7 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .info-list li { margin-bottom: 8px; }
 .info-list b { color: #0f172a; }
 .pricing { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-weight: 600; color: #0f172a; }
-.pricing div { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 8px; }
+.pricing div { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
 
 /* APP DOWNLOAD */
 .app-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; }
@@ -136,13 +135,13 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .app-title { font-size: 16px; font-weight: 800; color: #0f172a; }
 .app-note { font-size: 12px; color: #ef4444; font-weight: 600; margin-top: 4px; }
 .app-details { font-size: 13px; color: #475569; line-height: 1.6; }
-.btn-download { background: #facc15; color: #000; padding: 12px; border-radius: 12px; font-weight: 700; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; transition: 0.3s; }
-.btn-download:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(250, 204, 21, 0.3); }
+.btn-download { background: linear-gradient(135deg, #64748b, #334155); color: #fff; padding: 12px; border-radius: 12px; font-weight: 700; text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px; transition: 0.3s; }
+.btn-download:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(71, 85, 105, 0.3); }
 
 /* FOOTER */
 .footer { text-align: center; padding: 40px 20px; border-top: 1px solid rgba(0,0,0,0.05); margin-top: auto; position: relative; z-index: 10; }
 .footer p { font-size: 13px; font-weight: 500; color: var(--text-muted); }
-.footer a { color: #facc15; font-weight: 700; text-decoration: none; }
+.footer a { color: #475569; font-weight: 700; text-decoration: none; }
 
 /* FLOATING WIDGET */
 .float-widget { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #0068FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 10px 25px rgba(0, 104, 255, 0.5); z-index: 100; cursor: pointer; transition: transform 0.3s; text-decoration: none; }
@@ -150,9 +149,7 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .float-dot { position: absolute; top: 0; right: 0; width: 14px; height: 14px; background: #ef4444; border-radius: 50%; border: 2px solid #fff; }
 `;
 
-// --- JAVASCRIPT (SNOWFALL + LIMIT LOGIC) ---
 export const JS = `
-// 1. Snowfall
 const canvas = document.createElement('canvas');
 canvas.id = 'snow-bg';
 document.body.prepend(canvas);
@@ -179,14 +176,11 @@ function drawSnow() {
 }
 window.addEventListener('resize', initCanvas); initCanvas(); drawSnow();
 
-// 2. Spotlight
 const spotlight = document.createElement('div'); spotlight.className = 'spotlight'; document.body.prepend(spotlight);
 document.addEventListener('mousemove', (e) => { spotlight.style.setProperty('--mouse-x', e.clientX + 'px'); spotlight.style.setProperty('--mouse-y', e.clientY + 'px'); });
 
-// 3. Device Info & Limit Logic
 function updateDeviceInfo() {
   const now = new Date();
-  // Reset lúc 00:00 GMT+7 (tức là 17:00 UTC ngày hôm trước)
   const vnTime = new Date(now.getTime() + (7 * 60 * 60 * 1000));
   const resetTime = new Date(vnTime);
   resetTime.setHours(24, 0, 0, 0);
@@ -194,13 +188,11 @@ function updateDeviceInfo() {
   const hoursLeft = Math.floor(timeUntilReset / (1000 * 60 * 60));
   const minsLeft = Math.floor((timeUntilReset % (1000 * 60 * 60)) / (1000 * 60));
 
-  // Giả lập localStorage
   let limit = parseInt(localStorage.getItem('daily_limit') || '5');
   let success = parseInt(localStorage.getItem('success_count') || '0');
   let lastTime = localStorage.getItem('last_time') || 'Chưa có';
   let retries = parseInt(localStorage.getItem('retry_count') || '0');
 
-  // Update UI
   const elLimit = document.getElementById('dev-limit'); if(elLimit) elLimit.innerText = limit;
   const elSuccess = document.getElementById('dev-success'); if(elSuccess) elSuccess.innerText = success;
   const elLast = document.getElementById('dev-last'); if(elLast) elLast.innerText = lastTime;
@@ -209,7 +201,6 @@ function updateDeviceInfo() {
 }
 updateDeviceInfo();
 
-// 4. Clock
 setInterval(() => {
   const clockEl = document.getElementById('vn-clock');
   if(clockEl) {
@@ -218,7 +209,6 @@ setInterval(() => {
   }
 }, 1000);
 
-// 5. Terminal
 setTimeout(() => {
   const term = document.getElementById('terminal');
   if(term) {
@@ -227,7 +217,6 @@ setTimeout(() => {
   }
 }, 500);
 
-// 6. Heartbeat Graph
 const barCount = 50; let graphData = new Array(barCount).fill(10);
 setInterval(() => {
   const bars = document.querySelectorAll('.bar'); if(bars.length === 0) return;
@@ -237,7 +226,6 @@ setInterval(() => {
   bars.forEach((bar, i) => { bar.style.height = graphData[i] + '%'; if(graphData[i] > 40) bar.classList.add('active'); else bar.classList.remove('active'); });
 }, 100);
 
-// 7. Toast
 window.showToast = function(message, type = 'success') {
   const container = document.querySelector('.toast-container') || (() => { const c = document.createElement('div'); c.className = 'toast-container'; document.body.appendChild(c); return c; })();
   const toast = document.createElement('div'); toast.className = 'toast ' + type;

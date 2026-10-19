@@ -16,13 +16,12 @@ const layoutApp = (title, content) => `${head(title)}<style>${CSS_APP}</style></
 <body>
   <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
   <div class="wrapper">${content}</div>
-  <div class="float-widget"><i data-lucide="message-circle" style="width:28px;height:28px;"></i><div class="float-dot"></div></div>
+  <a href="https://zalo.me/0996492296" target="_blank" class="float-widget"><i data-lucide="message-circle" style="width:28px;height:28px;"></i><div class="float-dot"></div></a>
   <script>${JS}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
 export function renderCheckpoint(env) {
-  // (Giữ nguyên giao diện Checkpoint bảo mật)
   return layoutCheckpoint('Security Check', `
     <div class="top-nav">
       <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> getkeydpiconfig.site</div>
@@ -82,8 +81,8 @@ export function renderCheckpoint(env) {
         .then(r => r.json()).then(d => {
           if(d.success) {
             document.querySelector('.step.active .step-label').innerText = "Đã xác minh!";
-            document.querySelector('.step.active .step-circle').style.background = '#facc15';
-            document.querySelector('.step.active .step-circle').style.borderColor = '#facc15';
+            document.querySelector('.step.active .step-circle').style.background = '#475569';
+            document.querySelector('.step.active .step-circle').style.borderColor = '#475569';
             setTimeout(() => location.href = '/', 800);
           } else { showToast('Lỗi: ' + d.error, 'error'); }
         });
@@ -93,16 +92,16 @@ export function renderCheckpoint(env) {
 }
 
 export function renderHome(env, error) {
-  return layoutApp('SunnyMod Hub', `
+  return layoutApp('Get Key', `
     <div class="container">
       <!-- CỘT TRÁI: LẤY KEY -->
       <div>
         <div class="glass-card">
-          <div class="header-title"><i data-lucide="key" style="color:#facc15;"></i> Lấy key miễn phí</div>
-          <div class="header-desc">Chào mừng mọi người đến với trang web của Sunny Mod.</div>
+          <div class="header-title"><i data-lucide="key" style="color:#475569;"></i> Lấy key miễn phí</div>
+          <div class="header-desc">Chào mừng bạn đến với trang web của chúng tôi.</div>
           
           <div class="telegram-banner">
-            <h4>Cộng đồng SunnyMod</h4>
+            <h4>Cộng đồng GetKey</h4>
             <a href="#" class="telegram-btn"><i data-lucide="send"></i> Tham gia nhóm Telegram ↗</a>
           </div>
 
@@ -120,7 +119,7 @@ export function renderHome(env, error) {
             <span class="key-badge">Bước 1</span>
           </div>
           <div class="key-input-group" style="background:#fff; border-color:#cbd5e1;">
-            <span style="font-weight:600; font-size:15px;">Key SunnyMod Tool</span>
+            <span style="font-weight:600; font-size:15px;">Key Bản Quyền Tool</span>
           </div>
 
           <form method="POST" action="/start">
@@ -168,12 +167,12 @@ export function renderHome(env, error) {
           </div>
         </div>
 
-        <!-- THÔNG TIN TỪ SUNNYMOD -->
+        <!-- THÔNG TIN TỪ WEB -->
         <div class="glass-card">
           <div class="info-box">
-            <h4>Thông tin từ SunnyMod</h4>
+            <h4>Thông tin từ GetKey</h4>
             <ul class="info-list">
-              <li>© Bản quyền thuộc về SunnyMod</li>
+              <li>© Bản quyền thuộc về GetKey System</li>
               <li style="color:#ef4444; font-weight:700;">‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo sài key vượt để bán.</li>
               <li>📦 Mua key Free Fire vui lòng liên hệ phía dưới</li>
               <li style="margin-top:12px; font-weight:700;">Bảng giá key OB54</li>
@@ -201,9 +200,9 @@ export function renderHome(env, error) {
 
           <div class="app-card">
             <div class="app-header">
-              <img src="https://ui-avatars.com/api/?name=S+M&background=facc15&color=000&size=60&rounded=true" class="app-icon" alt="App">
+              <img src="https://ui-avatars.com/api/?name=Proxy&background=64748b&color=fff&size=60&rounded=true" class="app-icon" alt="App">
               <div>
-                <div class="app-title">SunnyMod Proxy V1.3 🍎</div>
+                <div class="app-title">App Proxy V1.3 🍎</div>
                 <div class="app-note">⚠ Lưu ý!</div>
               </div>
             </div>
@@ -219,9 +218,9 @@ export function renderHome(env, error) {
 
           <div class="app-card">
             <div class="app-header">
-              <img src="https://ui-avatars.com/api/?name=S+E&background=facc15&color=000&size=60&rounded=true" class="app-icon" alt="App">
+              <img src="https://ui-avatars.com/api/?name=Ext&background=475569&color=fff&size=60&rounded=true" class="app-icon" alt="App">
               <div>
-                <div class="app-title">Sunny Mod External - Root - Fix</div>
+                <div class="app-title">App External - Root - Fix</div>
                 <div class="app-note" style="color:#ef4444;">‼ Đã fix "Lỗi ứng dụng chưa cài đặt"</div>
               </div>
             </div>
