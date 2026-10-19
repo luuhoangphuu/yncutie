@@ -1,6 +1,5 @@
 export function safeBtoa(str) { return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
 export function safeAtob(str) { return decodeURIComponent(escape(atob(str.replace(/-/g, '+').replace(/_/g, '/')))); }
-
 export async function hmac(data, secret, action) {
   const enc = new TextEncoder(); const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [action]);
   if (action === 'sign') { const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data)); return btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
@@ -18,16 +17,12 @@ export async function decodeSession(token, secret) {
 }
 export function getCookie(request, name) { const c = request.headers.get('cookie') || ''; const m = c.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)')); return m ? m[1] : null; }
 export function setCookie(name, value, maxAge) { return `${name}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}; Secure`; }
-
 export async function verifyTurnstile(token, ip, env) {
   if (!token) return { success: false, error: "Missing token" };
   try {
     const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secret: env.TURNSTILE_SECRET_KEY, response: token, remoteip: ip }) });
     const d = await r.json();
-    if (!d.success) {
-      if (d['error-codes'].includes('missing-input-secret')) return { success: false, error: "LỖI: Thiếu Secret Key trên Cloudflare." };
-      return { success: false, error: "Captcha không hợp lệ." };
-    }
+    if (!d.success) return { success: false, error: d['error-codes'].includes('missing-input-secret') ? "LỖI: Thiếu Secret Key trên Cloudflare." : "Captcha không hợp lệ." };
     return { success: true };
   } catch { return { success: false, error: "Lỗi mạng." }; }
 }
