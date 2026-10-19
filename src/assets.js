@@ -313,3 +313,35 @@ document.addEventListener('click', function(e) {
   navigator.clipboard.writeText(t.textContent).then(() => { showToast('Đã sao chép Key vào bộ nhớ tạm!', 'success'); });
 });
 `;
+
+// Thêm CSS cho Mobile và hiệu ứng chạm
+export const CSS_MOBILE = `
+@media (max-width: 900px) {
+  .wrapper { padding: 20px 15px; }
+  .glass-card { padding: 24px; margin-bottom: 15px; }
+  .header-title { font-size: 20px; }
+  .device-grid { grid-template-columns: 1fr; }
+  .stepper { margin-bottom: 20px; }
+  .step-circle { width: 28px; height: 28px; font-size: 12px; }
+  .step-label { font-size: 11px; }
+  
+  /* Hiệu ứng lơ lửng cho thẻ trên Mobile (thay cho 3D Tilt) */
+  .glass-card { animation: mobileFloat 6s ease-in-out infinite; }
+  .glass-card:nth-child(2) { animation-delay: -3s; }
+  
+  @keyframes mobileFloat {
+    0% { transform: translateY(0px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5); }
+    50% { transform: translateY(-8px); box-shadow: 0 25px 45px -5px rgba(0,0,0,0.7); }
+    100% { transform: translateY(0px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5); }
+  }
+
+  /* Hiệu ứng chạm (Touch feedback) cho nút bấm */
+  .btn:active, .telegram-btn:active, .tier-option:active {
+    transform: scale(0.96) !important;
+    filter: brightness(0.8);
+  }
+  
+  .float-widget { bottom: 20px; right: 20px; width: 50px; height: 50px; }
+  .float-widget svg { width: 24px; height: 24px; }
+}
+`;

@@ -38,7 +38,7 @@ export default {
 
       if (p === '/api/admin/notice' && m === 'POST') {
         const { password, notice } = await request.json();
-        const adminPass = env.ADMIN_PASSWORD || 'lhp_admin_2026';
+        const adminPass = 'lhp_admin_2026';
         
         if (password !== adminPass) {
           return new Response(JSON.stringify({ success: false, error: 'Mật khẩu Admin không đúng!' }), { status: 401, headers: { 'Content-Type': 'application/json' } });

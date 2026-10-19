@@ -1,4 +1,4 @@
-import { CSS_CHECKPOINT, CSS_APP, JS } from './assets.js';
+import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE } from './assets.js';
 
 const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
-const layoutApp = (title, content) => `${head(title)}<style>${CSS_APP}</style></head>
+const layoutApp = (title, content) => `${head(title)}<style>${CSS_APP}${CSS_MOBILE}</style></head>
 <body>
   <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
   <div class="wrapper">${content}</div>
