@@ -1,5 +1,5 @@
 // ============================================================================
-// Key System Worker v11.0 - Quantum Cyber-Defense UI + Detailed Debug
+// Key System Worker v11.1 - Add VIP Key Selection
 // ============================================================================
 
 const CHECKPOINT_CSS = `
@@ -10,60 +10,27 @@ body {
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
   overflow: hidden; position: relative; font-size: 14px;
 }
-
-/* 3D Perspective Grid Background */
-.bg-grid {
-  position: fixed; inset: -50%; z-index: 0;
-  background-image: 
-    linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px);
-  background-size: 60px 60px;
-  transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
-  animation: gridMove 10s linear infinite;
-  mask-image: radial-gradient(circle at center, black 20%, transparent 70%);
-  -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 70%);
-}
+.bg-grid { position: fixed; inset: -50%; z-index: 0; background-image: linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px); background-size: 60px 60px; transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px); animation: gridMove 10s linear infinite; mask-image: radial-gradient(circle at center, black 20%, transparent 70%); -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 70%); }
 @keyframes gridMove { 0% { background-position: 0 0; } 100% { background-position: 0 60px; } }
-
-/* Glow Effects */
-.bg-glow {
-  position: fixed; inset: 0; z-index: 1; pointer-events: none;
-  background: 
-    radial-gradient(circle at 20% 30%, rgba(14, 165, 233, 0.15), transparent 40%),
-    radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.1), transparent 40%);
-}
-
+.bg-glow { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at 20% 30%, rgba(14, 165, 233, 0.15), transparent 40%), radial-gradient(circle at 80% 70%, rgba(16, 185, 129, 0.1), transparent 40%); }
 .container { position: relative; z-index: 10; width: 100%; max-width: 1150px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; }
 @media (max-width: 900px) { .container { grid-template-columns: 1fr; gap: 30px; } }
-
-/* Left Side */
 .left { display: flex; flex-direction: column; justify-content: center; position: relative; }
 .badge-security { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; color: #0ea5e9; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 3px; }
 .badge-security .dot { width: 6px; height: 6px; background: #0ea5e9; border-radius: 50%; box-shadow: 0 0 10px #0ea5e9; animation: blink 1.5s infinite; }
 @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-/* Glitch Effect */
 .glitch { position: relative; font-size: 48px; font-weight: 800; color: #f8fafc; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em; text-shadow: 0 4px 30px rgba(0,0,0,0.8); }
 .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8; }
 .glitch::before { left: 2px; text-shadow: -2px 0 #ef4444; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 3s infinite linear alternate-reverse; }
 .glitch::after { left: -2px; text-shadow: -2px 0 #0ea5e9; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim2 2.5s infinite linear alternate-reverse; }
 @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 83px, 0); } 20% { clip: rect(62px, 9999px, 14px, 0); } 40% { clip: rect(33px, 9999px, 98px, 0); } 60% { clip: rect(88px, 9999px, 45px, 0); } 80% { clip: rect(12px, 9999px, 77px, 0); } 100% { clip: rect(55px, 9999px, 23px, 0); } }
 @keyframes glitch-anim2 { 0% { clip: rect(65px, 9999px, 100px, 0); } 20% { clip: rect(12px, 9999px, 55px, 0); } 40% { clip: rect(88px, 9999px, 23px, 0); } 60% { clip: rect(34px, 9999px, 77px, 0); } 80% { clip: rect(90px, 9999px, 12px, 0); } 100% { clip: rect(45px, 9999px, 62px, 0); } }
-
 .desc { font-size: 16px; line-height: 1.7; color: #94a3b8; margin-bottom: 30px; max-width: 90%; }
-
-/* Challenge Box */
-.challenge-box { 
-  background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(14, 165, 233, 0.2); border-radius: 20px; padding: 35px 30px; position: relative; overflow: hidden; 
-  box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 0 40px rgba(14, 165, 233, 0.05); transition: all 0.3s; 
-}
+.challenge-box { background: rgba(10, 15, 30, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(14, 165, 233, 0.2); border-radius: 20px; padding: 35px 30px; position: relative; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 0 40px rgba(14, 165, 233, 0.05); transition: all 0.3s; }
 .challenge-box::before { content: ''; position: absolute; inset: 0; border-radius: 20px; padding: 2px; background: linear-gradient(135deg, rgba(14, 165, 233, 0.5), transparent, rgba(16, 185, 129, 0.5)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
 .challenge-box:hover { border-color: rgba(14, 165, 233, 0.5); box-shadow: 0 30px 70px rgba(0,0,0,0.8), inset 0 0 50px rgba(14, 165, 233, 0.1); }
 .cf-turnstile { margin-bottom: 20px; display: flex; justify-content: center; }
 .status-text { text-align: center; font-size: 14px; color: #64748b; transition: color 0.3s; font-weight: 500; line-height: 1.5; }
-
-/* Stepper */
 .stepper { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; padding: 0 5px; }
 .step { display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; }
 .step-circle { width: 32px; height: 32px; border-radius: 10px; transform: rotate(45deg); background: #0f172a; border: 2px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: all 0.5s; z-index: 2; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
@@ -78,40 +45,24 @@ body {
 .step-line.active::after { width: 50%; background: linear-gradient(90deg, #10b981, #0ea5e9); box-shadow: 0 0 10px #0ea5e9; }
 .step-label { font-size: 12px; font-weight: 700; color: #475569; transition: all 0.3s; white-space: nowrap; text-transform: uppercase; letter-spacing: 1px; }
 .step.completed .step-label, .step.active .step-label { color: #e2e8f0; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-
-/* Right Side (HUD) */
 .right { display: flex; flex-direction: column; gap: 16px; }
-.card { 
-  background: rgba(10, 15, 30, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
-  border: 1px solid #1e293b; border-radius: 16px; padding: 20px; position: relative; overflow: hidden; 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
-}
+.card { background: rgba(10, 15, 30, 0.6); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid #1e293b; border-radius: 16px; padding: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
 .card-value { font-size: 34px; font-weight: 800; color: #f8fafc; font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 20px rgba(255,255,255,0.3); line-height: 1; }
 .card-value small { font-size: 14px; color: #64748b; font-weight: 600; margin-left: 4px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-/* Terminal */
-.terminal { 
-  background: #000000; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; 
-  font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0ea5e9; height: 160px; overflow: hidden; 
-  display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 0 30px rgba(0,0,0,0.9); position: relative;
-}
+.terminal { background: #000000; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0ea5e9; height: 160px; overflow: hidden; display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 0 30px rgba(0,0,0,0.9); position: relative; }
 .terminal::before { content: 'root@cloudflare:~#'; position: absolute; bottom: 10px; left: 16px; color: #10b981; font-weight: bold; opacity: 0.5; }
 .log-line { opacity: 0; animation: typeIn 0.3s forwards; line-height: 1.4; z-index: 1; }
 .log-line.success { color: #10b981; }
 .log-line.warn { color: #f59e0b; }
 .log-line.error { color: #ef4444; }
 @keyframes typeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-
-/* Radar SVG */
 .radar-wrapper { position: relative; width: 120px; height: 120px; margin: 0 auto; }
 .radar-svg { width: 100%; height: 100%; animation: spin 4s linear infinite; transform-origin: center; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 .radar-ping { animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
 @keyframes ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
-
-/* Modal */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 100; display: none; align-items: center; justify-content: center; }
 .modal-box { background: rgba(15, 23, 42, 0.95); border: 1px solid #ef4444; border-radius: 24px; padding: 40px 30px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 30px 80px rgba(239, 68, 68, 0.3); transform: scale(0.9); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
 @keyframes popIn { to { transform: scale(1); } }
@@ -123,9 +74,7 @@ body {
 `;
 
 const CHECKPOINT_JS = `
-// 1. Background Network Canvas
-const canvas = document.getElementById('network');
-const ctx = canvas.getContext('2d');
+const canvas = document.getElementById('network'); const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth; canvas.height = window.innerHeight;
 let particles = Array.from({length: 50}, () => ({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3 }));
 function drawNetwork() {
@@ -142,8 +91,6 @@ function drawNetwork() {
   requestAnimationFrame(drawNetwork);
 }
 drawNetwork();
-
-// 2. Real Timer & Logs
 let timerInterval; let startTime; let isVerifying = false;
 function startRealTimer() {
   startTime = performance.now();
@@ -154,83 +101,42 @@ function startRealTimer() {
     document.getElementById('realTimer').textContent = elapsed.toFixed(3);
   }, 10);
 }
-
-const logs = [
-  "[SYS] Initializing Quantum Gateway...",
-  "[NET] Establishing TLS 1.3 handshake...",
-  "[NET] Route optimized via Anycast Edge (SGP).",
-  "[SEC] Analyzing browser fingerprint (Canvas/WebGL)...",
-  "[WAF] Scanning for DDoS, SQLi, and XSS patterns...",
-  "[BOT] Evaluating mouse movements and touch events...",
-  "[CHK] Ready for human verification."
-];
+const logs = ["[SYS] Initializing Quantum Gateway...","[NET] Establishing TLS 1.3 handshake...","[NET] Route optimized via Anycast Edge (SGP).","[SEC] Analyzing browser fingerprint (Canvas/WebGL)...","[WAF] Scanning for DDoS, SQLi, and XSS patterns...","[BOT] Evaluating mouse movements and touch events...","[CHK] Ready for human verification."];
 let logIndex = 0;
 function addLog(text, type) {
   const terminal = document.getElementById('terminal');
-  const line = document.createElement('div');
-  line.className = 'log-line ' + (type || '');
-  line.textContent = text;
-  terminal.appendChild(line);
-  terminal.scrollTop = terminal.scrollHeight;
+  const line = document.createElement('div'); line.className = 'log-line ' + (type || ''); line.textContent = text;
+  terminal.appendChild(line); terminal.scrollTop = terminal.scrollHeight;
 }
 setInterval(() => { if(logIndex < logs.length) { addLog(logs[logIndex]); logIndex++; } }, 600);
-
-// 3. Turnstile Callback
 function onTurnstileSuccess(token) {
-  if (isVerifying) return; 
-  isVerifying = true;
-  
+  if (isVerifying) return; isVerifying = true;
   startRealTimer();
   document.getElementById('statusText').style.color = '#0ea5e9';
   document.getElementById('statusText').innerHTML = 'Đang xác thực dữ liệu sinh trắc học...';
-  
   const stepVerify = document.querySelector('.step:nth-child(5)');
   stepVerify.classList.add('active'); stepVerify.classList.remove('completed');
   addLog("[AUTH] Token received. Transmitting to secure enclave...", 'warn');
-
-  fetch('/api/verify-bot', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ token: token })
-  }).then(res => res.json()).then(data => {
+  fetch('/api/verify-bot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token }) }).then(res => res.json()).then(data => {
     clearInterval(timerInterval);
-    
     if(data.success) {
       addLog("[OK] VERIFICATION SUCCESSFUL. REDIRECTING...", 'success');
       document.getElementById('statusText').style.color = '#10b981';
       document.getElementById('statusText').style.textShadow = '0 0 10px rgba(16, 185, 129, 0.5)';
       document.getElementById('statusText').innerHTML = '<b>Xác minh thành công! Đang vào trang sau...</b>';
-      
       stepVerify.classList.add('completed'); stepVerify.classList.remove('active');
       const steps = document.querySelectorAll('.step'); const lines = document.querySelectorAll('.step-line');
       lines[2].classList.add('completed'); steps[3].classList.add('active'); steps[3].classList.remove('completed');
-      
       setTimeout(() => { window.location.href = '/'; }, 1200);
-    } else {
-      showError(data.error || 'Xác thực thất bại.');
-    }
-  }).catch(() => {
-    clearInterval(timerInterval); showError('Lỗi kết nối mạng. Vui lòng thử lại.');
-  });
+    } else { showError(data.error || 'Xác thực thất bại.'); }
+  }).catch(() => { clearInterval(timerInterval); showError('Lỗi kết nối mạng. Vui lòng thử lại.'); });
 }
-
-function showError(msg) {
-  document.getElementById('modalMsg').innerHTML = msg;
-  document.getElementById('errorModal').style.display = 'flex';
-  addLog("[ERR] " + msg, 'error');
-}
-
+function showError(msg) { document.getElementById('modalMsg').innerHTML = msg; document.getElementById('errorModal').style.display = 'flex'; addLog("[ERR] " + msg, 'error'); }
 function reloadPage() { window.location.reload(); }
-
 setInterval(() => {
   const bars = document.querySelectorAll('.bar');
   bars.forEach((bar, index) => {
-    if(index > bars.length - 15) {
-      bar.style.height = Math.floor(Math.random() * 80 + 20) + '%';
-      bar.style.background = '#0ea5e9';
-      bar.style.boxShadow = '0 0 10px #0ea5e9';
-      setTimeout(() => { bar.style.background = '#1e293b'; bar.style.boxShadow = 'none'; }, 200);
-    }
+    if(index > bars.length - 15) { bar.style.height = Math.floor(Math.random() * 80 + 20) + '%'; bar.style.background = '#0ea5e9'; bar.style.boxShadow = '0 0 10px #0ea5e9'; setTimeout(() => { bar.style.background = '#1e293b'; bar.style.boxShadow = 'none'; }, 200); }
   });
 }, 100);
 `;
@@ -281,11 +187,34 @@ h2 { font-size: 24px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
 .copy-btn { padding: 14px 20px; border-radius: 14px; border: none; background: var(--primary); color: #fff; font-weight: 700; cursor: pointer; font-size: 14px; transition: 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
 .copy-btn:hover { background: #4338ca; transform: translateY(-2px); }
 .expiry-info { display: inline-flex; align-items: center; gap: 8px; background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 10px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; margin-bottom: 24px; }
+
+/* VIP Selector */
+.tier-selector { display: flex; gap: 10px; margin-bottom: 24px; background: #f8fafc; padding: 6px; border-radius: 16px; border: 1px solid #e2e8f0; }
+.tier-option { flex: 1; text-align: center; padding: 10px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-muted); transition: all 0.2s; position: relative; overflow: hidden; }
+.tier-option input { display: none; }
+.tier-option.selected { background: #fff; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid rgba(79, 70, 229, 0.2); }
+.tier-option .tier-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 4px; color: #fff; }
+.tier-option[data-tier="VIP"] .tier-badge { background: #f59e0b; }
+.tier-option[data-tier="Normal"] .tier-badge { background: #10b981; }
+
 @media (max-width: 480px) { .card { padding: 32px 24px; border-radius: 28px; } h1 { font-size: 28px; } .btn { padding: 14px 20px; font-size: 15px; } .key-box { flex-direction: column; } .copy-btn { width: 100%; justify-content: center; } }
 `;
 
 const APP_JS = `
 (function(){
+  // Tier selection logic
+  const tierOptions = document.querySelectorAll('.tier-option');
+  const tierInput = document.getElementById('tierInput');
+  if (tierOptions.length > 0) {
+    tierOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        tierOptions.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        if(tierInput) tierInput.value = opt.dataset.tier;
+      });
+    });
+  }
+
   if(document.querySelector('.success-icon')) {
     for (let i = 0; i < 50; i++) {
       let el = document.createElement('div');
@@ -327,21 +256,17 @@ function renderCheckpoint(env) {
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>${CHECKPOINT_CSS}</style></head>
   <body>
-    <div class="bg-grid"></div>
-    <div class="bg-glow"></div>
+    <div class="bg-grid"></div><div class="bg-glow"></div>
     <canvas id="network" style="position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.3;"></canvas>
-    
     <div class="container">
       <div class="left">
         <div class="badge-security"><div class="dot"></div> Quantum Firewall v4.2</div>
         <h1 class="glitch" data-text="Xác minh nhanh trước khi vào trang sau">Xác minh nhanh<br>trước khi vào trang sau</h1>
         <p class="desc">Hệ thống đang kiểm tra kết nối của bạn bằng Trí tuệ Nhân tạo để chặn bot và spam. Thường chỉ mất vài giây.</p>
-        
         <div class="challenge-box">
           <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
           <div class="status-text" id="statusText">Nếu thấy ô <b>Verify you are human</b>, bấm vào đó. Không cần tải lại trang.</div>
         </div>
-
         <div class="stepper">
           <div class="step completed"><div class="step-circle"></div><div class="step-label">Kết nối TLS</div></div>
           <div class="step-line completed"></div>
@@ -352,13 +277,11 @@ function renderCheckpoint(env) {
           <div class="step"><div class="step-circle"></div><div class="step-label">Vào trang sau</div></div>
         </div>
       </div>
-
       <div class="right">
         <div class="card">
           <div class="card-header"><span>Thời gian xác minh thực tế</span><span class="card-value" id="realTimer">0.000<small>s</small></span></div>
           <div class="graph" id="graph"></div>
         </div>
-
         <div class="grid-2">
           <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:15px;">
             <div class="radar-wrapper">
@@ -383,11 +306,9 @@ function renderCheckpoint(env) {
             <div style="font-size:11px; color:#64748b; margin-top:10px;">Giao thức<br><b style="color:#f8fafc;">HTTP/3 (QUIC)</b></div>
           </div>
         </div>
-
         <div class="terminal" id="terminal"></div>
       </div>
     </div>
-    
     <div class="modal-overlay" id="errorModal">
       <div class="modal-box">
         <div class="modal-icon">⚠</div>
@@ -396,7 +317,6 @@ function renderCheckpoint(env) {
         <button class="modal-btn" onclick="reloadPage()">Thử lại</button>
       </div>
     </div>
-
     <script>
       for(let i=0; i<30; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; bar.style.flex = '1'; bar.style.background = '#1e293b'; bar.style.margin = '0 1px'; bar.style.borderRadius = '2px'; document.getElementById('graph').appendChild(bar); }
       ${CHECKPOINT_JS}
@@ -454,9 +374,7 @@ async function verifyTurnstile(token, ip, env) {
       return { success: false, error: "Captcha không hợp lệ (" + d['error-codes'][0] + ")" };
     }
     return { success: true };
-  } catch (e) {
-    return { success: false, error: "Lỗi kết nối tới Cloudflare." };
-  }
+  } catch (e) { return { success: false, error: "Lỗi kết nối tới Cloudflare." }; }
 }
 
 async function shortenUrl(longUrl, env) {
@@ -464,9 +382,9 @@ async function shortenUrl(longUrl, env) {
   try { const api = `https://link4m.co/api-shorten/v2?api=${env.LINK4M_API_TOKEN}&url=${encodeURIComponent(longUrl)}`; const res = await fetch(api); const data = await res.json(); return data.status === 'success' ? data.shortenedUrl : longUrl; } catch { return longUrl; }
 }
 
-async function fetchKeyFromIssuer(env) {
+async function fetchKeyFromIssuer(tier, env) {
   try {
-    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/11.0', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: env.KEY_TIER || 'Normal' }) });
+    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/11.1', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: tier }) });
     const data = await res.json().catch(() => null);
     if (data && data.success === true && data.key) return { ok: true, key: data.key, expiresAt: data.expires_at, durationHours: data.duration_hours };
     return { ok: false };
@@ -475,7 +393,30 @@ async function fetchKeyFromIssuer(env) {
 
 // ============ ROUTER & API ============
 function home(env) {
-  return renderApp('Nhận Key Miễn Phí', `<div class="card hero"><div class="badge">✨ Hệ thống tự động 2026</div><h1>Nhận Key <span class="grad">Tự Động</span></h1><p class="sub">Hoàn thành 2 bước siêu tốc để nhận key bản quyền.</p><form method="POST" action="/start"><div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light"></div><button type="submit" class="btn btn-primary" style="margin-top:20px;">🚀 Bắt đầu nhận Key</button></form><p style="font-size:12px; color:#94a3b8; margin-top:15px; font-weight:500;">Bảo mật bởi Cloudflare Turnstile</p></div>`);
+  return renderApp('Nhận Key Miễn Phí', `
+    <div class="card hero">
+      <div class="badge">✨ Hệ thống tự động 2026</div>
+      <h1>Nhận Key <span class="grad">Tự Động</span></h1>
+      <p class="sub">Chọn loại Key bạn muốn nhận, sau đó hoàn thành 2 bước siêu tốc.</p>
+      
+      <div class="tier-selector">
+        <label class="tier-option selected" data-tier="Normal">
+          <input type="radio" name="tier" value="Normal" checked>
+          Thường <span class="tier-badge">8H</span>
+        </label>
+        <label class="tier-option" data-tier="VIP">
+          <input type="radio" name="tier" value="VIP">
+          VIP <span class="tier-badge">2H</span>
+        </label>
+      </div>
+
+      <form method="POST" action="/start">
+        <input type="hidden" name="tier" id="tierInput" value="Normal">
+        <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light"></div>
+        <button type="submit" class="btn btn-primary" style="margin-top:20px;">🚀 Bắt đầu nhận Key</button>
+      </form>
+      <p style="font-size:12px; color:#94a3b8; margin-top:15px; font-weight:500;">Bảo mật bởi Cloudflare Turnstile</p>
+    </div>`);
 }
 
 async function start(request, env) {
@@ -484,7 +425,10 @@ async function start(request, env) {
   const form = await request.formData();
   const verify = await verifyTurnstile(form.get('cf-turnstile-response'), ip, env);
   if (!verify.success) return renderApp('Lỗi', `<div class="card center"><h2>Captcha không hợp lệ</h2><p class="sub">${verify.error}</p><a href="/" class="btn btn-primary">Thử lại</a></div>`);
-  const session = { sid: crypto.randomUUID(), ip, createdAt: Date.now(), subVerified: false, adsVerified: false, keyIssued: null };
+  
+  const selectedTier = form.get('tier') || 'Normal';
+  const session = { sid: crypto.randomUUID(), ip, createdAt: Date.now(), subVerified: false, adsVerified: false, keyIssued: null, tier: selectedTier };
+  
   return redirect('/step1', await saveSession(request, env, session));
 }
 
@@ -515,9 +459,9 @@ async function verifyAds(request, env) {
   const verify = await verifyTurnstile(form.get('cf-turnstile-response'), s.ip, env);
   if (!verify.success) return renderApp('Lỗi', `<div class="card center"><h2>Captcha không hợp lệ</h2><p class="sub">${verify.error}</p><a href="/step2" class="btn btn-primary">Thử lại</a></div>`);
   
-  const issued = await fetchKeyFromIssuer(env);
+  const issued = await fetchKeyFromIssuer(s.tier || 'Normal', env);
   if (!issued.ok) return renderApp('Lỗi', `<div class="card center"><h2>Hệ thống đang bận</h2><a href="/step2" class="btn btn-primary">Thử lại</a></div>`);
-  s.adsVerified = true; s.keyIssued = issued.key; s.keyDuration = issued.durationHours || 8; s.keyExpiresAt = issued.expiresAt || new Date(Date.now() + s.keyDuration * 3600000).toISOString();
+  s.adsVerified = true; s.keyIssued = issued.key; s.keyDuration = issued.durationHours || (s.tier === 'VIP' ? 2 : 8); s.keyExpiresAt = issued.expiresAt || new Date(Date.now() + s.keyDuration * 3600000).toISOString();
   return redirect('/success', await saveSession(request, env, s));
 }
 
@@ -535,12 +479,10 @@ async function verifyCheckpoint(request, env) {
     const { token } = await request.json();
     const ip = request.headers.get('cf-connecting-ip') || 'local';
     const verify = await verifyTurnstile(token, ip, env);
-    
     if (!verify.success) {
       log('error', 'checkpoint turnstile failed', { ip, error: verify.error });
       return new Response(JSON.stringify({ success: false, error: verify.error }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
-    
     const passToken = crypto.randomUUID();
     const headers = new Headers({ 'Content-Type': 'application/json', 'Set-Cookie': `bot_passed=${passToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=900; Secure` });
     return new Response(JSON.stringify({ success: true }), { headers });
@@ -554,16 +496,12 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url); const p = url.pathname; const m = request.method;
     const botPassed = getCookie(request, 'bot_passed');
-
     try {
       if (p === '/style.css') return withHeaders(new Response(APP_CSS, { headers: { 'Content-Type': 'text/css' } }));
       if (p === '/app.js') return withHeaders(new Response(APP_JS, { headers: { 'Content-Type': 'application/javascript' } }));
       if (p === '/api/verify-bot' && m === 'POST') return verifyCheckpoint(request, env);
-
-      if (!botPassed && p !== '/api/verify-bot') {
-        return renderCheckpoint(env);
-      }
-
+      if (!botPassed && p !== '/api/verify-bot') return renderCheckpoint(env);
+      
       if (p === '/' && m === 'GET') return home(env);
       if (p === '/start' && m === 'POST') return start(request, env);
       if (p === '/step1' && m === 'GET') return step1(request, env);
