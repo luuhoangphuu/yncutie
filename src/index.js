@@ -3,6 +3,7 @@
 // ============================================================================
 
 const CSS = `
+html, body { background-color: #f8fafc !important; color: #0f172a !important; }
 :root {
   color-scheme: light only;
   --bg-color: #f0f4f8; --text-main: #0f172a; --text-muted: #475569;
