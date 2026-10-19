@@ -14,6 +14,7 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
 
 const layoutApp = (title, content) => `${head(title)}<style>${CSS_APP}</style></head>
 <body>
+  <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
   <div class="wrapper">${content}</div>
   <a href="https://zalo.me/0996492296" target="_blank" class="float-widget"><i data-lucide="message-circle" style="width:28px;height:28px;"></i><div class="float-dot"></div></a>
   <script>${JS}</script>
@@ -91,97 +92,109 @@ export function renderCheckpoint(env) {
 }
 
 export function renderHome(env, error) {
-  return layoutApp('Get Key | Zenith', `
+  return layoutApp('Get Key | Dark Titanium', `
     <div class="container">
-      
-      <div class="logo-container">
-        <div class="logo-circle">
-          <i data-lucide="eye" style="width:40px;height:40px;color:#fff;"></i>
-        </div>
-        <div class="logo-text">ZENITH.SOLITUDE</div>
-        <div style="font-size:12px; color:#a1a1aa; letter-spacing:2px; margin-top:4px;">VERSION 23.7.20</div>
-      </div>
-
-      <div class="glass-card">
-        
-        <div class="stepper">
-          <div class="step active"><div class="step-line"></div><div class="step-circle">1</div><div class="step-label">Chọn Key</div></div>
-          <div class="step"><div class="step-line"></div><div class="step-circle">2</div><div class="step-label">Vượt Link</div></div>
-          <div class="step"><div class="step-line"></div><div class="step-circle">3</div><div class="step-label">Xác Thực</div></div>
-          <div class="step"><div class="step-circle">4</div><div class="step-label">Nhận Key</div></div>
-        </div>
-
-        <div class="input-group">
-          <label>HEADLOCK CENTER 23.7.20 ANTIBAN</label>
-          <span class="input-badge">1.55.48.71</span>
-        </div>
-        
-        <div class="input-group">
-          <label>DEVICE ID:</label>
-          <span class="input-badge" style="font-family:monospace;">VIP-1F3F3E4G...</span>
-        </div>
-
-        ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600; text-align:center;">${error}</div>` : ''}
-
-        <form method="POST" action="/start">
-          <input type="hidden" name="tier" value="Normal">
-          <div class="input-group" style="margin-bottom:20px;">
-            <i data-lucide="key" style="color:#a1a1aa; width:20px;"></i>
-            <span style="flex:1; margin-left:12px; font-weight:500; color:#a1a1aa; text-align:left;">Nhập Key (VIP / FREE)...</span>
-            <i data-lucide="clipboard" style="color:#a1a1aa; width:16px;"></i>
-          </div>
+      <!-- CỘT TRÁI: LẤY KEY -->
+      <div>
+        <div class="glass-card">
+          <div class="header-title"><i data-lucide="key" style="color:#fff;"></i> Lấy key miễn phí</div>
+          <div class="header-desc">Chào mừng bạn đến với trang web của chúng tôi.</div>
           
-          <button type="submit" class="btn btn-primary" style="margin-bottom:16px;"><i data-lucide="log-in"></i> LOGIN HỆ THỐNG</button>
-          <button type="button" class="btn btn-dark" style="margin-bottom:16px;"><i data-lucide="download"></i> LẤY KEY MỚI TẠI ĐÂY</button>
+          <div class="telegram-banner">
+            <h4>Cộng đồng GetKey</h4>
+            <a href="#" class="telegram-btn"><i data-lucide="send"></i> Tham gia nhóm Telegram ↗</a>
+          </div>
+
+          <div class="stepper">
+            <div class="step active"><div class="step-line"></div><div class="step-circle">1</div><div class="step-label">Chọn key</div></div>
+            <div class="step"><div class="step-line"></div><div class="step-circle">2</div><div class="step-label">Vượt link</div></div>
+            <div class="step"><div class="step-line"></div><div class="step-circle">3</div><div class="step-label">Xác thực</div></div>
+            <div class="step"><div class="step-circle">4</div><div class="step-label">Nhận key</div></div>
+          </div>
+          <div style="text-align:center; font-size:12px; color:#a1a1aa; margin-bottom:20px;">Bước 1/4 • Chọn key</div>
+
+          <div style="font-weight:700; font-size:14px; margin-bottom:12px; display:flex; align-items:center; gap:6px; color:#fff;"><i data-lucide="info" style="width:16px;"></i> Hướng dẫn lấy key</div>
+          <div class="key-input-group">
+            <label>Chọn loại key</label>
+            <span class="key-badge">Bước 1</span>
+          </div>
+          <div class="key-input-group" style="background:#000; border-color:#555;">
+            <span style="font-weight:600; font-size:15px; color:#fff;">Key Bản Quyền Tool</span>
+          </div>
+
+          ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600; text-align:center;">${error}</div>` : ''}
+
+          <form method="POST" action="/start">
+            <input type="hidden" name="tier" value="Normal">
+            <button type="submit" class="btn btn-primary"><i data-lucide="download"></i> Get Key</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- CỘT PHẢI: THÔNG TIN & THIẾT BỊ -->
+      <div>
+        <!-- THIẾT BỊ HIỆN TẠI -->
+        <div class="glass-card">
+          <div style="font-size:12px; font-weight:700; color:#a1a1aa; text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+            <span>THIẾT BỊ HIỆN TẠI</span>
+            <span style="background:#222; padding:2px 8px; border-radius:10px; font-size:11px; color:#fff;">Hôm nay</span>
+          </div>
+          <div style="font-size:15px; font-weight:800; margin-bottom:16px; color:#fff;">Theo dõi nhanh lượt nhận key trong hôm nay</div>
           
-          <div style="display:flex; gap:12px;">
-            <button type="button" class="btn btn-dark" style="flex:1; font-size:13px;"><i data-lucide="search"></i> TÌM KEY BẰNG IP</button>
-            <button type="button" class="btn btn-dark" style="flex:1; font-size:13px;"><i data-lucide="shield"></i> TẢI CERT</button>
+          <div class="device-grid">
+            <div class="device-item">
+              <div class="device-label">TÊN KEY</div>
+              <div class="device-val" style="font-size:14px;">Key Customs</div>
+            </div>
+            <div class="device-item">
+              <div class="device-label">CÒN LẠI HÔM NAY</div>
+              <div class="device-val" id="dev-limit">5</div>
+              <div class="device-sub">Giới hạn: thiết bị 5 / IP 5 theo lịch sử thiết bị; server vẫn kiểm tra quota thật. Reset lúc <span id="dev-reset">00h 00p</span> (GMT+7)</div>
+            </div>
+            <div class="device-item">
+              <div class="device-label">THÀNH CÔNG</div>
+              <div class="device-val" id="dev-success">0</div>
+              <div class="device-sub">lượt đã nhận key</div>
+            </div>
+            <div class="device-item">
+              <div class="device-label">LẦN GẦN NHẤT</div>
+              <div class="device-val" id="dev-last" style="font-size:16px;">Chưa có</div>
+              <div class="device-sub">Chưa lưu key gần đây</div>
+            </div>
+            <div class="device-item" style="grid-column: span 2;">
+              <div class="device-label">CÓ THỂ THỬ LẠI</div>
+              <div class="device-val" id="dev-retry">-</div>
+              <div class="device-sub">0 lượt đã bắt đầu, vui lòng chờ reset để thử lại.</div>
+            </div>
           </div>
-        </form>
-
-        <div style="text-align:center; font-size:11px; color:#555; margin-top:20px; letter-spacing:1px; text-transform:uppercase;">
-          HEADLOCK VERSION 23.7.20 BY ZENITH.SOLITUDE
         </div>
 
+        <!-- THÔNG TIN TỪ WEB -->
+        <div class="glass-card">
+          <div class="info-box">
+            <h4>Thông tin từ GetKey</h4>
+            <ul class="info-list">
+              <li>© Bản quyền thuộc về GetKey System</li>
+              <li style="color:#ef4444; font-weight:700;">‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo sài key vượt để bán.</li>
+              <li>📦 Mua key Free Fire vui lòng liên hệ phía dưới</li>
+              <li style="margin-top:12px; font-weight:700; color:#fff;">Bảng giá key OB54</li>
+            </ul>
+            <div class="pricing">
+              <div><span>👉 Key 1 ngày</span> <b>10k</b></div>
+              <div><span>👉 Key 7 ngày</span> <b>50k</b></div>
+              <div><span>👉 Key 30 ngày</span> <b>150k</b></div>
+            </div>
+            <ul class="info-list" style="margin-top:12px;">
+              <li style="color:#ef4444; font-weight:700;">‼ Nhớ chọn đúng key trước khi vượt</li>
+            </ul>
+            
+            <div style="display:flex; gap:12px; margin-top:20px;">
+               <a href="https://zalo.me/0996492296" target="_blank" style="flex:1; padding:12px; border-radius:12px; border:1px solid #333; text-decoration:none; color:#fff; font-weight:600; text-align:center; display:flex; justify-content:center; gap:8px; background:#000; transition:0.3s;"><i data-lucide="message-circle"></i> Zalo</a>
+               <a href="https://youtube.com/@zwicxsharereg" target="_blank" style="flex:1; padding:12px; border-radius:12px; border:1px solid #333; text-decoration:none; color:#fff; font-weight:600; text-align:center; display:flex; justify-content:center; gap:8px; background:#000; transition:0.3s;"><i data-lucide="youtube"></i> YouTube</a>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <!-- DEVICE LIMIT TRACKER -->
-      <div class="glass-card">
-        <div style="font-size:12px; font-weight:700; color:#a1a1aa; text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-          <span>THIẾT BỊ HIỆN TẠI</span>
-          <span style="background:#222; padding:2px 8px; border-radius:10px; font-size:11px; color:#fff;">Hôm nay</span>
-        </div>
-        <div style="font-size:14px; font-weight:800; margin-bottom:16px; color:#fff;">Theo dõi nhanh lượt nhận key trong hôm nay</div>
-        
-        <div class="device-grid">
-          <div class="device-item">
-            <div class="device-label">TÊN KEY</div>
-            <div class="device-val" style="font-size:14px;">Key Customs</div>
-          </div>
-          <div class="device-item">
-            <div class="device-label">CÒN LẠI HÔM NAY</div>
-            <div class="device-val" id="dev-limit">5</div>
-            <div class="device-sub">Giới hạn: 5 / IP. Reset lúc <span id="dev-reset">00h 00p</span> (GMT+7)</div>
-          </div>
-          <div class="device-item">
-            <div class="device-label">THÀNH CÔNG</div>
-            <div class="device-val" id="dev-success">0</div>
-            <div class="device-sub">lượt đã nhận key</div>
-          </div>
-          <div class="device-item">
-            <div class="device-label">LẦN GẦN NHẤT</div>
-            <div class="device-val" id="dev-last" style="font-size:16px;">Chưa có</div>
-            <div class="device-sub">Chưa lưu key gần đây</div>
-          </div>
-          <div class="device-item" style="grid-column: span 2;">
-            <div class="device-label">CÓ THỂ THỬ LẠI</div>
-            <div class="device-val" id="dev-retry">-</div>
-            <div class="device-sub">0 lượt đã bắt đầu, vui lòng chờ reset để thử lại.</div>
-          </div>
-        </div>
-      </div>
-
     </div>
   `);
 }
@@ -189,18 +202,16 @@ export function renderHome(env, error) {
 export function renderStep(title, stepNum, content) {
   const steps = ['Chọn key', 'Vượt link', 'Xác thực', 'Nhận key'];
   return layoutApp(title, `
-    <div class="container" style="max-width: 500px;">
-      <div class="glass-card">
-        <div class="header-title">${title}</div>
-        <div class="stepper" style="margin-top:20px;">
-          ${steps.map((s, i) => `<div class="step ${stepNum > i ? 'active' : ''}"><div class="step-line"></div><div class="step-circle">${i+1}</div><div class="step-label">${s}</div></div>`).join('')}
-        </div>
-        ${content}
+    <div class="glass-card" style="max-width: 500px; margin: 0 auto;">
+      <div class="header-title">${title}</div>
+      <div class="stepper" style="margin-top:20px;">
+        ${steps.map((s, i) => `<div class="step ${stepNum > i ? 'active' : ''}"><div class="step-line"></div><div class="step-circle">${i+1}</div><div class="step-label">${s}</div></div>`).join('')}
       </div>
+      ${content}
     </div>
   `);
 }
 
 export function renderFAQ() {
-  return layoutApp('FAQ', `<div class="glass-card"><h2>FAQ</h2><a href="/">Quay lại</a></div>`);
+  return layoutApp('FAQ', `<div class="glass-card"><h2>FAQ</h2><a href="/" style="color:#fff;">Quay lại</a></div>`);
 }

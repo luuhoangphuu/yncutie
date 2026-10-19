@@ -1,4 +1,3 @@
-// --- CSS CHECKPOINT (DARK TITANIUM) ---
 export const CSS_CHECKPOINT = `
 :root { color-scheme: dark; --bg: #050505; --text: #ffffff; --text-muted: #a1a1aa; --primary: #ffffff; --border: rgba(255,255,255,0.1); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -23,18 +22,15 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 h1 { font-size: 54px; font-weight: 800; line-height: 1.05; margin-bottom: 24px; color: #fff; letter-spacing: -0.04em; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
 h1 span { color: #a1a1aa; }
 .desc { font-size: 16px; line-height: 1.7; color: var(--text-muted); margin-bottom: 40px; font-weight: 500; max-width: 90%; }
-
 .terminal-box { background: #000; border-radius: 16px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #fff; height: 160px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02); position: relative; border: 1px solid var(--border); }
 .terminal-box::before { content: 'root@titanium:~#'; color: #fff; display: block; margin-bottom: 10px; font-weight: bold; opacity: 0.8; }
 .term-line { margin-bottom: 6px; opacity: 0; animation: typeIn 0.3s forwards; color: #a1a1aa; }
 @keyframes typeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-
 .challenge-module { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px); border-radius: 24px; padding: 40px; box-shadow: 0 24px 60px -12px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.1); position: relative; overflow: hidden; }
 .challenge-module::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, transparent, #fff, transparent); box-shadow: 0 0 15px #fff; }
 .cf-turnstile { display: flex; justify-content: center; margin-bottom: 24px; }
 .help-text { text-align: center; font-size: 14px; color: var(--text-muted); line-height: 1.6; font-weight: 500; }
 .help-text b { color: #fff; }
-
 .stepper { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; }
 .step { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .step-circle { width: 32px; height: 32px; border-radius: 50%; background: #000; border: 2px solid #333; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
@@ -46,7 +42,6 @@ h1 span { color: #a1a1aa; }
 .step-line { flex: 1; height: 2px; background: #333; margin: 0 15px; margin-bottom: 28px; border-radius: 2px; }
 .step-line.completed { background: #fff; }
 .step-line.active { background: linear-gradient(90deg, #fff, #555); }
-
 .right { display: grid; gap: 20px; animation: fadeInUp 0.8s ease-out 0.2s both; }
 .dash-card { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(24px); border: 1px solid var(--border); border-radius: 24px; padding: 28px; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5); transition: all 0.3s ease; }
 .dash-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.2); }
@@ -70,27 +65,31 @@ h1 span { color: #a1a1aa; }
 .stat-val { font-size: 15px; font-weight: 800; color: #fff; }
 `;
 
-// --- CSS APP (DARK TITANIUM) ---
 export const CSS_APP = `
 :root { color-scheme: dark; --bg: #050505; --text: #ffffff; --text-muted: #a1a1aa; --primary: #ffffff; --border: rgba(255,255,255,0.1); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
 #snow-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 .spotlight { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.05), transparent 40%); }
-
-.wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; position: relative; z-index: 10; }
-.container { position: relative; z-index: 10; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 20px; animation: fadeInUp 0.6s ease-out; }
+.bg-shapes { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: 0.05; }
+.shape { position: absolute; border: 6px solid #fff; pointer-events: none; }
+.circle { width: 200px; height: 200px; border-radius: 50%; top: -10%; left: -5%; animation: float 12s infinite ease-in-out alternate; }
+.triangle { width: 0; height: 0; border-left: 100px solid transparent; border-right: 100px solid transparent; border-bottom: 180px solid #fff; border-top: none; background: transparent !important; bottom: -10%; right: -5%; animation: float 15s infinite ease-in-out alternate-reverse; }
+.square { width: 150px; height: 150px; top: 40%; right: 10%; animation: float 18s infinite ease-in-out alternate; }
+@keyframes float { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-40px) rotate(20deg); } }
+.wrapper { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; position: relative; z-index: 10; }
+.container { position: relative; z-index: 10; width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; animation: fadeInUp 0.6s ease-out; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 900px) { .container { grid-template-columns: 1fr; max-width: 500px; } }
+.glass-card { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border); border-radius: 24px; padding: 30px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); margin-bottom: 20px; }
+.header-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.header-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
 
-.logo-container { text-align: center; margin-bottom: 20px; position: relative; }
-.logo-circle { width: 100px; height: 100px; border-radius: 50%; background: #000; border: 2px solid rgba(255,255,255,0.2); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 40px rgba(255,255,255,0.1), inset 0 0 20px rgba(255,255,255,0.05); position: relative; overflow: hidden; }
-.logo-circle::after { content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1px solid #fff; opacity: 0.5; animation: ping 2s infinite; }
-@keyframes ping { 75%, 100% { transform: scale(1.5); opacity: 0; } }
-.logo-text { font-size: 28px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
-
-.glass-card { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border); border-radius: 24px; padding: 30px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); }
-.header-title { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-.header-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+/* TELEGRAM BANNER */
+.telegram-banner { background: #111; border-radius: 16px; padding: 20px; color: #fff; margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border); }
+.telegram-banner h4 { font-size: 16px; font-weight: 700; }
+.telegram-btn { background: #fff; color: #000; padding: 12px; border-radius: 12px; font-weight: 800; text-align: center; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
+.telegram-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255, 255, 255, 0.2); }
 
 /* 4-STEPPER */
 .stepper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
@@ -102,35 +101,43 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .step-label { font-size: 12px; font-weight: 600; color: #a1a1aa; text-align: center; }
 .step.active .step-label { color: #fff; }
 
-/* INPUTS & BUTTONS */
-.input-group { background: #111; border: 1px solid #333; border-radius: 16px; padding: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s; }
-.input-group:hover { border-color: #555; }
-.input-group label { font-size: 14px; font-weight: 600; color: #a1a1aa; }
-.input-group span { font-size: 15px; font-weight: 700; color: #fff; }
-.input-badge { background: rgba(255,255,255,0.1); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+/* KEY SELECTOR */
+.key-input-group { background: #111; border: 1px solid #333; border-radius: 16px; padding: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+.key-input-group label { font-size: 14px; font-weight: 600; color: #a1a1aa; }
+.key-badge { background: rgba(255,255,255,0.1); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
 
 .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 18px 24px; border-radius: 16px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; text-decoration: none; transition: all 0.4s; position: relative; overflow: hidden; }
 .btn-primary { background: #ffffff; color: #000; box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.3); }
 .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 35px -5px rgba(255, 255, 255, 0.5); }
 
-.btn-dark { background: #111; color: #fff; border: 1px solid #333; }
-.btn-dark:hover { background: #1a1a1a; border-color: #555; }
-
 /* DEVICE INFO CARD */
-.device-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.device-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .device-item { background: #111; border: 1px solid #333; border-radius: 16px; padding: 16px; }
 .device-label { font-size: 11px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; margin-bottom: 8px; }
 .device-val { font-size: 20px; font-weight: 800; color: #fff; }
 .device-sub { font-size: 12px; color: #a1a1aa; margin-top: 4px; line-height: 1.4; }
 .device-sub b { color: #fff; }
 
+/* PRICING & INFO */
+.info-box { background: #111; border: 1px solid #333; border-radius: 16px; padding: 24px; }
+.info-box h4 { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: #fff; }
+.info-list { list-style: none; font-size: 14px; color: #a1a1aa; line-height: 1.6; }
+.info-list li { margin-bottom: 8px; }
+.info-list b { color: #fff; }
+.pricing { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; font-weight: 600; color: #fff; }
+.pricing div { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #000; border-radius: 8px; border: 1px solid #333; }
+
+/* FOOTER */
+.footer { text-align: center; padding: 40px 20px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto; position: relative; z-index: 10; }
+.footer p { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+.footer a { color: #fff; font-weight: 700; text-decoration: none; }
+
 /* FLOATING WIDGET */
-.float-widget { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3); z-index: 100; cursor: pointer; transition: transform 0.3s; text-decoration: none; }
+.float-widget { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3); z-index: 100; cursor: pointer; transition: transform 0.3s; text-decoration: none; }
 .float-widget:hover { transform: scale(1.1); }
 .float-dot { position: absolute; top: 0; right: 0; width: 14px; height: 14px; background: #ef4444; border-radius: 50%; border: 2px solid #000; }
 `;
 
-// --- JAVASCRIPT CHUNG (SNOWFALL) ---
 export const JS = `
 const canvas = document.createElement('canvas');
 canvas.id = 'snow-bg';
