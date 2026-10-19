@@ -420,3 +420,258 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 `;
+
+// ============ PREMIUM EFFECTS ============
+export const CSS_PREMIUM = `
+/* Custom Cursor */
+@media (hover: hover) and (pointer: fine) {
+  body, a, button, .btn, .glass-card { cursor: none !important; }
+  .cursor-dot, .cursor-ring { display: block; }
+}
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot, .cursor-ring { display: none !important; }
+}
+.cursor-dot { position: fixed; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); mix-blend-mode: difference; box-shadow: 0 0 10px rgba(255,255,255,0.8); display: none; transition: transform 0.1s; }
+.cursor-ring { position: fixed; width: 40px; height: 40px; border: 1.5px solid rgba(255,255,255,0.4); border-radius: 50%; pointer-events: none; z-index: 99999; transform: translate(-50%, -50%); display: none; transition: width 0.3s, height 0.3s, border-color 0.3s, background 0.3s; }
+body.cursor-hover .cursor-ring { width: 60px; height: 60px; border-color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.08); box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+body.cursor-click .cursor-dot { transform: translate(-50%, -50%) scale(2); }
+
+/* Top Progress Bar */
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: linear-gradient(90deg, #555, #fff, #555); box-shadow: 0 0 15px #fff, 0 0 30px rgba(255,255,255,0.5); z-index: 10000; transition: width 0.1s linear; }
+
+/* Page Load Bar */
+.page-loader { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 10001; overflow: hidden; }
+.page-loader-bar { height: 100%; background: linear-gradient(90deg, #555, #fff, #ff0055, #fff); box-shadow: 0 0 20px #fff; animation: pageLoad 1.8s cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+@keyframes pageLoad { 0% { width: 0%; } 40% { width: 60%; } 70% { width: 90%; } 100% { width: 100%; opacity: 0; } }
+
+/* Aurora Background */
+.aurora { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
+.aurora-blob { position: absolute; width: 500px; height: 500px; border-radius: 50%; filter: blur(120px); opacity: 0.15; }
+.aurora-blob:nth-child(1) { top: -10%; left: -10%; background: radial-gradient(circle, #ffffff, transparent 70%); animation: aurora1 25s infinite ease-in-out; }
+.aurora-blob:nth-child(2) { top: 40%; right: -15%; background: radial-gradient(circle, #a1a1aa, transparent 70%); animation: aurora2 30s infinite ease-in-out; }
+.aurora-blob:nth-child(3) { bottom: -15%; left: 30%; background: radial-gradient(circle, #52525b, transparent 70%); animation: aurora3 20s infinite ease-in-out; }
+@keyframes aurora1 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(150px, 100px) scale(1.3); } }
+@keyframes aurora2 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(-100px, -80px) scale(0.85); } }
+@keyframes aurora3 { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(80px, -100px) scale(1.15); } }
+
+/* Scroll Reveal */
+.reveal-opacity { opacity: 0; transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.reveal-opacity.visible { opacity: 1; }
+
+/* Stagger Children */
+.stagger-item { opacity: 0; animation: staggerIn 0.6s ease-out forwards; }
+@keyframes staggerIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Magnetic Buttons */
+.magnetic { translate: 0 0; transition: translate 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* Chrome Shine on Cards */
+.glass-card { position: relative; overflow: hidden; }
+.glass-card::after { content: ''; position: absolute; top: -50%; left: -100%; width: 60%; height: 200%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); transform: skewX(-20deg); transition: left 1s; pointer-events: none; z-index: 1; }
+.glass-card:hover::after { left: 150%; }
+.glass-card:hover { transform: translateY(-6px); }
+
+/* Button Press Depth */
+.btn:active, .telegram-btn:active, .tier-option:active, .btn-save:active { transform: translateY(2px) scale(0.97) !important; }
+
+/* Text Glow */
+.header-title { transition: text-shadow 0.3s; }
+.header-title:hover { text-shadow: 0 0 20px rgba(255,255,255,0.6); }
+
+/* Ambient Glow behind h1 */
+h1 { position: relative; }
+h1::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 100%; transform: translateY(-50%); background: radial-gradient(ellipse, rgba(255,255,255,0.06), transparent 70%); z-index: -1; animation: ambientPulse 4s ease-in-out infinite; pointer-events: none; }
+@keyframes ambientPulse { 0%, 100% { opacity: 0.5; transform: translateY(-50%) scale(1); } 50% { opacity: 1; transform: translateY(-50%) scale(1.15); } }
+
+/* Scroll Progress Circle */
+.scroll-indicator { position: fixed; bottom: 100px; right: 30px; width: 50px; height: 50px; z-index: 99; opacity: 0; transform: translateY(20px); transition: opacity 0.4s, transform 0.4s; pointer-events: none; }
+.scroll-indicator.visible { opacity: 1; transform: translateY(0); }
+.scroll-indicator svg { transform: rotate(-90deg); }
+.scroll-indicator circle { fill: none; stroke-width: 3; }
+.scroll-indicator .bg { stroke: rgba(255,255,255,0.08); }
+.scroll-indicator .fg { stroke: #fff; stroke-linecap: round; transition: stroke-dashoffset 0.1s; filter: drop-shadow(0 0 6px #fff); }
+
+/* Header Shrink on Scroll */
+.top-nav { transition: padding 0.3s ease, background 0.3s ease, backdrop-filter 0.3s ease; }
+.top-nav.scrolled { padding: 10px 40px !important; background: rgba(9,9,11,0.95) !important; backdrop-filter: blur(30px) saturate(180%) !important; box-shadow: 0 4px 30px rgba(0,0,0,0.5); }
+
+/* Live pulse dot */
+.live-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; animation: livePulse 1.5s ease-in-out infinite; display: inline-block; }
+@keyframes livePulse { 0%, 100% { box-shadow: 0 0 10px #10b981; transform: scale(1); } 50% { box-shadow: 0 0 20px #10b981, 0 0 30px #10b981; transform: scale(1.2); } }
+
+@media (max-width: 900px) {
+  .glass-card::after { display: none; }
+  .scroll-indicator { bottom: 80px; right: 20px; width: 40px; height: 40px; }
+  .progress-bar { height: 2px; }
+}
+`;
+
+export const JS_PREMIUM = `
+// ============ PREMIUM EFFECTS JS ============
+
+// 1. Custom Cursor
+(function() {
+  if (window.matchMedia('(hover: none), (pointer: coarse)').matches) return;
+  const dot = document.createElement('div');
+  dot.className = 'cursor-dot';
+  const ring = document.createElement('div');
+  ring.className = 'cursor-ring';
+  document.body.appendChild(dot);
+  document.body.appendChild(ring);
+  let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  let ringX = mouseX, ringY = mouseY;
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top = mouseY + 'px';
+  });
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.15;
+    ringY += (mouseY - ringY) * 0.15;
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+  document.addEventListener('mouseover', (e) => {
+    const t = e.target.closest('a, button, .btn, .tier-option, .glass-card, .device-item, .pricing div');
+    if (t) document.body.classList.add('cursor-hover');
+  });
+  document.addEventListener('mouseout', (e) => {
+    const t = e.target.closest('a, button, .btn, .tier-option, .glass-card, .device-item, .pricing div');
+    if (t) document.body.classList.remove('cursor-hover');
+  });
+  document.addEventListener('mousedown', () => document.body.classList.add('cursor-click'));
+  document.addEventListener('mouseup', () => document.body.classList.remove('cursor-click'));
+})();
+
+// 2. Top Progress Bar
+(function() {
+  const bar = document.createElement('div');
+  bar.className = 'progress-bar';
+  document.body.appendChild(bar);
+  window.addEventListener('scroll', () => {
+    const st = window.scrollY;
+    const dh = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = dh > 0 ? (st / dh * 100) + '%' : '0%';
+  });
+})();
+
+// 3. Page Load Bar
+(function() {
+  const loader = document.createElement('div');
+  loader.className = 'page-loader';
+  loader.innerHTML = '<div class="page-loader-bar"></div>';
+  document.body.prepend(loader);
+  setTimeout(() => loader.remove(), 2000);
+})();
+
+// 4. Aurora Blobs
+(function() {
+  const aurora = document.createElement('div');
+  aurora.className = 'aurora';
+  aurora.innerHTML = '<div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div>';
+  document.body.prepend(aurora);
+})();
+
+// 5. Scroll Reveal
+(function() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.05 });
+  document.querySelectorAll('.info-box, .device-item, .pricing div, .challenge-module, .terminal-box').forEach(el => {
+    el.classList.add('reveal-opacity');
+    observer.observe(el);
+  });
+})();
+
+// 6. Stagger Children
+(function() {
+  const containers = document.querySelectorAll('.features, .device-grid, .pricing, .stepper, .info-list');
+  containers.forEach(container => {
+    Array.from(container.children).forEach((child, i) => {
+      child.classList.add('stagger-item');
+      child.style.animationDelay = (i * 0.08) + 's';
+    });
+  });
+})();
+
+// 7. Magnetic Buttons
+(function() {
+  document.querySelectorAll('.btn, .telegram-btn, .btn-save').forEach(btn => {
+    btn.classList.add('magnetic');
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width / 2) * 0.15;
+      const y = (e.clientY - rect.top - rect.height / 2) * 0.15;
+      btn.style.translate = x + 'px ' + y + 'px';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.translate = '0 0';
+    });
+  });
+})();
+
+// 8. Header Shrink
+(function() {
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('.top-nav');
+    if (nav) {
+      if (window.scrollY > 50) nav.classList.add('scrolled');
+      else nav.classList.remove('scrolled');
+    }
+  });
+})();
+
+// 9. Scroll Progress Circle
+(function() {
+  const indicator = document.createElement('div');
+  indicator.className = 'scroll-indicator';
+  indicator.innerHTML = '<svg width="50" height="50" viewBox="0 0 50 50"><circle class="bg" cx="25" cy="25" r="22"/><circle class="fg" cx="25" cy="25" r="22" stroke-dasharray="138" stroke-dashoffset="138"/></svg>';
+  document.body.appendChild(indicator);
+  const fg = indicator.querySelector('.fg');
+  window.addEventListener('scroll', () => {
+    const st = window.scrollY;
+    const dh = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = dh > 0 ? st / dh : 0;
+    fg.style.strokeDashoffset = 138 - (138 * progress);
+    if (st > 300) indicator.classList.add('visible');
+    else indicator.classList.remove('visible');
+  });
+})();
+
+// 10. Parallax h1 on mouse
+(function() {
+  if (window.matchMedia('(hover: none)').matches) return;
+  document.addEventListener('mousemove', (e) => {
+    const h1 = document.querySelector('h1');
+    if (!h1) return;
+    const x = (e.clientX / window.innerWidth - 0.5) * 10;
+    const y = (e.clientY / window.innerHeight - 0.5) * 10;
+    h1.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+  });
+})();
+
+// 11. Device value glow on hover
+(function() {
+  document.querySelectorAll('.device-val').forEach(d => {
+    d.addEventListener('mouseenter', () => { d.style.transition = 'text-shadow 0.3s'; d.style.textShadow = '0 0 15px rgba(255,255,255,0.8)'; });
+    d.addEventListener('mouseleave', () => { d.style.textShadow = 'none'; });
+  });
+})();
+
+// 12. Haptic on mobile
+(function() {
+  if ('vibrate' in navigator) {
+    document.querySelectorAll('.btn, .tier-option, .telegram-btn').forEach(el => {
+      el.addEventListener('click', () => navigator.vibrate(10));
+    });
+  }
+})();
+`;

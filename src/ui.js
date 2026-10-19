@@ -1,23 +1,25 @@
-import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE, CSS_MODAL, JS_MODAL, CSS_ADMIN } from './assets.js';
+import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE, CSS_MODAL, JS_MODAL, CSS_ADMIN, CSS_PREMIUM, JS_PREMIUM } from './assets.js';
 
 const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>`;
 
-const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPOINT}</style></head>
+const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPOINT}${CSS_PREMIUM}</style></head>
 <body>
   ${content}
   <script>${JS}</script>
+  <script>${JS_PREMIUM}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
-const layoutApp = (title, content, isAdmin = false) => `${head(title)}<style>${CSS_APP}${CSS_MOBILE}${CSS_MODAL}${isAdmin ? CSS_ADMIN : ''}</style></head>
+const layoutApp = (title, content, isAdmin = false) => `${head(title)}<style>${CSS_APP}${CSS_MOBILE}${CSS_MODAL}${CSS_PREMIUM}${isAdmin ? CSS_ADMIN : ''}</style></head>
 <body>
   <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
   <div class="wrapper">${content}</div>
   <a href="https://zalo.me/0996492296" target="_blank" class="float-widget"><i data-lucide="message-circle" style="width:28px;height:28px;"></i><div class="float-dot"></div></a>
   <script>${JS}</script>
+  <script>${JS_PREMIUM}</script>
   <script>${JS_MODAL}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
