@@ -1,12 +1,12 @@
 export const CSS_CHECKPOINT = `
-:root { color-scheme: dark; --bg: #050505; --text: #ffffff; --text-muted: #a1a1aa; --primary: #ffffff; --border: rgba(255,255,255,0.1); }
+:root { color-scheme: dark; --bg: #050505; --text: #ffffff; --text-muted: #a1a1aa; --primary: #ffffff; --brand: #ff0055; --border: rgba(255,255,255,0.1); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
 #snow-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 .spotlight { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.05), transparent 40%); }
 
 .top-nav { position: relative; z-index: 10; width: 100%; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-.logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
+.logo { font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 10px; color: var(--brand); letter-spacing: 2px; text-transform: uppercase; text-shadow: 0 0 15px rgba(255,0,85,0.4); }
 .logo-icon { width: 32px; height: 32px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #000; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
 .status-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #fff; background: rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); }
 .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #fff; animation: pulse 2s infinite; }
@@ -20,10 +20,10 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .badge-security { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 2px; }
 .badge-security::before { content: ''; display: block; width: 30px; height: 3px; background: #fff; border-radius: 2px; box-shadow: 0 0 10px #fff; }
 h1 { font-size: 54px; font-weight: 800; line-height: 1.05; margin-bottom: 24px; color: #fff; letter-spacing: -0.04em; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
-h1 span { color: #a1a1aa; }
+h1 span { color: var(--brand); text-shadow: 0 0 20px rgba(255,0,85,0.3); }
 .desc { font-size: 16px; line-height: 1.7; color: var(--text-muted); margin-bottom: 40px; font-weight: 500; max-width: 90%; }
 .terminal-box { background: #000; border-radius: 16px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #fff; height: 160px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02); position: relative; border: 1px solid var(--border); }
-.terminal-box::before { content: 'root@getkey:~#'; color: #fff; display: block; margin-bottom: 10px; font-weight: bold; opacity: 0.8; }
+.terminal-box::before { content: 'root@getkeydpiconfig:~#'; color: var(--brand); display: block; margin-bottom: 10px; font-weight: bold; opacity: 0.8; }
 .term-line { margin-bottom: 6px; opacity: 0; animation: typeIn 0.3s forwards; color: #a1a1aa; }
 @keyframes typeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 .challenge-module { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px); border-radius: 24px; padding: 40px; box-shadow: 0 24px 60px -12px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.1); position: relative; overflow: hidden; }
@@ -66,7 +66,7 @@ h1 span { color: #a1a1aa; }
 `;
 
 export const CSS_APP = `
-:root { color-scheme: dark; --bg: #050505; --text: #ffffff; --text-muted: #a1a1aa; --primary: #ffffff; --border: rgba(255,255,255,0.1); }
+:root { color-scheme: dark; --bg: #050505; --text: #ffffff; --text-muted: #a1a1aa; --primary: #ffffff; --brand: #ff0055; --border: rgba(255,255,255,0.1); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
 #snow-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
@@ -77,6 +77,7 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .triangle { width: 0; height: 0; border-left: 100px solid transparent; border-right: 100px solid transparent; border-bottom: 180px solid #fff; border-top: none; background: transparent !important; bottom: -10%; right: -5%; animation: float 15s infinite ease-in-out alternate-reverse; }
 .square { width: 150px; height: 150px; top: 40%; right: 10%; animation: float 18s infinite ease-in-out alternate; }
 @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-40px) rotate(20deg); } }
+
 .wrapper { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; position: relative; z-index: 10; }
 .container { position: relative; z-index: 10; width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; animation: fadeInUp 0.6s ease-out; }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -84,6 +85,14 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .glass-card { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border); border-radius: 24px; padding: 30px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8); margin-bottom: 20px; }
 .header-title { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
 .header-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+
+/* ANNOUNCEMENT BANNER */
+.announcement { background: rgba(255, 0, 85, 0.1); border: 1px solid rgba(255, 0, 85, 0.3); border-radius: 12px; padding: 16px; margin-bottom: 20px; position: relative; display: flex; align-items: flex-start; gap: 12px; }
+.announcement-icon { color: var(--brand); margin-top: 2px; }
+.announcement-content h5 { color: var(--brand); font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.announcement-content p { color: #fff; font-size: 13px; line-height: 1.5; }
+.announcement-close { position: absolute; top: 12px; right: 12px; background: none; border: none; color: #fff; cursor: pointer; opacity: 0.5; transition: 0.3s; }
+.announcement-close:hover { opacity: 1; }
 
 /* TELEGRAM BANNER */
 .telegram-banner { background: #111; border-radius: 16px; padding: 20px; color: #fff; margin-bottom: 24px; display: flex; flex-direction: column; gap: 12px; border: 1px solid var(--border); }
@@ -118,6 +127,8 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 18px 24px; border-radius: 16px; border: none; font-weight: 800; font-size: 16px; cursor: pointer; text-decoration: none; transition: all 0.4s; position: relative; overflow: hidden; }
 .btn-primary { background: #ffffff; color: #000; box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.3); }
 .btn-primary:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 35px -5px rgba(255, 255, 255, 0.5); }
+.btn-admin { background: transparent; border: 1px solid var(--brand); color: var(--brand); margin-top: 10px; }
+.btn-admin:hover { background: rgba(255,0,85,0.1); }
 
 /* DEVICE INFO CARD */
 .device-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -139,6 +150,7 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 /* FOOTER */
 .footer { text-align: center; padding: 40px 20px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto; position: relative; z-index: 10; }
 .footer p { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+.footer p span { color: var(--brand); font-weight: 900; text-transform: uppercase; }
 .footer a { color: #fff; font-weight: 700; text-decoration: none; }
 
 /* FLOATING WIDGET */

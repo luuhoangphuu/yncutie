@@ -1,4 +1,4 @@
-import { renderCheckpoint, renderHome, renderStep, renderFAQ } from './ui.js';
+import { renderCheckpoint, renderHome, renderStep, renderFAQ, renderAdmin } from './ui.js';
 import { encodeSession, decodeSession, getCookie, setCookie, verifyTurnstile } from './auth.js';
 
 async function getSession(req, env) { return await decodeSession(getCookie(req, 'sess'), env.SESSION_SECRET || 'fallback_1101_fix'); }
@@ -12,15 +12,17 @@ export default {
     const botPassed = getCookie(request, 'bot_passed');
 
     try {
-      // API check bot
+      // TRANG ADMIN ẨN
+      if (p === '/ynsociuu/lhp' && m === 'GET') {
+        return html(renderAdmin());
+      }
+
       if (p === '/api/verify-bot' && m === 'POST') {
         const { token } = await request.json();
         const v = await verifyTurnstile(token, request.headers.get('cf-connecting-ip') || 'local', env);
         if(!v.success) return new Response(JSON.stringify({ success: false, error: v.error }), { status: 400 });
-        // Cookie 3 phút
         return new Response(JSON.stringify({ success: true }), { headers: { 'Set-Cookie': `bot_passed=1; Path=/; Max-Age=180; Secure` } });
       }
-      
       if (!botPassed) return html(renderCheckpoint(env));
 
       const s = await getSession(request, env);
@@ -30,7 +32,6 @@ export default {
       
       if (p === '/start' && m === 'POST') {
         const form = await request.formData();
-        // Session lưu tier
         const session = { sub: false, ads: 0, key: null, tier: form.get('tier') || 'Normal', adsToken: null, adsStartTime: null };
         return redirect('/step1', await saveSession(request, env, session));
       }
@@ -38,9 +39,9 @@ export default {
       if (p === '/step1' && m === 'GET') {
         if(!s) return redirect('/');
         return html(renderStep('Ủng hộ', 1, `
-          <h2 style="text-align:center; margin-bottom:20px;">Ủng hộ Kênh YouTube</h2>
-          <p class="sub" style="text-align:center;">Vui lòng theo dõi kênh để duy trì hệ thống miễn phí.</p>
-          <a href="${env.YOUTUBE_CHANNEL_URL}" target="_blank" class="btn btn-youtube" style="margin-bottom:20px;"><i data-lucide="youtube"></i> Mở YouTube</a>
+          <h2 style="text-align:center; margin-bottom:20px; color:#fff;">Ủng hộ Kênh YouTube</h2>
+          <p class="sub" style="text-align:center; color:#a1a1aa;">Vui lòng theo dõi kênh để duy trì hệ thống miễn phí.</p>
+          <a href="${env.YOUTUBE_CHANNEL_URL}" target="_blank" class="btn btn-primary" style="margin-bottom:20px; background:#ff0000; color:#fff; box-shadow:0 10px 25px rgba(255,0,0,0.3);"><i data-lucide="youtube"></i> Mở YouTube</a>
           <form method="POST" action="/verify/sub" onsubmit="showSkeleton();">
             <button type="submit" class="btn btn-primary"><i data-lucide="check"></i> Tôi đã theo dõi</button>
           </form>
@@ -51,22 +52,19 @@ export default {
         s.sub = true; return redirect('/step2', await saveSession(request, env, s));
       }
 
-      // BƯỚC 2: TẠO TOKEN VÉ THÔNG HÀNH
       if (p === '/step2' && m === 'GET') {
         if(!s || !s.sub) return redirect('/');
         const required = s.tier === 'VIP' ? 2 : 1;
         if (s.ads >= required) return redirect('/success');
 
         const currentStep = s.ads + 1;
-        
-        // Tạo vé thông hành mới mỗi lần vào
         const adsToken = crypto.randomUUID();
         s.adsToken = adsToken;
         s.adsStartTime = Date.now();
         const cookie = await saveSession(request, env, s);
 
         const returnUrl = new URL('/ads-return', request.url);
-        returnUrl.searchParams.set('token', adsToken); // Gắn vé vào URL
+        returnUrl.searchParams.set('token', adsToken);
 
         let link4mUrl = returnUrl.toString();
         if(env.LINK4M_API_TOKEN) {
@@ -78,38 +76,32 @@ export default {
         }
 
         return html(renderStep('Vượt Ads', 2, `
-          <h2 style="text-align:center; margin-bottom:20px;">Vượt Quảng Cáo (${currentStep}/${required})</h2>
-          <p class="sub" style="text-align:center;">Nhấn mở Ads, hoàn thành và đợi hệ thống tự chuyển hướng về nhận Key.</p>
-          <a href="${link4mUrl}" target="_blank" class="btn btn-ads" style="margin-bottom:20px;"><i data-lucide="play-circle"></i> Mở Link4M (Lần ${currentStep})</a>
+          <h2 style="text-align:center; margin-bottom:20px; color:#fff;">Vượt Quảng Cáo (${currentStep}/${required})</h2>
+          <p class="sub" style="text-align:center; color:#a1a1aa;">Nhấn mở Ads, hoàn thành và đợi hệ thống tự chuyển hướng về nhận Key.</p>
+          <a href="${link4mUrl}" target="_blank" class="btn btn-primary" style="margin-bottom:20px; background:linear-gradient(135deg, #f59e0b, #f97316); color:#fff;"><i data-lucide="play-circle"></i> Mở Link4M (Lần ${currentStep})</a>
         `), { 'Set-Cookie': cookie });
       }
 
-      // CALLBACK TỪ LINK4M: CHECK TOKEN VÀ THỜI GIAN
       if (p === '/ads-return' && m === 'GET') {
         if(!s || !s.sub) return redirect('/');
-        
         const reqToken = url.searchParams.get('token');
         
-        // 1. Check Token có khớp không (Chống bypass gọi trực tiếp)
         if (!reqToken || !s.adsToken || reqToken !== s.adsToken) {
            return redirect('/?error=' + encodeURIComponent('Cảnh báo: Phát hiện hành vi Bypass Ads! Vui lòng làm lại.'));
         }
 
-        // 2. Check thời gian (Chống click ảo - Ít nhất 5 giây)
         const timeTaken = (Date.now() - s.adsStartTime) / 1000;
         if (timeTaken < 5) {
            return redirect('/?error=' + encodeURIComponent('Cảnh báo: Bạn vượt Ads quá nhanh! Vui lòng thực hiện lại.'));
         }
 
-        // Hợp lệ -> Cộng điểm
         s.ads += 1;
-        s.adsToken = null; // Xóa vé (chỉ dùng 1 lần)
+        s.adsToken = null;
         
         const required = s.tier === 'VIP' ? 2 : 1;
         if (s.ads < required) {
           return redirect('/step2', await saveSession(request, env, s));
         } else {
-          // Đã đủ điều kiện -> Lấy Key
           const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY }, body: JSON.stringify({ tier: s.tier }) });
           const data = await res.json();
           if(data.success) { s.key = data.key; s.duration = data.duration_hours; return redirect('/success', await saveSession(request, env, s)); }
@@ -120,13 +112,13 @@ export default {
       if (p === '/success' && m === 'GET') {
         if(!s || !s.key) return redirect('/');
         return html(renderStep('Nhận Key', 3, `
-          <h2 style="text-align:center; margin-bottom:20px;">Lấy Key Thành Công!</h2>
+          <h2 style="text-align:center; margin-bottom:20px; color:#fff;">Lấy Key Thành Công!</h2>
           <div id="keyContainer">
-            <div class="key-box"><span id="keyText">${s.key}</span></div>
+            <div class="key-box" style="background:#111; border:2px dashed #555;"><span id="keyText" style="color:var(--brand);">${s.key}</span></div>
             <button class="btn btn-primary" data-copy="keyText"><i data-lucide="copy"></i> Sao chép Key</button>
           </div>
-          <p style="text-align:center; color:var(--text-muted); margin-top:20px; font-size:13px;">Hạn sử dụng: <b>${s.duration || 8} giờ</b></p>
-          <a href="/" class="btn btn-ghost" style="margin-top:20px;"><i data-lucide="home"></i> Quay lại trang chủ</a>
+          <p style="text-align:center; color:#a1a1aa; margin-top:20px; font-size:13px;">Hạn sử dụng: <b>${s.duration || 8} giờ</b></p>
+          <a href="/" class="btn btn-ghost" style="margin-top:20px; border:1px solid #333; color:#fff;"><i data-lucide="home"></i> Quay lại trang chủ</a>
         `));
       }
 

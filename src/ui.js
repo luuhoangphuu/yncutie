@@ -24,7 +24,7 @@ const layoutApp = (title, content) => `${head(title)}<style>${CSS_APP}</style></
 export function renderCheckpoint(env) {
   return layoutCheckpoint('Security Check', `
     <div class="top-nav">
-      <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> GET KEY</div>
+      <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> GETKEYDPICONFIG.SITE</div>
       <div style="display:flex; gap:16px; align-items:center;">
         <div class="time-badge"><i data-lucide="clock" style="width:16px;height:16px;"></i> <span id="vn-clock">00:00:00</span> (GMT+7)</div>
         <div class="status-badge"><div class="status-dot"></div> Bảo vệ</div>
@@ -92,16 +92,26 @@ export function renderCheckpoint(env) {
 }
 
 export function renderHome(env, error) {
-  return layoutApp('Get Key', `
+  return layoutApp('GETKEYDPICONFIG.SITE', `
     <div class="container">
       <!-- CỘT TRÁI: LẤY KEY -->
       <div>
         <div class="glass-card">
-          <div class="header-title"><i data-lucide="key" style="color:#fff;"></i> Lấy Key Miễn Phí</div>
-          <div class="header-desc">Chào mừng bạn đến với hệ thống Get Key tự động.</div>
+          <div class="header-title"><i data-lucide="key" style="color:var(--brand);"></i> Lấy Key Miễn Phí</div>
+          <div class="header-desc">Chào mừng bạn đến với hệ thống của GETKEYDPICONFIG.SITE.</div>
           
+          <!-- THÔNG BÁO -->
+          <div class="announcement" id="announcementBanner">
+            <div class="announcement-icon"><i data-lucide="bell" style="width:20px;"></i></div>
+            <div class="announcement-content">
+              <h5>THÔNG BÁO QUAN TRỌNG</h5>
+              <p>Hệ thống vừa cập nhật giao diện Dark Titanium mới. Nếu có lỗi vui lòng báo Admin qua Zalo. Chúc bạn lấy Key thành công!</p>
+            </div>
+            <button class="announcement-close" onclick="document.getElementById('announcementBanner').style.display='none'"><i data-lucide="x" style="width:16px;"></i></button>
+          </div>
+
           <div class="telegram-banner">
-            <h4>Cộng đồng Get Key</h4>
+            <h4>Cộng đồng GETKEYDPICONFIG</h4>
             <a href="#" class="telegram-btn"><i data-lucide="send"></i> Tham gia nhóm Telegram ↗</a>
           </div>
 
@@ -125,14 +135,13 @@ export function renderHome(env, error) {
 
           <form method="POST" action="/start">
             <input type="hidden" name="tier" id="tierInput" value="Normal">
-            <button type="submit" class="btn btn-primary"><i data-lucide="download"></i> Get Key</button>
+            <button type="submit" class="btn btn-primary"><i data-lucide="download"></i> Lấy Key Ngay</button>
           </form>
         </div>
       </div>
 
       <!-- CỘT PHẢI: THÔNG TIN & THIẾT BỊ -->
       <div>
-        <!-- THIẾT BỊ HIỆN TẠI -->
         <div class="glass-card">
           <div style="font-size:12px; font-weight:700; color:#a1a1aa; text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
             <span>THIẾT BỊ HIỆN TẠI</span>
@@ -168,12 +177,11 @@ export function renderHome(env, error) {
           </div>
         </div>
 
-        <!-- THÔNG TIN TỪ WEB -->
         <div class="glass-card">
           <div class="info-box">
-            <h4>Thông tin từ Get Key</h4>
+            <h4>Thông tin bản quyền</h4>
             <ul class="info-list">
-              <li>© Bản quyền thuộc về Get Key System</li>
+              <li>© Bản quyền thuộc về <b style="color:var(--brand);">GETKEYDPICONFIG.SITE</b>.</li>
               <li style="color:#ef4444; font-weight:700;">‼ Mọi hành vi buôn bán key không rõ nguồn gốc đều là lừa đảo.</li>
               <li>📦 Mua key VIP vui lòng liên hệ Admin.</li>
               <li style="margin-top:12px; font-weight:700; color:#fff;">Bảng giá Key VIP</li>
@@ -220,6 +228,32 @@ export function renderStep(title, stepNum, content) {
       </div>
       ${content}
     </div>
+  `);
+}
+
+export function renderAdmin() {
+  return layoutApp('Admin Panel', `
+    <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-color: var(--brand);">
+      <div class="header-title" style="color: var(--brand);"><i data-lucide="terminal" style="color:var(--brand);"></i> HỆ THỐNG QUẢN TRỊ ẨN</div>
+      <div class="header-desc">Chào mừng Admin. Đây là trang quản trị nội bộ, không được public.</div>
+      
+      <div class="terminal-box" style="height: 300px; color: #fff; border-color: var(--brand);">
+        <div class="term-line" style="color: var(--brand);">> Truy cập thành công vào hệ thống lõi.</div>
+        <div class="term-line">> IP của bạn đã được ghi nhận.</div>
+        <div class="term-line">> Trạng thái Server: Hoạt động bình thường.</div>
+        <div class="term-line">> Số lượng Key phát ra hôm nay: 124 (Mock data).</div>
+        <div class="term-line">> Số lượng IP bị chặn: 4 (Mock data).</div>
+        <div class="term-line" style="color: #ef4444;">> CẢNH BÁO: Không chia sẻ đường dẫn này cho bất kỳ ai.</div>
+        <div class="term-line" style="color: #10b981;">> Sẵn sàng nhận lệnh...</div>
+        <div class="term-line" style="margin-top:20px;"><span style="color:var(--brand);">admin@getkeydpiconfig:~#</span> <span class="cursor" style="animation: blink 1s step-end infinite;">_</span></div>
+      </div>
+
+      <div style="margin-top:20px; display:flex; gap:10px;">
+        <a href="/" class="btn btn-primary" style="flex:1;"><i data-lucide="arrow-left"></i> Về trang chủ</a>
+        <button class="btn btn-admin" style="flex:1;" onclick="showToast('Chức năng đang phát triển!', 'success')">Quản lý Key</button>
+      </div>
+    </div>
+    <style>@keyframes blink { 50% { opacity: 0; } }</style>
   `);
 }
 
