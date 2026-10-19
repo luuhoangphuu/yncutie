@@ -6,37 +6,26 @@ async function saveSession(req, env, data) { data.expiresAt = Date.now() + 90000
 const html = (s) => new Response(s, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 const redirect = (loc, cookie) => { const h = { 'Location': loc }; if(cookie) h['Set-Cookie'] = cookie; return new Response('', { status: 302, headers: h }); };
 
-// Hàm lấy thông báo: Ưu tiên KV, fallback sang Cache
+// Hàm lấy thông báo: Ưu tiên KV, nếu không có thì trả về rỗng
 async function getNotice(env) {
   if (env.ANNOUNCEMENT_KV) {
     try {
-      const n = await env.ANNOUNCEMENT_KV.get('notice');
-      if (n !== null) return n;
+      return await env.ANNOUNCEMENT_KV.get('notice') || '';
     } catch (e) { console.error('KV get error:', e); }
   }
-  // Fallback Cache API
-  try {
-    const cached = await caches.default.match('https://internal.notice');
-    if (cached) return await cached.text();
-  } catch (e) {}
   return '';
 }
 
-// Hàm lưu thông báo: Ghi cả KV và Cache để đảm bảo
+// Hàm lưu thông báo: Bắt buộc phải có KV
 async function saveNotice(env, notice) {
-  let success = false;
-  if (env.ANNOUNCEMENT_KV) {
-    try {
-      await env.ANNOUNCEMENT_KV.put('notice', notice);
-      success = true;
-    } catch (e) { console.error('KV put error:', e); }
-  }
-  // Luôn ghi vào cache làm backup
+  if (!env.ANNOUNCEMENT_KV) return false;
   try {
-    await caches.default.put('https://internal.notice', new Response(notice, { headers: { 'Cache-Control': 'max-age=86400' } }));
-    success = true;
-  } catch (e) { console.error('Cache put error:', e); }
-  return success;
+    await env.ANNOUNCEMENT_KV.put('notice', notice);
+    return true;
+  } catch (e) { 
+    console.error('KV put error:', e); 
+    return false; 
+  }
 }
 
 export default {
@@ -50,14 +39,16 @@ export default {
       if (p === '/api/admin/notice' && m === 'POST') {
         const { password, notice } = await request.json();
         const adminPass = env.ADMIN_PASSWORD || 'lhp_admin_2026';
+        
         if (password !== adminPass) {
           return new Response(JSON.stringify({ success: false, error: 'Mật khẩu Admin không đúng!' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
         }
+        
         const saved = await saveNotice(env, notice);
         if (saved) {
           return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
         } else {
-          return new Response(JSON.stringify({ success: false, error: 'Không thể lưu thông báo. Kiểm tra lại cấu hình KV.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+          return new Response(JSON.stringify({ success: false, error: 'Lỗi: Chưa cấu hình Cloudflare KV. Vui lòng làm theo hướng dẫn.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
         }
       }
 
@@ -150,7 +141,7 @@ export default {
         return html(renderStep('Nhận Key', 3, `
           <h2 style="text-align:center; margin-bottom:20px; color:#fff;">Lấy Key Thành Công!</h2>
           <div id="keyContainer">
-            <div class="key-box" style="background:#111; border:2px dashed #555;"><span id="keyText" style="color:var(--brand);">${s.key}</span></div>
+            <div class="key-box" style="background:#111; border:2px dashed #555;"><span id="keyText" style="color:#fff;">${s.key}</span></div>
             <button class="btn btn-primary" data-copy="keyText"><i data-lucide="copy"></i> Sao chép Key</button>
           </div>
           <p style="text-align:center; color:#a1a1aa; margin-top:20px; font-size:13px;">Hạn sử dụng: <b>${s.duration || 8} giờ</b></p>
