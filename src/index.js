@@ -74,7 +74,7 @@ export default {
 
       if (p === '/' && m === 'GET') {
         const notice = await getNotice(env);
-        return html(renderHome(env, url.searchParams.get('error'), notice));
+        return html(renderHome(env, url.searchParams.get('error'), notice, s));
       }
       
       if (p === '/faq' && m === 'GET') return html(renderFAQ());

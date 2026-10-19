@@ -94,7 +94,7 @@ export function renderCheckpoint(env) {
   `);
 }
 
-export function renderHome(env, error, notice) {
+export function renderHome(env, error, notice, session) {
   const modalHtml = (notice && notice.enabled) ? `
   <div id="customModal" class="modal-overlay">
     <div class="modal-box">
@@ -186,6 +186,38 @@ export function renderHome(env, error, notice) {
           </div>
         </div>
 
+        
+        <div class="glass-card">
+          <div class="header-title" style="font-size:18px; margin-bottom:12px; display:flex; align-items:center; gap:8px;"><i data-lucide="shield" style="width:20px; color:#10b981;"></i> Phiên & Cookie</div>
+          <div class="session-grid">
+            <div class="session-item" style="grid-column: span 2;">
+              <div class="label">Mã Session ID (HMAC)</div>
+              <div class="value" id="session-id">${session && session.sid ? session.sid.slice(0, 12) + '...' + session.sid.slice(-4) : 'Chưa có phiên'}</div>
+            </div>
+            <div class="session-item">
+              <div class="label">Hết hạn sau</div>
+              <div class="value" id="session-timer" style="color:#f59e0b;">--:--</div>
+            </div>
+            <div class="session-item">
+              <div class="label">Bảo mật Cookie</div>
+              <div class="value secure"><i data-lucide="lock" style="width:12px; vertical-align:-2px;"></i> Signed</div>
+            </div>
+          </div>
+          <button class="btn-clear-session" onclick="window.location.href='/reset'"><i data-lucide="trash-2" style="width:16px;"></i> Xóa phiên làm việc</button>
+          <script>
+            window.sessionExpires = ${session ? session.expiresAt : 0};
+            setInterval(() => {
+              const t = document.getElementById('session-timer');
+              if (t) {
+                const rem = Math.max(0, window.sessionExpires - Date.now());
+                const m = Math.floor(rem / 60000);
+                const s = Math.floor((rem % 60000) / 1000);
+                t.innerText = m + ':' + (s < 10 ? '0' : '') + s;
+              }
+            }, 1000);
+          </script>
+        </div>
+
         <div class="glass-card">
           <div class="info-box">
             <h4>Thông tin bản quyền</h4>
@@ -200,10 +232,11 @@ export function renderHome(env, error, notice) {
               <div><span>👉 Key 7 ngày</span> <b>50k</b></div>
               <div><span>👉 Key 30 ngày</span> <b>150k</b></div>
             </div>
-            <div style="display:flex; gap:12px; margin-top:20px;">
-               <a href="https://zalo.me/0996492296" target="_blank" style="flex:1; padding:12px; border-radius:12px; border:1px solid #333; text-decoration:none; color:#fff; font-weight:600; text-align:center; display:flex; justify-content:center; gap:8px; background:#000; transition:0.3s;"><i data-lucide="message-circle"></i> Zalo</a>
-               <a href="https://youtube.com/@zwicxsharereg" target="_blank" style="flex:1; padding:12px; border-radius:12px; border:1px solid #333; text-decoration:none; color:#fff; font-weight:600; text-align:center; display:flex; justify-content:center; gap:8px; background:#000; transition:0.3s;"><i data-lucide="youtube"></i> YouTube</a>
-            </div>
+            
+<div class="social-btns">
+  <a href="https://zalo.me/0996492296" target="_blank" class="social-btn zalo"><i data-lucide="message-circle" style="width:20px;height:20px;"></i> Zalo</a>
+  <a href="https://youtube.com/@zwicxsharereg" target="_blank" class="social-btn yt"><i data-lucide="youtube" style="width:20px;height:20px;"></i> YouTube</a>
+</div>
           </div>
         </div>
       </div>
