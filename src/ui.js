@@ -1,6 +1,11 @@
 import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE, CSS_MODAL, JS_MODAL, CSS_ADMIN, CSS_PREMIUM, JS_PREMIUM } from './assets.js';
 
 const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+<meta property="og:title" content="GETKEYDPICONFIG.SITE - Lấy Key Miễn Phí">
+<meta property="og:description" content="Hệ thống phát Key tự động, bảo mật 10 phút, hỗ trợ VIP/Normal.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://ui-avatars.com/api/?name=GK&background=09090b&color=fff&size=200&rounded=true">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>`;
@@ -11,17 +16,80 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
   <script>${JS}</script>
   <script>${JS_PREMIUM}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+
+  <script>
+    // Back to Top
+    const btt = document.getElementById('backToTop');
+    if(btt) {
+      window.addEventListener('scroll', () => {
+        if(window.scrollY > 300) btt.classList.add('show');
+        else btt.classList.remove('show');
+      });
+      btt.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    }
+    
+    // Copy logic nâng cao
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-copy]');
+      if(!btn) return;
+      const targetId = btn.dataset.copy;
+      const targetEl = document.getElementById(targetId);
+      if(!targetEl) return;
+      navigator.clipboard.writeText(targetEl.innerText).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check"></i> Đã Copy!';
+        btn.classList.add('btn-copied');
+        if(window.lucide) lucide.createIcons();
+        // Lưu lịch sử
+        localStorage.setItem('last_key', targetEl.innerText);
+        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-copied'); if(window.lucide) lucide.createIcons(); }, 2000);
+      });
+    });
+  </script>
+
 </body></html>`;
 
 const layoutApp = (title, content, isAdmin = false) => `${head(title)}<style>${CSS_APP}${CSS_MOBILE}${CSS_MODAL}${CSS_PREMIUM}${isAdmin ? CSS_ADMIN : ''}</style></head>
 <body>
   <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
   <div class="wrapper">${content}</div>
+  <a href="#" id="backToTop" class="back-to-top"><i data-lucide="arrow-up" style="width:24px;height:24px;"></i></a>
   <a href="https://zalo.me/0996492296" target="_blank" class="float-widget"><i data-lucide="message-circle" style="width:28px;height:28px;"></i><div class="float-dot"></div></a>
   <script>${JS}</script>
   <script>${JS_PREMIUM}</script>
   <script>${JS_MODAL}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+
+  <script>
+    // Back to Top
+    const btt = document.getElementById('backToTop');
+    if(btt) {
+      window.addEventListener('scroll', () => {
+        if(window.scrollY > 300) btt.classList.add('show');
+        else btt.classList.remove('show');
+      });
+      btt.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    }
+    
+    // Copy logic nâng cao
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-copy]');
+      if(!btn) return;
+      const targetId = btn.dataset.copy;
+      const targetEl = document.getElementById(targetId);
+      if(!targetEl) return;
+      navigator.clipboard.writeText(targetEl.innerText).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check"></i> Đã Copy!';
+        btn.classList.add('btn-copied');
+        if(window.lucide) lucide.createIcons();
+        // Lưu lịch sử
+        localStorage.setItem('last_key', targetEl.innerText);
+        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-copied'); if(window.lucide) lucide.createIcons(); }, 2000);
+      });
+    });
+  </script>
+
 </body></html>`;
 
 export function renderCheckpoint(env) {
@@ -149,6 +217,22 @@ export function renderHome(env, error, notice, session) {
           </form>
         </div>
       </div>
+
+      
+        <div class="glass-card" id="historyCard" style="display:none;">
+          <div style="font-size:14px; font-weight:700; color:#fff; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><i data-lucide="history" style="width:16px;"></i> Key gần nhất</div>
+          <div class="key-box" style="margin:0; padding:15px; background:#000; border:1px solid #333;">
+            <span id="lastKeyText" style="font-size:16px; color:#10b981; letter-spacing:1px;">---</span>
+            <button class="btn btn-primary" style="width:auto; padding:8px 12px; font-size:12px;" onclick="navigator.clipboard.writeText(document.getElementById('lastKeyText').innerText).then(()=>showToast('Đã copy key cũ!','success'))"><i data-lucide="copy" style="width:14px;"></i> Copy</button>
+          </div>
+        </div>
+        <script>
+          const lastKey = localStorage.getItem('last_key');
+          if(lastKey) {
+            document.getElementById('historyCard').style.display = 'block';
+            document.getElementById('lastKeyText').innerText = lastKey;
+          }
+        </script>
 
       <div>
         <div class="glass-card">
@@ -420,7 +504,7 @@ export function renderAdmin() {
             setTimeout(() => { btn.innerHTML = '<i data-lucide="save" style="width:20px;"></i> Lưu Thay Đổi'; btn.style.background = 'var(--brand)'; btn.disabled = false; if(window.lucide) lucide.createIcons(); }, 2000);
           } else { throw new Error(d.error); }
         }).catch(e => {
-          alert('Lỗi: ' + e.message);
+          showToast('Lỗi: ' + e.message, 'error');
           btn.innerHTML = '<i data-lucide="save" style="width:20px;"></i> Lưu Thay Đổi'; btn.disabled = false; if(window.lucide) lucide.createIcons();
         });
       }
@@ -429,5 +513,50 @@ export function renderAdmin() {
 }
 
 export function renderFAQ() {
-  return layoutApp('FAQ', `<div class="glass-card"><h2>FAQ</h2><a href="/" style="color:#fff;">Quay lại</a></div>`);
+  const faqs = [
+    { q: "Key này dùng để làm gì?", a: "Key dùng để nâng cấp tài khoản, sử dụng các tính năng VIP trong ứng dụng. Key Normal có hạn 8 giờ, Key VIP có hạn 2 giờ." },
+    { q: "Tại sao tôi phải xem quảng cáo?", a: "Quảng cáo giúp duy trì máy chủ và hệ thống lấy Key tự động miễn phí. Key VIP yêu cầu 2 lần xem Ads, Key Normal yêu cầu 1 lần." },
+    { q: "Tôi bị kẹt ở bước vượt Ads thì phải làm sao?", a: "Hãy chắc chắn bạn không dùng trình chặn quảng cáo (AdBlock), tắt VPN và giữ tab quảng cáo mở cho đến khi nó tự chuyển hướng về lại trang web." },
+    { q: "Làm sao để mua Key VIP?", a: "Vui lòng liên hệ Admin qua Zalo hoặc Telegram hiển thị ở góc phải màn hình để được hỗ trợ." },
+    { q: "Hệ thống có bảo mật không?", a: "Có. Hệ thống sử dụng Cloudflare Turnstile chống bot, mã hóa Session HMAC và giới hạn 1 phiên/10 phút để đảm bảo an toàn." }
+  ];
+  return layoutApp('Câu hỏi thường gặp', `
+    <div class="glass-card" style="max-width: 700px; margin: 0 auto;">
+      <h2 style="text-align:center; margin-bottom:20px; color:#fff; display:flex; align-items:center; justify-content:center; gap:10px;"><i data-lucide="help-circle"></i> Câu hỏi thường gặp</h2>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        ${faqs.map(f => `
+          <details style="background:#111; border:1px solid #333; border-radius:12px; overflow:hidden; transition:0.3s;">
+            <summary style="padding:16px; font-weight:700; color:#fff; cursor:pointer; display:flex; justify-content:space-between; align-items:center; list-style:none;">
+              ${f.q}
+              <i data-lucide="chevron-down" style="width:20px; color:#a1a1aa; transition:transform 0.3s;" class="chevron"></i>
+            </summary>
+            <div style="padding:0 16px 16px; color:#a1a1aa; font-size:14px; line-height:1.6;">${f.a}</div>
+          </details>
+        `).join('')}
+      </div>
+      <a href="/" class="btn btn-primary" style="margin-top:24px;"><i data-lucide="arrow-left"></i> Về trang chủ</a>
+    </div>
+    <script>
+      document.querySelectorAll('details').forEach(det => {
+        det.addEventListener('toggle', () => {
+          const icon = det.querySelector('.chevron');
+          if(det.open) icon.style.transform = 'rotate(180deg)';
+          else icon.style.transform = 'rotate(0)';
+        });
+      });
+    </script>
+  `);
+}
+
+export function renderError(code, message) {
+  return layoutApp('Lỗi ' + code, `
+    <div class="glass-card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+      <div style="width: 80px; height: 80px; background: rgba(239,68,68,0.1); border: 2px solid #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #ef4444; font-size: 36px; font-weight: 900;">
+        ${code}
+      </div>
+      <h2 style="color:#fff; margin-bottom:12px;">${message || 'Đã xảy ra lỗi'}</h2>
+      <p style="color:#a1a1aa; margin-bottom:24px;">Trang bạn tìm kiếm không tồn tại hoặc đã xảy ra sự cố.</p>
+      <a href="/" class="btn btn-primary"><i data-lucide="home"></i> Về trang chủ</a>
+    </div>
+  `);
 }

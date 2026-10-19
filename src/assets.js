@@ -696,3 +696,11 @@ export const JS_PREMIUM = `
 })();
 `;
 
+
+/* BACK TO TOP */
+.back-to-top { position: fixed; bottom: 100px; right: 30px; width: 50px; height: 50px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3); z-index: 99; cursor: pointer; transition: all 0.3s; text-decoration: none; opacity: 0; pointer-events: none; transform: translateY(20px); }
+.back-to-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.back-to-top:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(255,255,255,0.5); }
+
+/* COPY BUTTON SUCCESS STATE */
+.btn-copied { background: #10b981 !important; color: #fff !important; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4) !important; }

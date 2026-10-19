@@ -1,4 +1,4 @@
-import { renderCheckpoint, renderHome, renderStep, renderFAQ, renderAdmin } from './ui.js';
+import { renderCheckpoint, renderHome, renderStep, renderFAQ, renderAdmin, renderError } from './ui.js';
 import { encodeSession, decodeSession, getCookie, setCookie, verifyTurnstile } from './auth.js';
 
 async function getSession(req, env) { return await decodeSession(getCookie(req, 'sess'), env.SESSION_SECRET || 'fallback_1101_fix'); }
@@ -127,7 +127,7 @@ export default {
         return html(renderStep('Vượt Ads', 2, `
           <h2 style="text-align:center; margin-bottom:20px; color:#fff;">Vượt Quảng Cáo (${currentStep}/${required})</h2>
           <p class="sub" style="text-align:center; color:#a1a1aa;">Nhấn mở Ads, hoàn thành và đợi hệ thống tự chuyển hướng về nhận Key.</p>
-          <a href="${link4mUrl}" target="_blank" class="btn btn-primary" style="margin-bottom:20px; background:linear-gradient(135deg, #f59e0b, #f97316); color:#fff;"><i data-lucide="play-circle"></i> Mở Link4M (Lần ${currentStep})</a>
+          <a href="${link4mUrl}" target="_blank" class="btn btn-primary" style="margin-bottom:20px; background:linear-gradient(135deg, #f59e0b, #f97316); color:#fff;" onclick="this.innerHTML='<svg width=\'20\' height=\'20\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' style=\'animation: spin 1s linear infinite;\'><circle cx=\'12\' cy=\'12\' r=\'10\' stroke-dasharray=\'30 10\'/></svg> Đang chuyển hướng...'"><i data-lucide="play-circle"></i> Mở Link4M (Lần ${currentStep})</a>
         `), { 'Set-Cookie': cookie });
       }
 
@@ -159,7 +159,7 @@ export default {
         `));
       }
 
-      return new Response('Not Found', { status: 404 });
-    } catch (e) { console.error(e); return html(renderHome(env, "Hệ thống bảo trì: " + e.message, DEFAULT_NOTICE)); }
+      return html(renderError(404, 'Không tìm thấy trang'));
+    } catch (e) { console.error(e); return html(renderError(500, 'Hệ thống đang bảo trì')); }
   }
 };
