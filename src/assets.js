@@ -166,11 +166,6 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 @keyframes floatBtn { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
 .float-dot { position: absolute; top: 0; right: 0; width: 14px; height: 14px; background: #ef4444; border-radius: 50%; border: 2px solid #000; }
 
-/* BACK TO TOP */
-.back-to-top { position: fixed; bottom: 100px; right: 30px; width: 50px; height: 50px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; box-shadow: 0 10px 25px rgba(255, 255, 255, 0.3); z-index: 99; cursor: pointer; transition: all 0.3s; text-decoration: none; opacity: 0; pointer-events: none; transform: translateY(20px); }
-.back-to-top.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.back-to-top:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(255,255,255,0.5); }
-
 /* SOCIAL BUTTONS PRO MAX */
 .social-btns { display: flex; gap: 12px; margin-top: 20px; transform: translateZ(20px); }
 .social-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; border-radius: 16px; font-weight: 800; font-size: 14px; text-decoration: none; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; transform-style: preserve-3d; }
@@ -306,13 +301,6 @@ export const CSS_PREMIUM = `
 @keyframes staggerIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 /* Magnetic */
 .magnetic { translate: 0 0; transition: translate 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-/* Scroll Indicator */
-.scroll-indicator { position: fixed; bottom: 100px; right: 30px; width: 50px; height: 50px; z-index: 99; opacity: 0; transform: translateY(20px); transition: opacity 0.4s, transform 0.4s; pointer-events: none; }
-.scroll-indicator.visible { opacity: 1; transform: translateY(0); }
-.scroll-indicator svg { transform: rotate(-90deg); }
-.scroll-indicator circle { fill: none; stroke-width: 3; }
-.scroll-indicator .bg { stroke: rgba(255,255,255,0.08); }
-.scroll-indicator .fg { stroke: #fff; stroke-linecap: round; transition: stroke-dashoffset 0.1s; filter: drop-shadow(0 0 6px #fff); }
 /* Live Pulse */
 .live-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; animation: livePulse 1.5s ease-in-out infinite; display: inline-block; }
 @keyframes livePulse { 0%, 100% { box-shadow: 0 0 10px #10b981; transform: scale(1); } 50% { box-shadow: 0 0 20px #10b981, 0 0 30px #10b981; transform: scale(1.2); } }
@@ -542,20 +530,6 @@ export const JS_PREMIUM = `
   window.addEventListener('scroll', () => {
     const nav = document.querySelector('.top-nav');
     if (nav) { if (window.scrollY > 50) nav.classList.add('scrolled'); else nav.classList.remove('scrolled'); }
-  });
-})();
-
-// 9. Scroll Progress Circle
-(function() {
-  const indicator = document.createElement('div'); indicator.className = 'scroll-indicator';
-  indicator.innerHTML = '<svg width="50" height="50" viewBox="0 0 50 50"><circle class="bg" cx="25" cy="25" r="22"/><circle class="fg" cx="25" cy="25" r="22" stroke-dasharray="138" stroke-dashoffset="138"/></svg>';
-  document.body.appendChild(indicator);
-  const fg = indicator.querySelector('.fg');
-  window.addEventListener('scroll', () => {
-    const st = window.scrollY; const dh = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = dh > 0 ? st / dh : 0;
-    fg.style.strokeDashoffset = 138 - (138 * progress);
-    if (st > 300) indicator.classList.add('visible'); else indicator.classList.remove('visible');
   });
 })();
 

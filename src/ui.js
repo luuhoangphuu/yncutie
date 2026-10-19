@@ -16,61 +16,21 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
   <script>${JS}</script>
   <script>${JS_PREMIUM}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
-
-  <script>
-    // Back to Top
-    const btt = document.getElementById('backToTop');
-    if(btt) {
-      window.addEventListener('scroll', () => {
-        if(window.scrollY > 300) btt.classList.add('show');
-        else btt.classList.remove('show');
-      });
-      btt.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-    }
-    
-    // Copy logic nâng cao
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-copy]');
-      if(!btn) return;
-      const targetId = btn.dataset.copy;
-      const targetEl = document.getElementById(targetId);
-      if(!targetEl) return;
-      navigator.clipboard.writeText(targetEl.innerText).then(() => {
-        const orig = btn.innerHTML;
-        btn.innerHTML = '<i data-lucide="check"></i> Đã Copy!';
-        btn.classList.add('btn-copied');
-        if(window.lucide) lucide.createIcons();
-        // Lưu lịch sử
-        localStorage.setItem('last_key', targetEl.innerText);
-        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-copied'); if(window.lucide) lucide.createIcons(); }, 2000);
-      });
-    });
-  </script>
-
 </body></html>`;
 
+// ĐÃ XÓA NÚT BACK TO TOP KHỎI LAYOUT APP
 const layoutApp = (title, content, isAdmin = false) => `${head(title)}<style>${CSS_APP}${CSS_MOBILE}${CSS_MODAL}${CSS_PREMIUM}${isAdmin ? CSS_ADMIN : ''}</style></head>
 <body>
   <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
   <div class="wrapper">${content}</div>
-  <a href="#" id="backToTop" class="back-to-top"><i data-lucide="arrow-up" style="width:24px;height:24px;"></i></a>
+  
   <a href="https://zalo.me/0996492296" target="_blank" class="float-widget"><i data-lucide="message-circle" style="width:28px;height:28px;"></i><div class="float-dot"></div></a>
+  
   <script>${JS}</script>
   <script>${JS_PREMIUM}</script>
   <script>${JS_MODAL}</script>
-  <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
-
+  
   <script>
-    // Back to Top
-    const btt = document.getElementById('backToTop');
-    if(btt) {
-      window.addEventListener('scroll', () => {
-        if(window.scrollY > 300) btt.classList.add('show');
-        else btt.classList.remove('show');
-      });
-      btt.addEventListener('click', (e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-    }
-    
     // Copy logic nâng cao
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-copy]');
@@ -83,13 +43,12 @@ const layoutApp = (title, content, isAdmin = false) => `${head(title)}<style>${C
         btn.innerHTML = '<i data-lucide="check"></i> Đã Copy!';
         btn.classList.add('btn-copied');
         if(window.lucide) lucide.createIcons();
-        // Lưu lịch sử
-        localStorage.setItem('last_key', targetEl.innerText);
+        localStorage.setItem('last_key', targetEl.innerText); // Lưu lịch sử
         setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-copied'); if(window.lucide) lucide.createIcons(); }, 2000);
       });
     });
   </script>
-
+  <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
 export function renderCheckpoint(env) {
@@ -162,7 +121,7 @@ export function renderCheckpoint(env) {
   `);
 }
 
-export function renderHome(env, error, notice, session) {
+export function renderHome(env, error, notice) {
   const modalHtml = (notice && notice.enabled) ? `
   <div id="customModal" class="modal-overlay">
     <div class="modal-box">
@@ -216,9 +175,8 @@ export function renderHome(env, error, notice, session) {
             <button type="submit" class="btn btn-primary" id="startBtn"><i data-lucide="download"></i> Lấy Key Ngay</button>
           </form>
         </div>
-      </div>
 
-      
+        <!-- KEY GẦN NHẤT (HIỂN THỊ NẾU CÓ) -->
         <div class="glass-card" id="historyCard" style="display:none;">
           <div style="font-size:14px; font-weight:700; color:#fff; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><i data-lucide="history" style="width:16px;"></i> Key gần nhất</div>
           <div class="key-box" style="margin:0; padding:15px; background:#000; border:1px solid #333;">
@@ -233,7 +191,9 @@ export function renderHome(env, error, notice, session) {
             document.getElementById('lastKeyText').innerText = lastKey;
           }
         </script>
+      </div>
 
+      <!-- CỘT PHẢI (KHÔNG CÒN SESSION) -->
       <div>
         <div class="glass-card">
           <div style="font-size:12px; font-weight:700; color:#a1a1aa; text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
@@ -270,54 +230,6 @@ export function renderHome(env, error, notice, session) {
           </div>
         </div>
 
-        
-        <div class="glass-card">
-          <div class="header-title" style="font-size:18px; margin-bottom:12px; display:flex; align-items:center; gap:8px;"><i data-lucide="shield" style="width:20px; color:#10b981;"></i> Phiên & Cookie</div>
-          <div class="session-grid">
-            <div class="session-item" style="grid-column: span 2;">
-              <div class="label">Mã Session ID (HMAC)</div>
-              <div class="value" id="session-id">${session && session.sid ? session.sid.slice(0, 12) + '...' + session.sid.slice(-4) : 'Chưa có phiên'}</div>
-            </div>
-            <div class="session-item">
-              <div class="label">Hết hạn sau</div>
-              <div class="value" id="session-timer" style="color:#f59e0b;">--:--</div>
-            </div>
-            <div class="session-item">
-              <div class="label">Bảo mật Cookie</div>
-              <div class="value secure"><i data-lucide="lock" style="width:12px; vertical-align:-2px;"></i> Signed</div>
-            </div>
-          </div>
-          <button class="btn-clear-session" onclick="window.location.href='/reset'"><i data-lucide="trash-2" style="width:16px;"></i> Xóa phiên làm việc</button>
-          <script>
-            window.sessionExpires = ${session ? session.expiresAt : 0};
-            setInterval(() => {
-              const t = document.getElementById('session-timer');
-              if (t) {
-                const rem = Math.max(0, window.sessionExpires - Date.now());
-                const m = Math.floor(rem / 60000);
-                const s = Math.floor((rem % 60000) / 1000);
-                t.innerText = m + ':' + (s < 10 ? '0' : '') + s;
-              }
-            }, 1000);
-          </script>
-        </div>
-
-        
-        <div class="glass-card">
-          <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px;">
-            <div style="background:rgba(16,185,129,0.1); width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#10b981; border:1px solid rgba(16,185,129,0.2);">
-              <i data-lucide="shield-check" style="width:24px;height:24px;"></i>
-            </div>
-            <div>
-              <h4 style="color:#fff; font-size:16px; font-weight:800;">Phiên Làm Việc</h4>
-              <p style="color:#10b981; font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px;">
-                <span class="live-dot" style="width:6px;height:6px;"></span> Đã kết nối an toàn
-              </p>
-            </div>
-          </div>
-          <button class="btn-clear-session" onclick="window.location.href='/reset'"><i data-lucide="log-out" style="width:16px;"></i> Kết thúc phiên (10 phút)</button>
-        </div>
-
         <div class="glass-card">
           <div class="info-box">
             <h4>Thông tin bản quyền</h4>
@@ -332,17 +244,16 @@ export function renderHome(env, error, notice, session) {
               <div><span>👉 Key 7 ngày</span> <b>50k</b></div>
               <div><span>👉 Key 30 ngày</span> <b>150k</b></div>
             </div>
-            
-<div class="social-btns">
-  <a href="https://zalo.me/0996492296" target="_blank" class="social-btn zalo">
-    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.83.5 3.54 1.35 5.02L2 22l4.98-1.35C8.46 21.5 10.17 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.27 14.23c-.18.5-1.04.96-1.42 1-.38.04-1.16.14-2.1-.2-.94-.34-1.72-.88-2.56-1.74-.84-.86-1.38-1.64-1.72-2.56-.34-.92-.24-1.7-.2-2.08.04-.38.5-1.24 1-1.42.5-.18 1.04-.22 1.4.2.36.42.66 1.5.8 1.88.14.38.06.64-.06.88-.12.24-.46.58-.6.72-.14.14-.28.34-.16.58.12.24.52.88 1.22 1.58.7.7 1.34 1.1 1.58 1.22.24.12.44-.02.58-.16.14-.14.48-.48.72-.6.24-.12.5-.2.88-.06.38.14 1.46.44 1.88.8.42.36.38.9.2 1.4z"/></svg>
-    Zalo
-  </a>
-  <a href="https://youtube.com/@zwicxsharereg" target="_blank" class="social-btn yt">
-    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-    YouTube
-  </a>
-</div>
+            <div class="social-btns">
+              <a href="https://zalo.me/0996492296" target="_blank" class="social-btn zalo">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.83.5 3.54 1.35 5.02L2 22l4.98-1.35C8.46 21.5 10.17 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.27 14.23c-.18.5-1.04.96-1.42 1-.38.04-1.16.14-2.1-.2-.94-.34-1.72-.88-2.56-1.74-.84-.86-1.38-1.64-1.72-2.56-.34-.92-.24-1.7-.2-2.08.04-.38.5-1.24 1-1.42.5-.18 1.04-.22 1.4.2.36.42.66 1.5.8 1.88.14.38.06.64-.06.88-.12.24-.46.58-.6.72-.14.14-.28.34-.16.58.12.24.52.88 1.22 1.58.7.7 1.34 1.1 1.58 1.22.24.12.44-.02.58-.16.14-.14.48-.48.72-.6.24-.12.5-.2.88-.06.38.14 1.46.44 1.88.8.42.36.38.9.2 1.4z"/></svg>
+                Zalo
+              </a>
+              <a href="https://youtube.com/@zwicxsharereg" target="_blank" class="social-btn yt">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                YouTube
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -510,7 +421,7 @@ export function renderAdmin() {
             setTimeout(() => { btn.innerHTML = '<i data-lucide="save" style="width:20px;"></i> Lưu Thay Đổi'; btn.style.background = 'var(--brand)'; btn.disabled = false; if(window.lucide) lucide.createIcons(); }, 2000);
           } else { throw new Error(d.error); }
         }).catch(e => {
-          showToast('Lỗi: ' + e.message, 'error');
+          alert('Lỗi: ' + e.message);
           btn.innerHTML = '<i data-lucide="save" style="width:20px;"></i> Lưu Thay Đổi'; btn.disabled = false; if(window.lucide) lucide.createIcons();
         });
       }
