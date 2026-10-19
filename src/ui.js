@@ -7,7 +7,6 @@ const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF
 
 const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPOINT}</style></head>
 <body>
-  <div class="bg-grid"></div>
   ${content}
   <script>${JS}</script>
   <script>lucide.createIcons();</script>
@@ -18,6 +17,7 @@ const layoutApp = (title, content, footer) => `${head(title)}<style>${CSS_APP}</
   <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
   <div class="wrapper">${content}</div>
   ${footer}
+  <a href="https://zalo.me/0996492296" target="_blank" class="float-support"><i data-lucide="message-circle" style="width:28px;height:28px;"></i></a>
   <script>${JS}</script>
   <script>lucide.createIcons();</script>
 </body></html>`;
@@ -95,7 +95,7 @@ export function renderCheckpoint(env) {
             document.querySelector('.step.active .step-circle').style.background = '#10b981';
             document.querySelector('.step.active .step-circle').style.borderColor = '#10b981';
             setTimeout(() => location.href = '/', 800);
-          } else { alert('Lỗi: ' + d.error); }
+          } else { showToast('Lỗi: ' + d.error, 'error'); }
         });
       }
     </script>
@@ -134,15 +134,13 @@ export function renderHome(env, error) {
           <div class="stat-icon"><i data-lucide="shield"></i></div>
           <div class="stat-info"><h4><span class="status-dot"></span> Hệ thống ổn định</h4><p>Độ trễ API: 24ms • Uptime: 99.9%</p></div>
         </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border-color: #f0abfc;">
+          <div class="stat-icon" style="background:#e879f9; color:#fff;"><i data-lucide="trending-up"></i></div>
+          <div class="stat-info"><h4>Live Stats</h4><p>Đã phát: <b id="stat-keys">14,235</b> keys • Online: <b id="stat-users">142</b></p></div>
+        </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:rgba(236,72,153,0.1); color:#ec4899;"><i data-lucide="gift"></i></div>
           <div class="stat-info"><h4>Khám phá tiện ích</h4><p>Sự kiện tặng Key VIP, BXH người dùng, Hỗ trợ trực tuyến 24/7.</p></div>
-        </div>
-        <div class="stat-card" style="flex-direction:column; align-items:flex-start;">
-          <h4 style="margin-bottom:12px; font-size:14px; display:flex; align-items:center; gap:6px;"><i data-lucide="book-open" style="width:16px;"></i> Quy trình lấy Key</h4>
-          <p style="font-size:13px; line-height:1.6; margin-bottom:8px;"><b style="color:#0f172a">1.</b> Chọn hạng Key mong muốn.</p>
-          <p style="font-size:13px; line-height:1.6; margin-bottom:8px;"><b style="color:#0f172a">2.</b> Mở YouTube và bấm "Đã theo dõi".</p>
-          <p style="font-size:13px; line-height:1.6;"><b style="color:#0f172a">3.</b> Vượt Ads (1 lần với Normal, 2 lần với VIP).</p>
         </div>
       </div>
     </div>

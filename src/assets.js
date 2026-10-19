@@ -1,15 +1,15 @@
-// --- CSS CHECKPOINT ---
+// --- CSS CHECKPOINT (DARK/LIGHT HYBRID) ---
 export const CSS_CHECKPOINT = `
 :root { color-scheme: light only; --bg: #f4f6f9; --text: #09090b; --text-muted: #64748b; --primary: #4f46e5; --accent: #ec4899; --border: rgba(0,0,0,0.06); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
 #network-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-.bg-grid { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 40px 40px; mask-image: radial-gradient(circle at center, black 10%, transparent 80%); -webkit-mask-image: radial-gradient(circle at center, black 10%, transparent 80%); }
+.spotlight { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(79, 70, 229, 0.08), transparent 40%); }
 
 .top-nav { position: relative; z-index: 10; width: 100%; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(244, 246, 249, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
 .logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; color: #0f172a; }
 .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.4); }
-.status-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #059669; background: #ecfdf5; padding: 8px 16px; border-radius: 30px; border: 1px solid #a7f3d0; box-shadow: 0 2px 10px rgba(16,185,129,0.1); }
+.status-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #059669; background: #ecfdf5; padding: 8px 16px; border-radius: 30px; border: 1px solid #a7f3d0; }
 .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; animation: pulse 2s infinite; }
 .time-badge { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 800; color: var(--primary); background: rgba(79, 70, 229, 0.1); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(79, 70, 229, 0.2); font-family: 'JetBrains Mono', monospace; }
 @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
@@ -17,7 +17,9 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .container-check { position: relative; z-index: 10; width: 100%; max-width: 1200px; margin: 60px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 0 40px; align-items: center; }
 @media (max-width: 900px) { .container-check { grid-template-columns: 1fr; gap: 40px; padding: 0 20px; margin: 30px auto; } }
 
-.left { display: flex; flex-direction: column; }
+.left { display: flex; flex-direction: column; animation: fadeInUp 0.8s ease-out; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
 .badge-security { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 2px; }
 .badge-security::before { content: ''; display: block; width: 30px; height: 3px; background: var(--primary); border-radius: 2px; }
 h1 { font-size: 54px; font-weight: 800; line-height: 1.05; margin-bottom: 24px; color: #0f172a; letter-spacing: -0.04em; }
@@ -31,7 +33,7 @@ h1 span { background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-backgro
 
 .challenge-module { background: #ffffff; border-radius: 24px; padding: 40px; box-shadow: 0 24px 60px -12px rgba(79,70,229,0.15), inset 0 0 0 1px rgba(255,255,255,1); position: relative; overflow: hidden; }
 .challenge-module::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #4f46e5, #ec4899); }
-.cf-turnstile { display: flex; justify-content: center; margin-bottom: 24px; position: relative; z-index: 2; }
+.cf-turnstile { display: flex; justify-content: center; margin-bottom: 24px; }
 .help-text { text-align: center; font-size: 14px; color: var(--text-muted); line-height: 1.6; font-weight: 500; }
 .help-text b { color: #0f172a; }
 
@@ -41,15 +43,14 @@ h1 span { background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-backgro
 .step.completed .step-circle { background: #10b981; border-color: #10b981; color: #fff; font-size: 14px; box-shadow: 0 0 15px rgba(16,185,129,0.4); }
 .step.completed .step-circle::after { content: '✓'; }
 .step.active .step-circle { border-color: #4f46e5; background: #4f46e5; box-shadow: 0 0 0 6px rgba(79,70,229,0.15); }
-.step-label { font-size: 13px; font-weight: 700; color: var(--text-muted); transition: 0.3s; }
+.step-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
 .step.completed .step-label, .step.active .step-label { color: #0f172a; }
 .step-line { flex: 1; height: 2px; background: #e2e8f0; margin: 0 15px; margin-bottom: 28px; border-radius: 2px; }
 .step-line.completed { background: #10b981; }
 .step-line.active { background: linear-gradient(90deg, #10b981, #4f46e5); }
 
-.right { display: grid; gap: 20px; }
-.dash-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,1); border-radius: 24px; padding: 28px; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.02); transition: transform 0.3s, box-shadow 0.3s; }
-.dash-card:hover { transform: translateY(-4px); box-shadow: 0 25px 45px -5px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02); }
+.right { display: grid; gap: 20px; animation: fadeInUp 0.8s ease-out 0.2s both; }
+.dash-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,1); border-radius: 24px; padding: 28px; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.05); transition: transform 0.1s ease-out; transform-style: preserve-3d; }
 .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
 .dash-title { font-size: 13px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 .dash-value { font-size: 38px; font-weight: 800; color: #0f172a; font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; }
@@ -76,6 +77,7 @@ export const CSS_APP = `
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
 #network-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.3; }
+.spotlight { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(236, 72, 153, 0.05), transparent 40%); }
 .bg-shapes { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: 0.04; }
 .shape { position: absolute; border: 6px solid var(--accent); pointer-events: none; }
 .circle { width: 200px; height: 200px; border-radius: 50%; top: -10%; left: -5%; animation: float 12s infinite ease-in-out alternate; }
@@ -84,7 +86,8 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-40px) rotate(20deg); } }
 
 .wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; position: relative; z-index: 10; }
-.container { position: relative; z-index: 10; width: 100%; max-width: 1000px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 30px; }
+.container { position: relative; z-index: 10; width: 100%; max-width: 1000px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 30px; animation: fadeInUp 0.6s ease-out; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 900px) { .container { grid-template-columns: 1fr; max-width: 500px; } }
 .glass-card { background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--card-border); border-radius: 32px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
 .hero { text-align: center; }
@@ -105,7 +108,8 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 .btn-youtube { background: #ff0000; color: #fff; box-shadow: 0 10px 25px -5px rgba(255,0,0,0.3); }
 .btn-ads { background: linear-gradient(135deg, #f59e0b, #f97316); color: #fff; box-shadow: 0 10px 25px -5px rgba(245,158,11,0.3); }
 .info-col { display: flex; flex-direction: column; gap: 20px; }
-.stat-card { display: flex; align-items: center; gap: 16px; padding: 24px; background: #ffffff; border: 1px solid var(--card-border); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); }
+.stat-card { display: flex; align-items: center; gap: 16px; padding: 24px; background: #ffffff; border: 1px solid var(--card-border); border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); transition: transform 0.2s; }
+.stat-card:hover { transform: scale(1.02); }
 .stat-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: rgba(79, 70, 229, 0.1); color: var(--primary); }
 .stat-info h4 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
 .stat-info p { font-size: 13px; color: var(--text-muted); }
@@ -123,6 +127,19 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 .key-box span { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; color: var(--primary); word-break: break-all; letter-spacing: 2px; text-align: center; }
 .skeleton { background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; height: 24px; width: 100%; }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* TOAST NOTIFICATION */
+.toast-container { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+.toast { background: #0f172a; color: #fff; padding: 14px 24px; border-radius: 12px; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); opacity: 0; transform: translateY(20px); animation: toastIn 0.3s forwards; }
+.toast.success { border-left: 4px solid #10b981; }
+.toast.error { border-left: 4px solid #ef4444; }
+@keyframes toastIn { to { opacity: 1; transform: translateY(0); } }
+
+/* FLOATING SUPPORT BUTTON */
+.float-support { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: #0068FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 10px 25px rgba(0, 104, 255, 0.4); z-index: 100; cursor: pointer; transition: transform 0.3s; text-decoration: none; }
+.float-support:hover { transform: scale(1.1); }
+.float-support img { width: 32px; height: 32px; border-radius: 50%; }
+
 .faq { margin-top: 40px; }
 .faq-item { background: #fff; border: 1px solid var(--border); border-radius: 16px; margin-bottom: 10px; overflow: hidden; }
 .faq-item summary { padding: 20px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }
@@ -136,15 +153,14 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 
 // --- JAVASCRIPT ---
 export const JS = `
+// 1. Particle Network
 const canvas = document.createElement('canvas');
 canvas.id = 'network-bg';
 document.body.prepend(canvas);
 const ctx = canvas.getContext('2d');
 let width, height, particles;
-
 function initCanvas() {
-  width = canvas.width = window.innerWidth;
-  height = canvas.height = window.innerHeight;
+  width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight;
   particles = [];
   const count = Math.floor(width * height / 12000);
   for (let i = 0; i < count; i++) {
@@ -152,47 +168,58 @@ function initCanvas() {
   }
 }
 function drawNetwork() {
-  ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = 'rgba(79, 70, 229, 0.2)';
+  ctx.clearRect(0, 0, width, height); ctx.fillStyle = 'rgba(79, 70, 229, 0.2)';
   particles.forEach((p, i) => {
     p.x += p.vx; p.y += p.vy;
-    if (p.x < 0 || p.x > width) p.vx *= -1;
-    if (p.y < 0 || p.y > height) p.vy *= -1;
+    if (p.x < 0 || p.x > width) p.vx *= -1; if (p.y < 0 || p.y > height) p.vy *= -1;
     ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
     for (let j = i + 1; j < particles.length; j++) {
-      const p2 = particles[j];
-      const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-      if (dist < 150) {
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y);
-        ctx.strokeStyle = 'rgba(79, 70, 229, ' + (1 - dist/150) * 0.1 + ')';
-        ctx.stroke();
-      }
+      const p2 = particles[j]; const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+      if (dist < 150) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.strokeStyle = 'rgba(79, 70, 229, ' + (1 - dist/150) * 0.1 + ')'; ctx.stroke(); }
     }
   });
   requestAnimationFrame(drawNetwork);
 }
-window.addEventListener('resize', initCanvas);
-initCanvas(); drawNetwork();
+window.addEventListener('resize', initCanvas); initCanvas(); drawNetwork();
 
+// 2. Spotlight Effect (Chuột di chuyển tạo đèn rọi)
+const spotlight = document.createElement('div');
+spotlight.className = 'spotlight';
+document.body.prepend(spotlight);
+document.addEventListener('mousemove', (e) => {
+  spotlight.style.setProperty('--mouse-x', e.clientX + 'px');
+  spotlight.style.setProperty('--mouse-y', e.clientY + 'px');
+});
+
+// 3. Hàm hiển thị Toast Notification
+window.showToast = function(message, type = 'success') {
+  const container = document.querySelector('.toast-container') || (() => {
+    const c = document.createElement('div'); c.className = 'toast-container'; document.body.appendChild(c); return c;
+  })();
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = (type === 'success' ? '<i data-lucide="check-circle"></i>' : '<i data-lucide="alert-circle"></i>') + ' ' + message;
+  container.appendChild(toast);
+  lucide.createIcons();
+  setTimeout(() => { toast.style.animation = 'toastOut 0.3s forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
+};
+
+// 4. Copy Logic
 document.addEventListener('click', function(e) {
   var b = e.target.closest('[data-copy]'); if(!b) return;
   var t = document.getElementById(b.dataset.copy); if(!t) return;
   navigator.clipboard.writeText(t.textContent).then(() => {
-    var orig = b.innerHTML; b.innerHTML = '<i data-lucide="check"></i> Đã Copy'; lucide.createIcons();
-    setTimeout(() => { b.innerHTML = orig; lucide.createIcons(); }, 2000);
+    showToast('Đã sao chép Key vào bộ nhớ tạm!', 'success');
   });
 });
 
+// 5. Skeleton Loading
 function showSkeleton() {
   const keyBox = document.getElementById('keyContainer');
-  const form = document.querySelector('form[action="/verify/ads"]');
-  if(keyBox) { keyBox.innerHTML = '<div class="key-box"><div class="skeleton" style="height:40px;"></div></div>'; }
-  if(form) {
-    const btn = form.querySelector('button');
-    if(btn) { btn.innerHTML = '<div class="skeleton" style="width:150px; height:20px;"></div>'; btn.disabled = true; }
-  }
+  if(keyBox) keyBox.innerHTML = '<div class="key-box"><div class="skeleton" style="height:40px;"></div></div>';
 }
 
+// 6. Real-time VN Clock
 setInterval(() => {
   const clockEl = document.getElementById('vn-clock');
   if(clockEl) {
@@ -201,38 +228,32 @@ setInterval(() => {
   }
 }, 1000);
 
+// 7. Terminal Typing Effect
 setTimeout(() => {
   const term = document.getElementById('terminal');
   if(term) {
     const logs = ["Khởi tạo kết nối TLS 1.3...", "Phân tích dấu vết trình duyệt...", "Quét mẫu tấn công DDoS...", "Chờ xác minh Captcha..."];
-    let idx = 0;
-    let int = setInterval(() => {
-      if(idx < logs.length) {
-        term.innerHTML += '<div class="term-line">> ' + logs[idx] + '</div>';
-        idx++;
-      } else { clearInterval(int); }
-    }, 600);
+    let idx = 0; let int = setInterval(() => { if(idx < logs.length) { term.innerHTML += '<div class="term-line">> ' + logs[idx] + '</div>'; idx++; } else { clearInterval(int); } }, 600);
   }
 }, 500);
 
-// LOGIC ĐỒ THỊ NHỊP TIM (REALISTIC GRAPH)
-const barCount = 50;
-let graphData = new Array(barCount).fill(10);
+// 8. Realistic Heartbeat Graph
+const barCount = 50; let graphData = new Array(barCount).fill(10);
 setInterval(() => {
-  const bars = document.querySelectorAll('.bar');
-  if(bars.length === 0) return;
-  
-  graphData.shift(); // Dịch dữ liệu sang trái
-  
-  let newVal = 10 + Math.random() * 20; // Mức nền
-  if(Math.random() > 0.85) newVal = 50 + Math.random() * 40; // Thỉnh thoảng nhảy vọt (nhịp tim/DDoS)
-  
+  const bars = document.querySelectorAll('.bar'); if(bars.length === 0) return;
+  graphData.shift();
+  let newVal = 10 + Math.random() * 15; // Nền
+  if(Math.random() > 0.9) newVal = 60 + Math.random() * 40; // Nhịp đập mạnh
+  else if(Math.random() > 0.7) newVal = 30 + Math.random() * 30; // Nhịp đập nhẹ
   graphData.push(newVal);
-  
-  bars.forEach((bar, i) => {
-    bar.style.height = graphData[i] + '%';
-    if(graphData[i] > 40) bar.classList.add('active');
-    else bar.classList.remove('active');
-  });
+  bars.forEach((bar, i) => { bar.style.height = graphData[i] + '%'; if(graphData[i] > 40) bar.classList.add('active'); else bar.classList.remove('active'); });
 }, 100);
+
+// 9. Fake Live Stats Counter
+let keysIssued = 14235; let usersOnline = 142;
+setInterval(() => {
+  const kEl = document.getElementById('stat-keys'); const uEl = document.getElementById('stat-users');
+  if(kEl) { keysIssued += Math.floor(Math.random() * 3); kEl.innerText = keysIssued.toLocaleString('vi-VN'); }
+  if(uEl) { usersOnline = Math.floor(140 + Math.random() * 20); uEl.innerText = usersOnline; }
+}, 3000);
 `;
