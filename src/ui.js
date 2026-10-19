@@ -7,6 +7,7 @@ const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF
 
 const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPOINT}</style></head>
 <body>
+  <div class="bg-grid"></div>
   ${content}
   <script>${JS}</script>
   <script>lucide.createIcons();</script>
@@ -24,18 +25,22 @@ const layoutApp = (title, content, footer) => `${head(title)}<style>${CSS_APP}</
 export function renderCheckpoint(env) {
   return layoutCheckpoint('Security Check', `
     <div class="top-nav">
-      <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:18px;"></i></div> getkeydpiconfig.site</div>
+      <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> getkeydpiconfig.site</div>
       <div class="status-badge"><div class="status-dot"></div> Kết nối đang được bảo vệ</div>
     </div>
     <div class="container-check">
       <div class="left">
         <div class="badge-security">Trạm kiểm tra bảo mật</div>
-        <h1>Xác minh nhanh trước<br>khi vào <span>cửa hàng</span></h1>
+        <h1>Xác minh nhanh<br>trước khi vào <span>cửa hàng</span></h1>
         <p class="desc">Cloudflare đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
-        <div class="challenge-box">
+        
+        <div class="terminal-box" id="terminal"></div>
+
+        <div class="challenge-module">
           <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" data-callback="onTurnstileSuccess"></div>
           <div class="help-text">Nếu thấy ô <b>Verify you are human</b>, bấm vào đó. Không cần tải lại trang, cửa hàng sẽ tự mở khi xác minh xong.</div>
         </div>
+
         <div class="stepper">
           <div class="step completed"><div class="step-circle"></div><div class="step-label">Kết nối TLS</div></div>
           <div class="step-line completed"></div>
@@ -46,31 +51,36 @@ export function renderCheckpoint(env) {
           <div class="step"><div class="step-circle"></div><div class="step-label">Vào cửa hàng</div></div>
         </div>
       </div>
+
       <div class="right">
-        <div class="card-light">
-          <div class="card-header"><span class="card-title">Thời gian xác minh</span><span class="card-value" id="timer">0.000<small>s</small></span></div>
-          <div class="graph-container" id="graph"></div>
+        <div class="dash-card">
+          <div class="dash-header"><span class="dash-title">Thời gian xác minh</span><span class="dash-value" id="timer">0.000<small>s</small></span></div>
+          <div class="waveform" id="graph"></div>
         </div>
-        <div class="grid-2">
-          <div class="card-light" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+
+        <div class="dash-card">
+          <div class="radar-wrapper">
             <div class="radar-container"><div class="radar-sweep"></div><div class="radar-dot"></div></div>
-            <div style="text-align:center; margin-top:15px;"><div style="font-size:12px; color:var(--text-muted);">Quét lưu lượng</div><div style="font-size:14px; font-weight:700; color:var(--text);">Đang bảo vệ</div><div style="font-size:11px; color:var(--primary);">WAF • Bot • DDoS</div></div>
-          </div>
-          <div class="card-light">
-            <div class="card-header"><span class="card-title">Độ trễ tới edge</span><span class="card-value">464<small>ms</small></span></div>
-            <div style="font-size:12px; color:var(--text-muted); margin-top:10px;">Giao thức<br><b style="color:var(--text); font-size:14px;">HTTP/3 (QUIC)</b></div>
+            <div class="radar-info">
+              <h4>Đang bảo vệ</h4>
+              <p>WAF • Bot • DDoS</p>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Lưu lượng quét: 1.2 GB/s</div>
+            </div>
           </div>
         </div>
-        <div class="stats-grid">
-          <div class="stat-item"><div class="stat-label">Giao thức</div><div class="stat-val">HTTP/3 (QUIC)</div></div>
-          <div class="stat-item"><div class="stat-label">Mạng edge</div><div class="stat-val">Anycast · 330+ thành phố</div></div>
-          <div class="stat-item"><div class="stat-label">Lớp bảo vệ</div><div class="stat-val">Cloudflare</div></div>
+
+        <div class="dash-card" style="padding: 0;">
+          <div class="stats-grid">
+            <div class="stat-item"><div class="stat-label">Giao thức</div><div class="stat-val">HTTP/3 (QUIC)</div></div>
+            <div class="stat-item"><div class="stat-label">Mạng Edge</div><div class="stat-val">Anycast</div></div>
+            <div class="stat-item"><div class="stat-label">Độ trễ</div><div class="stat-val">464 ms</div></div>
+          </div>
         </div>
       </div>
     </div>
     <script>
       const graph = document.getElementById('graph');
-      for(let i=0; i<40; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; graph.appendChild(bar); }
+      for(let i=0; i<50; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; graph.appendChild(bar); }
       let startTime;
       function onTurnstileSuccess(token) {
         startTime = performance.now();
