@@ -26,7 +26,10 @@ export function renderCheckpoint(env) {
   return layoutCheckpoint('Security Check', `
     <div class="top-nav">
       <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> getkeydpiconfig.site</div>
-      <div class="status-badge"><div class="status-dot"></div> Kết nối đang được bảo vệ</div>
+      <div style="display:flex; gap:16px; align-items:center;">
+        <div class="time-badge"><i data-lucide="clock" style="width:16px;height:16px;"></i> <span id="vn-clock">00:00:00</span> (GMT+7)</div>
+        <div class="status-badge"><div class="status-dot"></div> Kết nối đang được bảo vệ</div>
+      </div>
     </div>
     <div class="container-check">
       <div class="left">
@@ -99,6 +102,7 @@ export function renderCheckpoint(env) {
   `);
 }
 
+// Các hàm renderHome, renderStep, renderFAQ giữ nguyên như cũ...
 const renderFooter = () => `
   <div class="footer">
     <p style="margin-bottom:10px;">© 2026 GetKey System. Phát triển bởi <b>ZwicApex</b>.</p>
