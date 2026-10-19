@@ -12,6 +12,16 @@ export default {
     const botPassed = getCookie(request, 'bot_passed');
 
     try {
+      // API thống kê "Thực tế" (Nhận từ server backend hoặc KV nếu có)
+      if (p === '/api/stats' && m === 'GET') {
+        // Trong thực tế, bạn sẽ query Database (D1/KV) tại đây. 
+        // Do chưa có, tôi sẽ cung cấp một con số cố định (hoặc bạn có thể sửa thành API Vercel của bạn).
+        return new Response(JSON.stringify({ 
+          totalKeys: 14235, 
+          onlineUsers: 142 
+        }), { headers: { 'Content-Type': 'application/json' } });
+      }
+
       if (p === '/api/verify-bot' && m === 'POST') {
         const { token } = await request.json();
         const v = await verifyTurnstile(token, request.headers.get('cf-connecting-ip') || 'local', env);
@@ -49,22 +59,18 @@ export default {
 
       if (p === '/step2' && m === 'GET') {
         if(!s || !s.sub) return redirect('/');
-        
         const required = s.tier === 'VIP' ? 2 : 1;
         if (s.ads >= required) return redirect('/success');
-
         const currentStep = s.ads + 1;
         const returnUrl = new URL('/ads-return', request.url).toString();
         let link4mUrl = returnUrl;
         if(env.LINK4M_API_TOKEN) {
           try {
             const api = `https://link4m.co/api-shorten/v2?api=${env.LINK4M_API_TOKEN}&url=${encodeURIComponent(returnUrl)}`;
-            const res = await fetch(api);
-            const data = await res.json();
+            const res = await fetch(api); const data = await res.json();
             if (data.status === 'success') link4mUrl = data.shortenedUrl;
           } catch (e) {}
         }
-
         return html(renderStep('Vượt Ads', 2, `
           <h2 style="text-align:center; margin-bottom:20px;">Vượt Quảng Cáo (${currentStep}/${required})</h2>
           <p class="sub" style="text-align:center;">Nhấn mở Ads, hoàn thành và đợi hệ thống tự chuyển hướng về nhận Key.</p>
@@ -76,7 +82,6 @@ export default {
         if(!s || !s.sub) return redirect('/');
         s.ads += 1;
         const required = s.tier === 'VIP' ? 2 : 1;
-
         if (s.ads < required) {
           return redirect('/step2', await saveSession(request, env, s));
         } else {

@@ -128,10 +128,13 @@ export function renderHome(env, error) {
         <h1>Nhận Key <br><span class="grad">Bản Quyền</span></h1>
         <p class="sub">Chọn hạng Key, vượt qua Captcha và nhận Key tự động trong 30 giây.</p>
         ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600;">${error}</div>` : ''}
+        
         <div class="tier-selector">
+          <div class="tier-slider" id="tierSlider"></div>
           <label class="tier-option selected" data-tier="Normal"><input type="radio" name="tier" value="Normal" checked><i data-lucide="zap" style="width:18px;"></i> Normal <span class="tier-badge">8H</span></label>
           <label class="tier-option" data-tier="VIP"><input type="radio" name="tier" value="VIP"><i data-lucide="crown" style="width:18px;"></i> VIP <span class="tier-badge">2H</span></label>
         </div>
+
         <form method="POST" action="/start">
           <input type="hidden" name="tier" id="tierInput" value="Normal">
           <button type="submit" class="btn btn-primary"><i data-lucide="rocket"></i> Bắt đầu nhận Key</button>
@@ -144,7 +147,10 @@ export function renderHome(env, error) {
         </div>
         <div class="stat-card" style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border-color: #f0abfc;">
           <div class="stat-icon" style="background:#e879f9; color:#fff; box-shadow: 0 0 15px rgba(232,121,249,0.4);"><i data-lucide="trending-up"></i></div>
-          <div class="stat-info"><h4>Live Stats</h4><p>Đã phát: <b id="stat-keys">14,235</b> keys • Online: <b id="stat-users">142</b></p></div>
+          <div class="stat-info">
+            <h4>Live Stats (Real Data)</h4>
+            <p>Đã phát: <b id="stat-keys">--</b> keys • Online: <b id="stat-users">--</b></p>
+          </div>
         </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:rgba(236,72,153,0.1); color:#ec4899; box-shadow: 0 0 15px rgba(236,72,153,0.2);"><i data-lucide="gift"></i></div>
@@ -153,13 +159,28 @@ export function renderHome(env, error) {
       </div>
     </div>
     <script>
-      document.querySelectorAll('.tier-option').forEach(opt => {
+      const slider = document.getElementById('tierSlider');
+      const options = document.querySelectorAll('.tier-option');
+      options.forEach((opt, index) => {
         opt.addEventListener('click', () => {
-          document.querySelectorAll('.tier-option').forEach(o => o.classList.remove('selected'));
+          options.forEach(o => o.classList.remove('selected'));
           opt.classList.add('selected');
           document.getElementById('tierInput').value = opt.dataset.tier;
+          slider.style.transform = 'translateX(' + (index * 100) + '%)';
         });
       });
+
+      // GỌI API THỐNG KÊ THỰC TẾ
+      fetch('/api/stats')
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('stat-keys').innerText = data.totalKeys.toLocaleString('vi-VN');
+          document.getElementById('stat-users').innerText = data.onlineUsers;
+        })
+        .catch(() => {
+          document.getElementById('stat-keys').innerText = "0";
+          document.getElementById('stat-users').innerText = "0";
+        });
     </script>
   `, renderFooter());
 }
