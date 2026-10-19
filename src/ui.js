@@ -9,7 +9,7 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
 <body>
   ${content}
   <script>${JS}</script>
-  <script>lucide.createIcons();</script>
+  <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
 const layoutApp = (title, content, footer) => `${head(title)}<style>${CSS_APP}</style></head>
@@ -19,7 +19,7 @@ const layoutApp = (title, content, footer) => `${head(title)}<style>${CSS_APP}</
   ${footer}
   <a href="https://zalo.me/0996492296" target="_blank" class="float-support"><i data-lucide="message-circle" style="width:28px;height:28px;"></i></a>
   <script>${JS}</script>
-  <script>lucide.createIcons();</script>
+  <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
 export function renderCheckpoint(env) {
@@ -104,10 +104,10 @@ export function renderCheckpoint(env) {
 
 const renderFooter = () => `
   <div class="footer">
-    <p style="margin-bottom:10px;">© 2026 GetKey System. Phát triển bởi <b>ZwicApex</b>.</p>
+    <p>© 2026 <b>getkeydpiconfig.site</b>. Bảo lưu mọi quyền.</p>
     <div>
-      <a href="https://zalo.me/0996492296" target="_blank"><i data-lucide="message-circle" style="width:16px;"></i> Zalo Hỗ Trợ</a>
-      <a href="https://youtube.com/@zwicxsharereg" target="_blank"><i data-lucide="youtube" style="width:16px;"></i> YouTube Channel</a>
+      <a href="https://zalo.me/0996492296" target="_blank" class="zalo"><i data-lucide="message-circle" style="width:20px;"></i> Zalo Hỗ Trợ</a>
+      <a href="https://youtube.com/@zwicxsharereg" target="_blank" class="yt"><i data-lucide="youtube" style="width:20px;"></i> YouTube Channel</a>
     </div>
   </div>
 `;
@@ -135,11 +135,11 @@ export function renderHome(env, error) {
           <div class="stat-info"><h4><span class="status-dot"></span> Hệ thống ổn định</h4><p>Độ trễ API: 24ms • Uptime: 99.9%</p></div>
         </div>
         <div class="stat-card" style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border-color: #f0abfc;">
-          <div class="stat-icon" style="background:#e879f9; color:#fff;"><i data-lucide="trending-up"></i></div>
+          <div class="stat-icon" style="background:#e879f9; color:#fff; box-shadow: 0 0 15px rgba(232,121,249,0.4);"><i data-lucide="trending-up"></i></div>
           <div class="stat-info"><h4>Live Stats</h4><p>Đã phát: <b id="stat-keys">14,235</b> keys • Online: <b id="stat-users">142</b></p></div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(236,72,153,0.1); color:#ec4899;"><i data-lucide="gift"></i></div>
+          <div class="stat-icon" style="background:rgba(236,72,153,0.1); color:#ec4899; box-shadow: 0 0 15px rgba(236,72,153,0.2);"><i data-lucide="gift"></i></div>
           <div class="stat-info"><h4>Khám phá tiện ích</h4><p>Sự kiện tặng Key VIP, BXH người dùng, Hỗ trợ trực tuyến 24/7.</p></div>
         </div>
       </div>
