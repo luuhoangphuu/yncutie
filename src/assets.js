@@ -6,7 +6,7 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .spotlight { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.05), transparent 40%); }
 
 .top-nav { position: relative; z-index: 10; width: 100%; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-.logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; color: #fff; letter-spacing: 1px; }
+.logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; color: #fff; letter-spacing: 2px; text-transform: uppercase; }
 .logo-icon { width: 32px; height: 32px; background: #fff; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #000; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
 .status-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #fff; background: rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); }
 .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px #fff; animation: pulse 2s infinite; }
@@ -23,7 +23,7 @@ h1 { font-size: 54px; font-weight: 800; line-height: 1.05; margin-bottom: 24px; 
 h1 span { color: #a1a1aa; }
 .desc { font-size: 16px; line-height: 1.7; color: var(--text-muted); margin-bottom: 40px; font-weight: 500; max-width: 90%; }
 .terminal-box { background: #000; border-radius: 16px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #fff; height: 160px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02); position: relative; border: 1px solid var(--border); }
-.terminal-box::before { content: 'root@titanium:~#'; color: #fff; display: block; margin-bottom: 10px; font-weight: bold; opacity: 0.8; }
+.terminal-box::before { content: 'root@getkey:~#'; color: #fff; display: block; margin-bottom: 10px; font-weight: bold; opacity: 0.8; }
 .term-line { margin-bottom: 6px; opacity: 0; animation: typeIn 0.3s forwards; color: #a1a1aa; }
 @keyframes typeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 .challenge-module { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(20px); border-radius: 24px; padding: 40px; box-shadow: 0 24px 60px -12px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.1); position: relative; overflow: hidden; }
@@ -100,6 +100,15 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .step.active .step-circle { background: #fff; border-color: #fff; color: #000; box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
 .step-label { font-size: 12px; font-weight: 600; color: #a1a1aa; text-align: center; }
 .step.active .step-label { color: #fff; }
+
+/* SLIDING TIER SELECTOR */
+.tier-selector { position: relative; display: flex; background: #111; padding: 6px; border-radius: 20px; margin-bottom: 24px; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
+.tier-slider { position: absolute; top: 6px; left: 6px; width: calc(50% - 6px); height: calc(100% - 12px); background: #fff; border-radius: 14px; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 4px 15px rgba(255,255,255,0.2); z-index: 1; }
+.tier-option { flex: 1; text-align: center; padding: 14px; cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text-muted); transition: color 0.3s; position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.tier-option input { display: none; }
+.tier-option.selected { color: #000; }
+.tier-badge { font-size: 11px; padding: 3px 8px; border-radius: 6px; background: #333; color: #a1a1aa; transition: all 0.3s; }
+.tier-option.selected .tier-badge { background: #000; color: #fff; }
 
 /* KEY SELECTOR */
 .key-input-group { background: #111; border: 1px solid #333; border-radius: 16px; padding: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }

@@ -24,7 +24,7 @@ const layoutApp = (title, content) => `${head(title)}<style>${CSS_APP}</style></
 export function renderCheckpoint(env) {
   return layoutCheckpoint('Security Check', `
     <div class="top-nav">
-      <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> GETKEYDPICONFIG</div>
+      <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> GET KEY</div>
       <div style="display:flex; gap:16px; align-items:center;">
         <div class="time-badge"><i data-lucide="clock" style="width:16px;height:16px;"></i> <span id="vn-clock">00:00:00</span> (GMT+7)</div>
         <div class="status-badge"><div class="status-dot"></div> Bảo vệ</div>
@@ -92,16 +92,16 @@ export function renderCheckpoint(env) {
 }
 
 export function renderHome(env, error) {
-  return layoutApp('Get Key | Dark Titanium', `
+  return layoutApp('Get Key', `
     <div class="container">
       <!-- CỘT TRÁI: LẤY KEY -->
       <div>
         <div class="glass-card">
-          <div class="header-title"><i data-lucide="key" style="color:#fff;"></i> Lấy key miễn phí</div>
-          <div class="header-desc">Chào mừng bạn đến với trang web của chúng tôi.</div>
+          <div class="header-title"><i data-lucide="key" style="color:#fff;"></i> Lấy Key Miễn Phí</div>
+          <div class="header-desc">Chào mừng bạn đến với hệ thống Get Key tự động.</div>
           
           <div class="telegram-banner">
-            <h4>Cộng đồng GetKey</h4>
+            <h4>Cộng đồng Get Key</h4>
             <a href="#" class="telegram-btn"><i data-lucide="send"></i> Tham gia nhóm Telegram ↗</a>
           </div>
 
@@ -114,18 +114,17 @@ export function renderHome(env, error) {
           <div style="text-align:center; font-size:12px; color:#a1a1aa; margin-bottom:20px;">Bước 1/4 • Chọn key</div>
 
           <div style="font-weight:700; font-size:14px; margin-bottom:12px; display:flex; align-items:center; gap:6px; color:#fff;"><i data-lucide="info" style="width:16px;"></i> Hướng dẫn lấy key</div>
-          <div class="key-input-group">
-            <label>Chọn loại key</label>
-            <span class="key-badge">Bước 1</span>
-          </div>
-          <div class="key-input-group" style="background:#000; border-color:#555;">
-            <span style="font-weight:600; font-size:15px; color:#fff;">Key Bản Quyền Tool</span>
+          
+          <div class="tier-selector">
+            <div class="tier-slider" id="tierSlider"></div>
+            <label class="tier-option selected" data-tier="Normal"><input type="radio" name="tier" value="Normal" checked><i data-lucide="zap" style="width:18px;"></i> Normal <span class="tier-badge">8H</span></label>
+            <label class="tier-option" data-tier="VIP"><input type="radio" name="tier" value="VIP"><i data-lucide="crown" style="width:18px;"></i> VIP <span class="tier-badge">2H</span></label>
           </div>
 
           ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600; text-align:center;">${error}</div>` : ''}
 
           <form method="POST" action="/start">
-            <input type="hidden" name="tier" value="Normal">
+            <input type="hidden" name="tier" id="tierInput" value="Normal">
             <button type="submit" class="btn btn-primary"><i data-lucide="download"></i> Get Key</button>
           </form>
         </div>
@@ -144,12 +143,12 @@ export function renderHome(env, error) {
           <div class="device-grid">
             <div class="device-item">
               <div class="device-label">TÊN KEY</div>
-              <div class="device-val" style="font-size:14px;">Key Customs</div>
+              <div class="device-val" style="font-size:14px;">Key Bản Quyền</div>
             </div>
             <div class="device-item">
               <div class="device-label">CÒN LẠI HÔM NAY</div>
               <div class="device-val" id="dev-limit">5</div>
-              <div class="device-sub">Giới hạn: thiết bị 5 / IP 5 theo lịch sử thiết bị; server vẫn kiểm tra quota thật. Reset lúc <span id="dev-reset">00h 00p</span> (GMT+7)</div>
+              <div class="device-sub">Giới hạn: 5 key / IP. Reset lúc <span id="dev-reset">00h 00p</span> (GMT+7)</div>
             </div>
             <div class="device-item">
               <div class="device-label">THÀNH CÔNG</div>
@@ -172,12 +171,12 @@ export function renderHome(env, error) {
         <!-- THÔNG TIN TỪ WEB -->
         <div class="glass-card">
           <div class="info-box">
-            <h4>Thông tin từ GetKey</h4>
+            <h4>Thông tin từ Get Key</h4>
             <ul class="info-list">
-              <li>© Bản quyền thuộc về GetKey System</li>
-              <li style="color:#ef4444; font-weight:700;">‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo sài key vượt để bán.</li>
-              <li>📦 Mua key Free Fire vui lòng liên hệ phía dưới</li>
-              <li style="margin-top:12px; font-weight:700; color:#fff;">Bảng giá key OB54</li>
+              <li>© Bản quyền thuộc về Get Key System</li>
+              <li style="color:#ef4444; font-weight:700;">‼ Mọi hành vi buôn bán key không rõ nguồn gốc đều là lừa đảo.</li>
+              <li>📦 Mua key VIP vui lòng liên hệ Admin.</li>
+              <li style="margin-top:12px; font-weight:700; color:#fff;">Bảng giá Key VIP</li>
             </ul>
             <div class="pricing">
               <div><span>👉 Key 1 ngày</span> <b>10k</b></div>
@@ -185,7 +184,7 @@ export function renderHome(env, error) {
               <div><span>👉 Key 30 ngày</span> <b>150k</b></div>
             </div>
             <ul class="info-list" style="margin-top:12px;">
-              <li style="color:#ef4444; font-weight:700;">‼ Nhớ chọn đúng key trước khi vượt</li>
+              <li style="color:#ef4444; font-weight:700;">‼ Vui lòng chọn đúng loại Key trước khi vượt.</li>
             </ul>
             
             <div style="display:flex; gap:12px; margin-top:20px;">
@@ -196,6 +195,18 @@ export function renderHome(env, error) {
         </div>
       </div>
     </div>
+    <script>
+      const slider = document.getElementById('tierSlider');
+      const options = document.querySelectorAll('.tier-option');
+      options.forEach((opt, index) => {
+        opt.addEventListener('click', () => {
+          options.forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          document.getElementById('tierInput').value = opt.dataset.tier;
+          slider.style.transform = 'translateX(' + (index * 100) + '%)';
+        });
+      });
+    </script>
   `);
 }
 
