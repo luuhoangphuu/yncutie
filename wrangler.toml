@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [[kv_namespaces]]
 binding = "ANNOUNCEMENT_KV"
-id = "50fe066cc0f6491e939bd29ad778bda8"
+id = "3f2178f84ea2484098db8d5ab88cd23a"
 
 [vars]
 DEMO_MODE = "false"
