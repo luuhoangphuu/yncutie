@@ -1,10 +1,10 @@
-// --- CSS CHECKPOINT: SCI-FI LIGHT DASHBOARD ---
+// --- CSS CHECKPOINT ---
 export const CSS_CHECKPOINT = `
 :root { color-scheme: light only; --bg: #f4f6f9; --text: #09090b; --text-muted: #64748b; --primary: #4f46e5; --accent: #ec4899; --border: rgba(0,0,0,0.06); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
-#network-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-.bg-grid { position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 40px 40px; mask-image: radial-gradient(circle at center, black 10%, transparent 80%); -webkit-mask-image: radial-gradient(circle at center, black 10%, transparent 80%); }
+#network-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.bg-grid { position: fixed; inset: 0; z-index: -1; pointer-events: none; background-image: linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 40px 40px; mask-image: radial-gradient(circle at center, black 10%, transparent 80%); -webkit-mask-image: radial-gradient(circle at center, black 10%, transparent 80%); }
 
 .top-nav { position: relative; z-index: 10; width: 100%; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(244, 246, 249, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
 .logo { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; color: #0f172a; }
@@ -17,7 +17,6 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .container-check { position: relative; z-index: 10; width: 100%; max-width: 1200px; margin: 60px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 0 40px; align-items: center; }
 @media (max-width: 900px) { .container-check { grid-template-columns: 1fr; gap: 40px; padding: 0 20px; margin: 30px auto; } }
 
-/* LEFT SIDE */
 .left { display: flex; flex-direction: column; }
 .badge-security { display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 2px; }
 .badge-security::before { content: ''; display: block; width: 30px; height: 3px; background: var(--primary); border-radius: 2px; }
@@ -25,20 +24,17 @@ h1 { font-size: 54px; font-weight: 800; line-height: 1.05; margin-bottom: 24px; 
 h1 span { background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .desc { font-size: 16px; line-height: 1.7; color: var(--text-muted); margin-bottom: 40px; font-weight: 500; max-width: 90%; }
 
-/* TERMINAL BOX */
 .terminal-box { background: #0f172a; border-radius: 16px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #38bdf8; height: 160px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 20px 40px rgba(15,23,42,0.15); position: relative; }
 .terminal-box::before { content: 'root@system:~#'; color: #10b981; display: block; margin-bottom: 10px; font-weight: bold; opacity: 0.8; }
 .term-line { margin-bottom: 6px; opacity: 0; animation: typeIn 0.3s forwards; }
 @keyframes typeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
-/* CHALLENGE MODULE */
 .challenge-module { background: #ffffff; border-radius: 24px; padding: 40px; box-shadow: 0 24px 60px -12px rgba(79,70,229,0.15), inset 0 0 0 1px rgba(255,255,255,1); position: relative; overflow: hidden; }
 .challenge-module::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #4f46e5, #ec4899); }
 .cf-turnstile { display: flex; justify-content: center; margin-bottom: 24px; position: relative; z-index: 2; }
 .help-text { text-align: center; font-size: 14px; color: var(--text-muted); line-height: 1.6; font-weight: 500; }
 .help-text b { color: #0f172a; }
 
-/* STEPPER */
 .stepper { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; }
 .step { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .step-circle { width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
@@ -51,7 +47,6 @@ h1 span { background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-backgro
 .step-line.completed { background: #10b981; }
 .step-line.active { background: linear-gradient(90deg, #10b981, #4f46e5); }
 
-/* RIGHT SIDE (DASHBOARD) */
 .right { display: grid; gap: 20px; }
 .dash-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,1); border-radius: 24px; padding: 28px; box-shadow: 0 15px 35px -5px rgba(0,0,0,0.05), 0 0 0 1px rgba(0,0,0,0.02); transition: transform 0.3s, box-shadow 0.3s; }
 .dash-card:hover { transform: translateY(-4px); box-shadow: 0 25px 45px -5px rgba(0,0,0,0.08), 0 0 0 1px rgba(0,0,0,0.02); }
@@ -60,7 +55,7 @@ h1 span { background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-backgro
 .dash-value { font-size: 38px; font-weight: 800; color: #0f172a; font-family: 'JetBrains Mono', monospace; letter-spacing: -1px; }
 .dash-value small { font-size: 18px; color: var(--text-muted); margin-left: 4px; }
 .waveform { display: flex; align-items: flex-end; gap: 4px; height: 60px; margin-top: 16px; }
-.bar { flex: 1; background: #e2e8f0; border-radius: 3px; transition: height 0.15s, background 0.15s; }
+.bar { flex: 1; background: #e2e8f0; border-radius: 3px; transition: height 0.15s ease-out, background 0.15s; }
 .bar.active { background: linear-gradient(to top, #4f46e5, #ec4899); box-shadow: 0 0 12px rgba(79,70,229,0.5); }
 .radar-wrapper { display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 10px; }
 .radar-container { width: 110px; height: 110px; position: relative; border-radius: 50%; border: 1px solid rgba(79,70,229,0.2); overflow: hidden; background: #f8fafc; box-shadow: inset 0 0 20px rgba(79,70,229,0.05); }
@@ -75,19 +70,20 @@ h1 span { background: linear-gradient(135deg, #4f46e5, #ec4899); -webkit-backgro
 .stat-val { font-size: 15px; font-weight: 800; color: #0f172a; }
 `;
 
-// --- CSS CHO APP (SQUID GLASS) ---
+// --- CSS APP ---
 export const CSS_APP = `
 :root { color-scheme: light only; --bg: #f0f4f8; --text: #0f172a; --text-muted: #64748b; --primary: #4f46e5; --accent: #ec4899; --card-bg: rgba(255, 255, 255, 0.85); --card-border: rgba(255, 255, 255, 0.6); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; }
-#network-bg { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.3; }
-.bg-shapes { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; opacity: 0.04; }
-.shape { position: absolute; border: 6px solid var(--accent); }
+#network-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0.3; }
+.bg-shapes { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; opacity: 0.04; }
+.shape { position: absolute; border: 6px solid var(--accent); pointer-events: none; }
 .circle { width: 200px; height: 200px; border-radius: 50%; top: -10%; left: -5%; animation: float 12s infinite ease-in-out alternate; }
 .triangle { width: 0; height: 0; border-left: 100px solid transparent; border-right: 100px solid transparent; border-bottom: 180px solid var(--primary); border-top: none; background: transparent !important; bottom: -10%; right: -5%; animation: float 15s infinite ease-in-out alternate-reverse; }
 .square { width: 150px; height: 150px; top: 40%; right: 10%; animation: float 18s infinite ease-in-out alternate; }
 @keyframes float { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-40px) rotate(20deg); } }
-.wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+
+.wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; position: relative; z-index: 10; }
 .container { position: relative; z-index: 10; width: 100%; max-width: 1000px; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 30px; }
 @media (max-width: 900px) { .container { grid-template-columns: 1fr; max-width: 500px; } }
 .glass-card { background: var(--card-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--card-border); border-radius: 32px; padding: 40px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); }
@@ -125,7 +121,7 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 .line.active { background: var(--primary); }
 .key-box { display: flex; gap: 12px; align-items: center; margin: 24px 0 20px; padding: 20px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 20px; }
 .key-box span { flex: 1; font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 800; color: var(--primary); word-break: break-all; letter-spacing: 2px; text-align: center; }
-.skeleton { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; height: 24px; width: 100%; }
+.skeleton { background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; height: 24px; width: 100%; }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 .faq { margin-top: 40px; }
 .faq-item { background: #fff; border: 1px solid var(--border); border-radius: 16px; margin-bottom: 10px; overflow: hidden; }
@@ -138,9 +134,8 @@ h1 { font-size: 40px; font-weight: 800; line-height: 1.1; margin-bottom: 12px; l
 .footer a { color: var(--primary); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; margin: 0 10px; }
 `;
 
-// --- JAVASCRIPT CHUNG ---
+// --- JAVASCRIPT ---
 export const JS = `
-// Vẽ lưới hạt (Particle Network)
 const canvas = document.createElement('canvas');
 canvas.id = 'network-bg';
 document.body.prepend(canvas);
@@ -179,7 +174,6 @@ function drawNetwork() {
 window.addEventListener('resize', initCanvas);
 initCanvas(); drawNetwork();
 
-// Logic Copy
 document.addEventListener('click', function(e) {
   var b = e.target.closest('[data-copy]'); if(!b) return;
   var t = document.getElementById(b.dataset.copy); if(!t) return;
@@ -191,24 +185,22 @@ document.addEventListener('click', function(e) {
 
 function showSkeleton() {
   const keyBox = document.getElementById('keyContainer');
-  if(keyBox) { keyBox.innerHTML = '<div class="key-box"><div class="skeleton"></div></div><button class="btn btn-primary" disabled style="opacity:0.5">ĐANG LẤY KEY...</button>'; }
+  const form = document.querySelector('form[action="/verify/ads"]');
+  if(keyBox) { keyBox.innerHTML = '<div class="key-box"><div class="skeleton" style="height:40px;"></div></div>'; }
+  if(form) {
+    const btn = form.querySelector('button');
+    if(btn) { btn.innerHTML = '<div class="skeleton" style="width:150px; height:20px;"></div>'; btn.disabled = true; }
+  }
 }
 
-// Hiệu ứng biểu đồ nhịp tim
 setInterval(() => {
-  const bars = document.querySelectorAll('.bar');
-  if(bars.length > 0) {
-    bars.forEach((bar, index) => {
-      if(index > bars.length - 20) {
-        bar.style.height = Math.floor(Math.random() * 90 + 10) + '%';
-        bar.classList.add('active');
-        setTimeout(() => bar.classList.remove('active'), 150);
-      }
-    });
+  const clockEl = document.getElementById('vn-clock');
+  if(clockEl) {
+    const vnTime = new Intl.DateTimeFormat('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date());
+    clockEl.innerText = vnTime;
   }
-}, 100);
+}, 1000);
 
-// Hiệu ứng Terminal Log
 setTimeout(() => {
   const term = document.getElementById('terminal');
   if(term) {
@@ -223,15 +215,24 @@ setTimeout(() => {
   }
 }, 500);
 
-// Đồng hồ thời gian thực chuẩn giờ VN (GMT+7)
+// LOGIC ĐỒ THỊ NHỊP TIM (REALISTIC GRAPH)
+const barCount = 50;
+let graphData = new Array(barCount).fill(10);
 setInterval(() => {
-  const clockEl = document.getElementById('vn-clock');
-  if(clockEl) {
-    const vnTime = new Intl.DateTimeFormat('vi-VN', {
-      timeZone: 'Asia/Ho_Chi_Minh',
-      hour: '2-digit', minute: '2-digit', second: '2-digit'
-    }).format(new Date());
-    clockEl.innerText = vnTime;
-  }
-}, 1000);
+  const bars = document.querySelectorAll('.bar');
+  if(bars.length === 0) return;
+  
+  graphData.shift(); // Dịch dữ liệu sang trái
+  
+  let newVal = 10 + Math.random() * 20; // Mức nền
+  if(Math.random() > 0.85) newVal = 50 + Math.random() * 40; // Thỉnh thoảng nhảy vọt (nhịp tim/DDoS)
+  
+  graphData.push(newVal);
+  
+  bars.forEach((bar, i) => {
+    bar.style.height = graphData[i] + '%';
+    if(graphData[i] > 40) bar.classList.add('active');
+    else bar.classList.remove('active');
+  });
+}, 100);
 `;

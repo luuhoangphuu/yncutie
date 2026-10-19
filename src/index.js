@@ -31,14 +31,13 @@ export default {
         return redirect('/step1', await saveSession(request, env, session));
       }
 
-      // BƯỚC 1: YOUTUBE (Không Captcha)
       if (p === '/step1' && m === 'GET') {
         if(!s) return redirect('/');
         return html(renderStep('Ủng hộ', 1, `
           <h2 style="text-align:center; margin-bottom:20px;">Ủng hộ Kênh YouTube</h2>
           <p class="sub" style="text-align:center;">Vui lòng theo dõi kênh để duy trì hệ thống miễn phí.</p>
           <a href="${env.YOUTUBE_CHANNEL_URL}" target="_blank" class="btn btn-youtube" style="margin-bottom:20px;"><i data-lucide="youtube"></i> Mở YouTube</a>
-          <form method="POST" action="/verify/sub">
+          <form method="POST" action="/verify/sub" onsubmit="showSkeleton();">
             <button type="submit" class="btn btn-primary"><i data-lucide="check"></i> Tôi đã theo dõi</button>
           </form>
         `));
@@ -48,16 +47,13 @@ export default {
         s.sub = true; return redirect('/step2', await saveSession(request, env, s));
       }
 
-      // BƯỚC 2: VƯỢT ADS (Xử lý logic VIP 2 lần, Normal 1 lần)
       if (p === '/step2' && m === 'GET') {
         if(!s || !s.sub) return redirect('/');
         
         const required = s.tier === 'VIP' ? 2 : 1;
-        if (s.ads >= required) return redirect('/success'); // Đã đủ điều kiện
+        if (s.ads >= required) return redirect('/success');
 
         const currentStep = s.ads + 1;
-        
-        // Tạo link Link4M trỏ về /ads-return
         const returnUrl = new URL('/ads-return', request.url).toString();
         let link4mUrl = returnUrl;
         if(env.LINK4M_API_TOKEN) {
@@ -76,18 +72,14 @@ export default {
         `));
       }
 
-      // CALLBACK: Link4M trả về đây
       if (p === '/ads-return' && m === 'GET') {
         if(!s || !s.sub) return redirect('/');
-        
-        s.ads += 1; // Đánh dấu đã xem xong 1 ads
+        s.ads += 1;
         const required = s.tier === 'VIP' ? 2 : 1;
 
         if (s.ads < required) {
-          // Nếu VIP mà chưa đủ 2 lần, đá về step2 bắt xem tiếp
           return redirect('/step2', await saveSession(request, env, s));
         } else {
-          // Đã đủ điều kiện -> Lấy Key
           const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY }, body: JSON.stringify({ tier: s.tier }) });
           const data = await res.json();
           if(data.success) { s.key = data.key; s.duration = data.duration_hours; return redirect('/success', await saveSession(request, env, s)); }
@@ -95,7 +87,6 @@ export default {
         }
       }
 
-      // BƯỚC 3: NHẬN KEY
       if (p === '/success' && m === 'GET') {
         if(!s || !s.key) return redirect('/');
         return html(renderStep('Nhận Key', 3, `

@@ -102,7 +102,6 @@ export function renderCheckpoint(env) {
   `);
 }
 
-// Các hàm renderHome, renderStep, renderFAQ giữ nguyên như cũ...
 const renderFooter = () => `
   <div class="footer">
     <p style="margin-bottom:10px;">© 2026 GetKey System. Phát triển bởi <b>ZwicApex</b>.</p>
@@ -147,6 +146,15 @@ export function renderHome(env, error) {
         </div>
       </div>
     </div>
+    <script>
+      document.querySelectorAll('.tier-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('.tier-option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          document.getElementById('tierInput').value = opt.dataset.tier;
+        });
+      });
+    </script>
   `, renderFooter());
 }
 
