@@ -106,7 +106,7 @@ export function renderCheckpoint(env) {
 
 const renderFooter = () => `
   <div class="footer">
-    <p>© 2026 <b>getkeydpiconfig.site</b>. Bảo lưu mọi quyền.</p>
+    <p>© 2026 <b>getkeydpiconfig.site</b> • Phát triển bởi ZwicApex.</p>
     <div>
       <a href="https://zalo.me/0996492296" target="_blank" class="zalo">
         <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.83.5 3.54 1.35 5.02L2 22l4.98-1.35C8.46 21.5 10.17 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.27 14.23c-.18.5-1.04.96-1.42 1-.38.04-1.16.14-2.1-.2-.94-.34-1.72-.88-2.56-1.74-.84-.86-1.38-1.64-1.72-2.56-.34-.92-.24-1.7-.2-2.08.04-.38.5-1.24 1-1.42.5-.18 1.04-.22 1.4.2.36.42.66 1.5.8 1.88.14.38.06.64-.06.88-.12.24-.46.58-.6.72-.14.14-.28.34-.16.58.12.24.52.88 1.22 1.58.7.7 1.34 1.1 1.58 1.22.24.12.44-.02.58-.16.14-.14.48-.48.72-.6.24-.12.5-.2.88-.06.38.14 1.46.44 1.88.8.42.36.38.9.2 1.4z"/></svg>
@@ -124,9 +124,10 @@ export function renderHome(env, error) {
   return layoutApp('Get Key | Hệ thống tự động', `
     <div class="container">
       <div class="glass-card hero">
-        <div class="badge">✨ Tự động hóa 100%</div>
-        <h1>Nhận Key <br><span class="grad">Bản Quyền</span></h1>
-        <p class="sub">Chọn hạng Key, vượt qua Captcha và nhận Key tự động trong 30 giây.</p>
+        <div class="badge"><i data-lucide="shield-check" style="width:16px;"></i> Hệ thống bảo mật</div>
+        <h1>Hệ Thống Nhận Key<br><span class="grad">Bản Quyền Cao Cấp</span></h1>
+        <p class="sub">Xác thực danh tính và phân phối Key tự động. Bảo mật đa lớp, an toàn tuyệt đối.</p>
+        
         ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600;">${error}</div>` : ''}
         
         <div class="tier-selector">
@@ -137,7 +138,7 @@ export function renderHome(env, error) {
 
         <form method="POST" action="/start">
           <input type="hidden" name="tier" id="tierInput" value="Normal">
-          <button type="submit" class="btn btn-primary"><i data-lucide="rocket"></i> Bắt đầu nhận Key</button>
+          <button type="submit" class="btn btn-primary"><i data-lucide="rocket"></i> Khởi tạo quy trình nhận Key</button>
         </form>
       </div>
       <div class="info-col">
@@ -146,7 +147,6 @@ export function renderHome(env, error) {
           <div class="stat-info"><h4><span class="status-dot"></span> Hệ thống ổn định</h4><p>Độ trễ API: 24ms • Uptime: 99.9%</p></div>
         </div>
         
-        <!-- THẺ THÔNG TIN THỰC TẾ -->
         <div class="stat-card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #bbf7d0;">
           <div class="stat-icon" style="background:#22c55e; color:#fff; box-shadow: 0 0 15px rgba(34,197,94,0.4);"><i data-lucide="monitor-smartphone"></i></div>
           <div class="stat-info">
@@ -173,7 +173,6 @@ export function renderHome(env, error) {
         });
       });
 
-      // LẤY THÔNG TIN TRÌNH DUYỆT THỰC TẾ
       const ua = navigator.userAgent;
       let os = "Không xác định";
       if (ua.indexOf("Win") != -1) os = "Windows";
