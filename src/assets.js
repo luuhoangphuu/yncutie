@@ -56,10 +56,18 @@ h1::before { content: ''; position: absolute; top: 50%; left: 0; width: 100%; he
 .bar { flex: 1; background: #333; border-radius: 3px; transition: height 0.15s ease-out, background 0.15s; }
 .bar.active { background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
 .radar-wrapper { display: flex; align-items: center; justify-content: center; gap: 24px; margin-top: 10px; }
-.radar-container { width: 110px; height: 110px; position: relative; border-radius: 50%; border: 1px solid #333; overflow: hidden; background: #000; box-shadow: inset 0 0 20px rgba(255,255,255,0.05); }
-.radar-sweep { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: conic-gradient(from 0deg, transparent 60%, rgba(255,255,255,0.2) 100%); animation: spin 2s linear infinite; border-radius: 50%; }
+.radar-container { width: 110px; height: 110px; position: relative; border-radius: 50%; border: 1px solid rgba(255,255,255,0.15); overflow: hidden; background: radial-gradient(circle at center, rgba(20,20,25,0.8) 0%, #000 100%); box-shadow: inset 0 0 20px rgba(255,255,255,0.05), 0 0 20px rgba(255,255,255,0.1); }
+.radar-grid { position: absolute; inset: 0; border-radius: 50%; background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 50% 50%; background-position: center center; }
+.radar-circle { position: absolute; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); pointer-events: none; }
+.radar-circle:nth-child(1) { inset: 25%; }
+.radar-circle:nth-child(2) { inset: 10%; }
+.radar-sweep { position: absolute; inset: 0; background: conic-gradient(from 0deg, transparent 0%, rgba(255,255,255,0.3) 15%, transparent 15.1%); animation: spin 2s linear infinite; border-radius: 50%; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
-.radar-dot { position: absolute; top: 30%; left: 60%; width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 15px #fff; animation: pulse 1.5s infinite; }
+.radar-target { position: absolute; width: 6px; height: 6px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff, 0 0 20px #fff; animation: radarPing 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
+@keyframes radarPing { 0% { transform: scale(1); opacity: 1; box-shadow: 0 0 10px #fff; } 50% { transform: scale(2.5); opacity: 0; box-shadow: 0 0 20px #fff; } 100% { transform: scale(1); opacity: 0; } }
+.radar-target:nth-child(4) { top: 30%; left: 70%; animation-delay: 0s; }
+.radar-target:nth-child(5) { top: 70%; left: 30%; animation-delay: 0.6s; }
+.radar-target:nth-child(6) { top: 50%; left: 20%; animation-delay: 1.2s; width: 4px; height: 4px; }
 .radar-info h4 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
 .radar-info p { font-size: 13px; font-weight: 600; color: #a1a1aa; }
 .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; }
