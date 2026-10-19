@@ -2,10 +2,6 @@ import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE, CSS_MODAL, JS_MODAL, CSS_ADMIN
 
 const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
-<meta property="og:title" content="GETKEYDPICONFIG.SITE - Lấy Key Miễn Phí">
-<meta property="og:description" content="Hệ thống phát Key tự động, bảo mật 10 phút, hỗ trợ VIP/Normal.">
-<meta property="og:type" content="website">
-<meta property="og:image" content="https://ui-avatars.com/api/?name=GK&background=09090b&color=fff&size=200&rounded=true">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>`;
@@ -18,7 +14,6 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
-// ĐÃ XÓA NÚT BACK TO TOP KHỎI LAYOUT APP
 const layoutApp = (title, content, isAdmin = false) => `${head(title)}<style>${CSS_APP}${CSS_MOBILE}${CSS_MODAL}${CSS_PREMIUM}${isAdmin ? CSS_ADMIN : ''}</style></head>
 <body>
   <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
@@ -29,25 +24,6 @@ const layoutApp = (title, content, isAdmin = false) => `${head(title)}<style>${C
   <script>${JS}</script>
   <script>${JS_PREMIUM}</script>
   <script>${JS_MODAL}</script>
-  
-  <script>
-    // Copy logic nâng cao
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-copy]');
-      if(!btn) return;
-      const targetId = btn.dataset.copy;
-      const targetEl = document.getElementById(targetId);
-      if(!targetEl) return;
-      navigator.clipboard.writeText(targetEl.innerText).then(() => {
-        const orig = btn.innerHTML;
-        btn.innerHTML = '<i data-lucide="check"></i> Đã Copy!';
-        btn.classList.add('btn-copied');
-        if(window.lucide) lucide.createIcons();
-        localStorage.setItem('last_key', targetEl.innerText); // Lưu lịch sử
-        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-copied'); if(window.lucide) lucide.createIcons(); }, 2000);
-      });
-    });
-  </script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
@@ -87,7 +63,15 @@ export function renderCheckpoint(env) {
         </div>
         <div class="dash-card">
           <div class="radar-wrapper">
-            <div class="radar-container"><div class="radar-sweep"></div><div class="radar-dot"></div></div>
+            <div class="radar-container">
+              <div class="radar-grid"></div>
+              <div class="radar-circle c1"></div>
+              <div class="radar-circle c2"></div>
+              <div class="radar-sweep"></div>
+              <div class="radar-target t1"></div>
+              <div class="radar-target t2"></div>
+              <div class="radar-target t3"></div>
+            </div>
             <div class="radar-info"><h4>Đang bảo vệ</h4><p>WAF • Bot • DDoS</p><div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Lưu lượng quét: 1.2 GB/s</div></div>
           </div>
         </div>
@@ -193,7 +177,7 @@ export function renderHome(env, error, notice, quota) {
         </script>
       </div>
 
-      <!-- CỘT PHẢI (KHÔNG CÒN SESSION) -->
+      <!-- CỘT PHẢI -->
       <div>
         <div class="glass-card">
           <div style="font-size:12px; font-weight:700; color:#a1a1aa; text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
@@ -276,18 +260,6 @@ export function renderHome(env, error, notice, quota) {
         btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="30 10"/></svg> Đang khởi tạo...';
         btn.style.background = 'rgba(255,255,255,0.5)';
       });
-      
-      // Hiệu ứng đếm số cho Lượt còn lại (Chỉ đếm số do Server trả về)
-      const limitEl = document.getElementById('dev-limit');
-      if(limitEl) {
-        const finalVal = parseInt(limitEl.innerText);
-        let currentVal = 0;
-        const timer = setInterval(() => {
-          if(currentVal >= finalVal) { clearInterval(timer); limitEl.innerText = finalVal; return; }
-          currentVal++;
-          limitEl.innerText = currentVal;
-        }, 100);
-      }
     </script>
     <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
   `);
