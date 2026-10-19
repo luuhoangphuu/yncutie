@@ -121,7 +121,7 @@ export function renderCheckpoint(env) {
   `);
 }
 
-export function renderHome(env, error, notice) {
+export function renderHome(env, error, notice, quota) {
   const modalHtml = (notice && notice.enabled) ? `
   <div id="customModal" class="modal-overlay">
     <div class="modal-box">
@@ -208,13 +208,13 @@ export function renderHome(env, error, notice) {
               <div class="device-val" style="font-size:14px;">Key Bản Quyền</div>
             </div>
             <div class="device-item">
-              <div class="device-label">CÒN LẠI HÔM NAY</div>
-              <div class="device-val" id="dev-limit">0</div>
-              <div class="device-sub">Giới hạn: 5 key / IP. Reset lúc <span id="dev-reset">00h 00p</span> (GMT+7)</div>
+              <div class="device-label">LƯỢT CÒN LẠI</div>
+              <div class="device-val" id="dev-limit">${quota ? (quota.limit - quota.count) : 12}</div>
+              <div class="device-sub">Giới hạn: <b>12 key / IP / ngày</b>. Reset lúc <span id="dev-reset">00h 00p</span> (GMT+7)</div>
             </div>
             <div class="device-item">
-              <div class="device-label">THÀNH CÔNG</div>
-              <div class="device-val" id="dev-success">0</div>
+              <div class="device-label">ĐÃ DÙNG</div>
+              <div class="device-val" id="dev-success">${quota ? quota.count : 0}</div>
               <div class="device-sub">lượt đã nhận key</div>
             </div>
             <div class="device-item">

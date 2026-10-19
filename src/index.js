@@ -1,35 +1,72 @@
 import { renderCheckpoint, renderHome, renderStep, renderFAQ, renderAdmin, renderError } from './ui.js';
 import { encodeSession, decodeSession, getCookie, setCookie, verifyTurnstile } from './auth.js';
 
-async function getSession(req, env) { return await decodeSession(getCookie(req, 'sess'), env.SESSION_SECRET || 'fallback_1101_fix'); }
-async function saveSession(req, env, data) { data.expiresAt = Date.now() + 600000; return setCookie('sess', await encodeSession(data, env.SESSION_SECRET || 'fallback_1101_fix'), 600); }
-const html = (s) => new Response(s, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
-const redirect = (loc, cookie) => { const h = { 'Location': loc }; if(cookie) h['Set-Cookie'] = cookie; return new Response('', { status: 302, headers: h }); };
+const DEFAULT_NOTICE = { enabled: true, title: "THÔNG BÁO QUAN TRỌNG", content: "© Bản quyền thuộc về GETKEYDPICONFIG.SITE.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n🔥 IB Tele: @Anmaster18\n✅ Hoặc: @Mityangho\n👤 Để mua key." };
 
-// Mặc định thông báo nếu chưa có
-const DEFAULT_NOTICE = {
-  enabled: true,
-  title: "THÔNG BÁO QUAN TRỌNG",
-  content: "© Bản quyền thuộc về GETKEYDPICONFIG.SITE.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n🔥 IB Tele: @Anmaster18\n✅ Hoặc: @Mityangho\n👤 Để mua key."
-};
+// Lấy IP
+function getIP(req) { return req.headers.get('cf-connecting-ip') || 'local'; }
 
-async function getNotice(env) {
+// Quản lý Session (10 phút)
+async function getSession(req, env) { 
+  const s = await decodeSession(getCookie(req, 'sess'), env.SESSION_SECRET || 'fallback_1101_fix'); 
+  if (!s) return null;
+  // CHECK IP NGHIÊM NGẶT
+  if (s.ip !== getIP(req)) {
+    console.warn(`IP Mismatch: Session=${s.ip} | Request=${getIP(req)}`);
+    return null; // IP thay đổi -> Hủy session
+  }
+  return s;
+}
+async function saveSession(req, env, data) { 
+  data.expiresAt = Date.now() + 600000; // 10 phút
+  data.ip = getIP(req); // Lưu IP vào session
+  return setCookie('sess', await encodeSession(data, env.SESSION_SECRET || 'fallback_1101_fix'), 600); 
+}
+
+// Quản lý Quota (12 lần/ngày)
+async function checkQuota(req, env) {
+  const ip = getIP(req);
+  const dateStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date()); // YYYY-MM-DD
+  const key = `quota:${ip}:${dateStr}`;
+  
   if (env.ANNOUNCEMENT_KV) {
     try {
-      const data = await env.ANNOUNCEMENT_KV.get('notice_json');
-      if (data) return JSON.parse(data);
-    } catch (e) { console.error('KV get error:', e); }
+      const countStr = await env.ANNOUNCEMENT_KV.get(key);
+      const count = countStr ? parseInt(countStr) : 0;
+      if (count >= 12) return { ok: false, count, limit: 12 };
+      return { ok: true, count, limit: 12 };
+    } catch(e) { return { ok: true, count: 0, limit: 12 }; } // Fallback nếu KV lỗi
+  }
+  return { ok: true, count: 0, limit: 12 }; // Không có KV thì mặc định cho qua
+}
+
+async function incrementQuota(req, env) {
+  const ip = getIP(req);
+  const dateStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
+  const key = `quota:${ip}:${dateStr}`;
+  if (env.ANNOUNCEMENT_KV) {
+    try {
+      const countStr = await env.ANNOUNCEMENT_KV.get(key);
+      const count = countStr ? parseInt(countStr) : 0;
+      await env.ANNOUNCEMENT_KV.put(key, (count + 1).toString(), { expirationTtl: 86400 });
+    } catch(e) {}
+  }
+}
+
+// Lấy thông báo
+async function getNotice(env) {
+  if (env.ANNOUNCEMENT_KV) {
+    try { const data = await env.ANNOUNCEMENT_KV.get('notice_json'); if (data) return JSON.parse(data); } catch (e) {}
   }
   return DEFAULT_NOTICE;
 }
-
 async function saveNotice(env, noticeData) {
   if (!env.ANNOUNCEMENT_KV) return false;
-  try {
-    await env.ANNOUNCEMENT_KV.put('notice_json', JSON.stringify(noticeData));
-    return true;
-  } catch (e) { console.error('KV put error:', e); return false; }
+  try { await env.ANNOUNCEMENT_KV.put('notice_json', JSON.stringify(noticeData)); return true; } catch (e) { return false; }
 }
+
+const html = (s) => new Response(s, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
+const redirect = (loc, cookie) => { const h = { 'Location': loc }; if(cookie) h['Set-Cookie'] = cookie; return new Response('', { status: 302, headers: h }); };
 
 export default {
   async fetch(request, env) {
@@ -39,44 +76,33 @@ export default {
     try {
       if (p === '/ynsociuu/lhp' && m === 'GET') return html(renderAdmin());
 
-      // API Quản lý thông báo
       if (p === '/api/admin/notice' && m === 'POST') {
         const body = await request.json();
-        const adminPass = 'lhp_admin_2026';
-        
-        if (body.password !== adminPass) {
-          return new Response(JSON.stringify({ success: false, error: 'Mật khẩu Admin không đúng!' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-        }
-
-        // Hành động GET
-        if (body.action === 'get') {
-           const notice = await getNotice(env);
-           return new Response(JSON.stringify({ success: true, notice }), { headers: { 'Content-Type': 'application/json' } });
-        }
-
-        // Hành động SAVE
+        if (body.password !== 'lhp_admin_2026') return new Response(JSON.stringify({ success: false, error: 'Sai mật khẩu!' }), { status: 401 });
+        if (body.action === 'get') return new Response(JSON.stringify({ success: true, notice: await getNotice(env) }));
         if (body.action === 'save') {
-           const saved = await saveNotice(env, body.notice);
-           if (saved) return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
-           return new Response(JSON.stringify({ success: false, error: 'Lỗi: Chưa cấu hình Cloudflare KV.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+           if (await saveNotice(env, body.notice)) return new Response(JSON.stringify({ success: true }));
+           return new Response(JSON.stringify({ success: false, error: 'Lỗi KV.' }), { status: 500 });
         }
       }
 
       if (p === '/api/verify-bot' && m === 'POST') {
         const { token } = await request.json();
-        const v = await verifyTurnstile(token, request.headers.get('cf-connecting-ip') || 'local', env);
+        const v = await verifyTurnstile(token, getIP(request), env);
         if(!v.success) return new Response(JSON.stringify({ success: false, error: v.error }), { status: 400 });
         return new Response(JSON.stringify({ success: true }), { headers: { 'Set-Cookie': `bot_passed=1; Path=/; Max-Age=180; Secure` } });
       }
       if (!botPassed) return html(renderCheckpoint(env));
 
+      // KIỂM TRA QUOTA KHI VÀO TRANG CHỦ
+      const quota = await checkQuota(request, env);
+      if (!quota.ok) {
+        return html(renderError(429, 'Bạn đã hết lượt lấy Key hôm nay (12/12). Vui lòng quay lại vào ngày mai!'));
+      }
+
       const s = await getSession(request, env);
 
-      if (p === '/' && m === 'GET') {
-        const notice = await getNotice(env);
-        return html(renderHome(env, url.searchParams.get('error'), notice, s));
-      }
-      
+      if (p === '/' && m === 'GET') return html(renderHome(env, url.searchParams.get('error'), await getNotice(env), quota));
       if (p === '/faq' && m === 'GET') return html(renderFAQ());
       
       if (p === '/start' && m === 'POST') {
@@ -127,7 +153,7 @@ export default {
         return html(renderStep('Vượt Ads', 2, `
           <h2 style="text-align:center; margin-bottom:20px; color:#fff;">Vượt Quảng Cáo (${currentStep}/${required})</h2>
           <p class="sub" style="text-align:center; color:#a1a1aa;">Nhấn mở Ads, hoàn thành và đợi hệ thống tự chuyển hướng về nhận Key.</p>
-          <a href="${link4mUrl}" target="_blank" class="btn btn-primary" style="margin-bottom:20px; background:linear-gradient(135deg, #f59e0b, #f97316); color:#fff;" onclick="this.innerHTML='<svg width=\'20\' height=\'20\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\' style=\'animation: spin 1s linear infinite;\'><circle cx=\'12\' cy=\'12\' r=\'10\' stroke-dasharray=\'30 10\'/></svg> Đang chuyển hướng...'"><i data-lucide="play-circle"></i> Mở Link4M (Lần ${currentStep})</a>
+          <a href="${link4mUrl}" target="_blank" class="btn btn-primary" style="margin-bottom:20px; background:linear-gradient(135deg, #f59e0b, #f97316); color:#fff;"><i data-lucide="play-circle"></i> Mở Link4M (Lần ${currentStep})</a>
         `), { 'Set-Cookie': cookie });
       }
 
@@ -137,13 +163,21 @@ export default {
         if (!reqToken || !s.adsToken || reqToken !== s.adsToken) return redirect('/?error=' + encodeURIComponent('Cảnh báo: Phát hiện hành vi Bypass Ads!'));
         const timeTaken = (Date.now() - s.adsStartTime) / 1000;
         if (timeTaken < 5) return redirect('/?error=' + encodeURIComponent('Cảnh báo: Bạn vượt Ads quá nhanh!'));
+        
         s.ads += 1; s.adsToken = null;
         const required = s.tier === 'VIP' ? 2 : 1;
-        if (s.ads < required) return redirect('/step2', await saveSession(request, env, s));
-        const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY }, body: JSON.stringify({ tier: s.tier }) });
-        const data = await res.json();
-        if(data.success) { s.key = data.key; s.duration = data.duration_hours; return redirect('/success', await saveSession(request, env, s)); }
-        return redirect('/?error=' + encodeURIComponent("Lỗi API nhà cung cấp."));
+        
+        if (s.ads < required) {
+          return redirect('/step2', await saveSession(request, env, s));
+        } else {
+          // ĐÃ XONG ADS -> TĂNG QUOTA VÀ LẤY KEY
+          await incrementQuota(request, env);
+          
+          const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY }, body: JSON.stringify({ tier: s.tier }) });
+          const data = await res.json();
+          if(data.success) { s.key = data.key; s.duration = data.duration_hours; return redirect('/success', await saveSession(request, env, s)); }
+          return redirect('/?error=' + encodeURIComponent("Lỗi API nhà cung cấp."));
+        }
       }
 
       if (p === '/success' && m === 'GET') {
