@@ -205,12 +205,12 @@ export function renderHome(env, error, notice, quota) {
           <div class="device-grid">
             <div class="device-item">
               <div class="device-label">TÊN KEY</div>
-              <div class="device-val" style="font-size:14px;">Key Bản Quyền</div>
+              <div class="device-val" style="font-size:14px;">ZwicApex</div>
             </div>
             <div class="device-item">
               <div class="device-label">LƯỢT CÒN LẠI</div>
               <div class="device-val" id="dev-limit">${quota ? (quota.limit - quota.count) : 12}</div>
-              <div class="device-sub">Giới hạn: <b>12 key / IP / ngày</b>. Reset lúc <span id="dev-reset">00h 00p</span> (GMT+7)</div>
+              <div class="device-sub">Giới hạn: <b>12 key / IP / ngày</b>. Reset lúc <b>00:00</b> (GMT+7)</div>
             </div>
             <div class="device-item">
               <div class="device-label">ĐÃ DÙNG</div>
