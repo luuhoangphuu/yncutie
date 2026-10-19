@@ -218,6 +218,22 @@ export function renderHome(env, error, notice, session) {
           </script>
         </div>
 
+        
+        <div class="glass-card">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:15px;">
+            <div style="background:rgba(16,185,129,0.1); width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#10b981; border:1px solid rgba(16,185,129,0.2);">
+              <i data-lucide="shield-check" style="width:24px;height:24px;"></i>
+            </div>
+            <div>
+              <h4 style="color:#fff; font-size:16px; font-weight:800;">Phiên Làm Việc</h4>
+              <p style="color:#10b981; font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px;">
+                <span class="live-dot" style="width:6px;height:6px;"></span> Đã kết nối an toàn
+              </p>
+            </div>
+          </div>
+          <button class="btn-clear-session" onclick="window.location.href='/reset'"><i data-lucide="log-out" style="width:16px;"></i> Kết thúc phiên (10 phút)</button>
+        </div>
+
         <div class="glass-card">
           <div class="info-box">
             <h4>Thông tin bản quyền</h4>

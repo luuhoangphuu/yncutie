@@ -2,7 +2,7 @@ import { renderCheckpoint, renderHome, renderStep, renderFAQ, renderAdmin } from
 import { encodeSession, decodeSession, getCookie, setCookie, verifyTurnstile } from './auth.js';
 
 async function getSession(req, env) { return await decodeSession(getCookie(req, 'sess'), env.SESSION_SECRET || 'fallback_1101_fix'); }
-async function saveSession(req, env, data) { data.expiresAt = Date.now() + 900000; return setCookie('sess', await encodeSession(data, env.SESSION_SECRET || 'fallback_1101_fix'), 900); }
+async function saveSession(req, env, data) { data.expiresAt = Date.now() + 600000; return setCookie('sess', await encodeSession(data, env.SESSION_SECRET || 'fallback_1101_fix'), 600); }
 const html = (s) => new Response(s, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 const redirect = (loc, cookie) => { const h = { 'Location': loc }; if(cookie) h['Set-Cookie'] = cookie; return new Response('', { status: 302, headers: h }); };
 
