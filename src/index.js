@@ -12,12 +12,15 @@ export default {
     const botPassed = getCookie(request, 'bot_passed');
 
     try {
+      // API check bot
       if (p === '/api/verify-bot' && m === 'POST') {
         const { token } = await request.json();
         const v = await verifyTurnstile(token, request.headers.get('cf-connecting-ip') || 'local', env);
         if(!v.success) return new Response(JSON.stringify({ success: false, error: v.error }), { status: 400 });
+        // Cookie 3 phút
         return new Response(JSON.stringify({ success: true }), { headers: { 'Set-Cookie': `bot_passed=1; Path=/; Max-Age=180; Secure` } });
       }
+      
       if (!botPassed) return html(renderCheckpoint(env));
 
       const s = await getSession(request, env);
@@ -27,7 +30,8 @@ export default {
       
       if (p === '/start' && m === 'POST') {
         const form = await request.formData();
-        const session = { sub: false, ads: 0, key: null, tier: form.get('tier') || 'Normal' };
+        // Session lưu tier
+        const session = { sub: false, ads: 0, key: null, tier: form.get('tier') || 'Normal', adsToken: null, adsStartTime: null };
         return redirect('/step1', await saveSession(request, env, session));
       }
 
@@ -47,34 +51,65 @@ export default {
         s.sub = true; return redirect('/step2', await saveSession(request, env, s));
       }
 
+      // BƯỚC 2: TẠO TOKEN VÉ THÔNG HÀNH
       if (p === '/step2' && m === 'GET') {
         if(!s || !s.sub) return redirect('/');
         const required = s.tier === 'VIP' ? 2 : 1;
         if (s.ads >= required) return redirect('/success');
+
         const currentStep = s.ads + 1;
-        const returnUrl = new URL('/ads-return', request.url).toString();
-        let link4mUrl = returnUrl;
+        
+        // Tạo vé thông hành mới mỗi lần vào
+        const adsToken = crypto.randomUUID();
+        s.adsToken = adsToken;
+        s.adsStartTime = Date.now();
+        const cookie = await saveSession(request, env, s);
+
+        const returnUrl = new URL('/ads-return', request.url);
+        returnUrl.searchParams.set('token', adsToken); // Gắn vé vào URL
+
+        let link4mUrl = returnUrl.toString();
         if(env.LINK4M_API_TOKEN) {
           try {
-            const api = `https://link4m.co/api-shorten/v2?api=${env.LINK4M_API_TOKEN}&url=${encodeURIComponent(returnUrl)}`;
+            const api = `https://link4m.co/api-shorten/v2?api=${env.LINK4M_API_TOKEN}&url=${encodeURIComponent(returnUrl.toString())}`;
             const res = await fetch(api); const data = await res.json();
             if (data.status === 'success') link4mUrl = data.shortenedUrl;
           } catch (e) {}
         }
+
         return html(renderStep('Vượt Ads', 2, `
           <h2 style="text-align:center; margin-bottom:20px;">Vượt Quảng Cáo (${currentStep}/${required})</h2>
           <p class="sub" style="text-align:center;">Nhấn mở Ads, hoàn thành và đợi hệ thống tự chuyển hướng về nhận Key.</p>
           <a href="${link4mUrl}" target="_blank" class="btn btn-ads" style="margin-bottom:20px;"><i data-lucide="play-circle"></i> Mở Link4M (Lần ${currentStep})</a>
-        `));
+        `), { 'Set-Cookie': cookie });
       }
 
+      // CALLBACK TỪ LINK4M: CHECK TOKEN VÀ THỜI GIAN
       if (p === '/ads-return' && m === 'GET') {
         if(!s || !s.sub) return redirect('/');
+        
+        const reqToken = url.searchParams.get('token');
+        
+        // 1. Check Token có khớp không (Chống bypass gọi trực tiếp)
+        if (!reqToken || !s.adsToken || reqToken !== s.adsToken) {
+           return redirect('/?error=' + encodeURIComponent('Cảnh báo: Phát hiện hành vi Bypass Ads! Vui lòng làm lại.'));
+        }
+
+        // 2. Check thời gian (Chống click ảo - Ít nhất 5 giây)
+        const timeTaken = (Date.now() - s.adsStartTime) / 1000;
+        if (timeTaken < 5) {
+           return redirect('/?error=' + encodeURIComponent('Cảnh báo: Bạn vượt Ads quá nhanh! Vui lòng thực hiện lại.'));
+        }
+
+        // Hợp lệ -> Cộng điểm
         s.ads += 1;
+        s.adsToken = null; // Xóa vé (chỉ dùng 1 lần)
+        
         const required = s.tier === 'VIP' ? 2 : 1;
         if (s.ads < required) {
           return redirect('/step2', await saveSession(request, env, s));
         } else {
+          // Đã đủ điều kiện -> Lấy Key
           const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY }, body: JSON.stringify({ tier: s.tier }) });
           const data = await res.json();
           if(data.success) { s.key = data.key; s.duration = data.duration_hours; return redirect('/success', await saveSession(request, env, s)); }
