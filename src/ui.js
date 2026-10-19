@@ -4,8 +4,7 @@ const layoutCheckpoint = (title, content) => `<!DOCTYPE html><html lang="vi"><he
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>${CSS_CHECKPOINT}</style></head>
-<body class="dark-theme">
-  <div class="bg-glow"></div>
+<body>
   ${content}
   <script>${JS}</script>
 </body></html>`;
@@ -19,44 +18,112 @@ const layoutApp = (title, content) => `<!DOCTYPE html><html lang="vi"><head><met
   <script>${JS}</script>
 </body></html>`;
 
-// --- GIAO DIỆN CHECK BOT (DARK) ---
+// --- GIAO DIỆN CHECK BOT (GIỐNG ẢNH 2 MÀU TRẮNG) ---
 export function renderCheckpoint(env) {
   return layoutCheckpoint('Security Check', `
+    <div class="top-nav">
+      <div class="logo"><div class="logo-icon">🛡️</div> DOMAINCHEAP.WTF</div>
+      <div class="status-badge"><div class="status-dot"></div> Kết nối đang được bảo vệ</div>
+    </div>
+
     <div class="container-check">
       <div class="left">
-        <div class="glass-dark">
-          <h1 class="dark-title">Xác minh <br>Bảo mật</h1>
-          <p class="sub-dark">Hệ thống đang kiểm tra kết nối của bạn bằng Trí tuệ Nhân tạo để chặn bot và spam.</p>
-          <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
-          <div class="terminal" id="term"></div>
+        <div class="badge-security">Trạm kiểm tra bảo mật</div>
+        <h1>Xác minh nhanh trước<br>khi vào cửa hàng</h1>
+        <p class="desc">Cloudflare đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
+
+        <div class="challenge-box">
+          <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" data-callback="onTurnstileSuccess"></div>
+          <div class="help-text">
+            Nếu thấy ô <b>Verify you are human</b>, bấm vào đó. Không cần tải lại trang, cửa hàng sẽ tự mở khi xác minh xong.
+          </div>
+        </div>
+
+        <div class="stepper">
+          <div class="step completed"><div class="step-circle"></div><div class="step-label">Kết nối TLS</div></div>
+          <div class="step-line completed"></div>
+          <div class="step completed"><div class="step-circle"></div><div class="step-label">Lọc tại edge</div></div>
+          <div class="step-line completed"></div>
+          <div class="step active"><div class="step-circle"></div><div class="step-label">Xác minh trình duyệt</div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-circle"></div><div class="step-label">Vào cửa hàng</div></div>
         </div>
       </div>
-      <div class="right" style="display:flex; flex-direction:column; justify-content:center;">
-        <div class="stat-box">
-          <div style="font-size:12px; color:#64748b; text-transform:uppercase; margin-bottom:5px;">Thời gian xác minh</div>
-          <div class="stat-val"><span id="timer">0.000</span>s</div>
+
+      <div class="right">
+        <!-- Khối 1: Biểu đồ nhịp tim -->
+        <div class="card-light">
+          <div class="card-header">
+            <span class="card-title">Thời gian xác minh</span>
+            <span class="card-value" id="timer">0.000<small>s</small></span>
+          </div>
+          <div class="graph-container" id="graph"></div>
         </div>
-        <div class="stat-box">
-          <div style="font-size:12px; color:#64748b; text-transform:uppercase; margin-bottom:5px;">Lưu lượng quét</div>
-          <div class="stat-val" style="color:#10b981;">An toàn</div>
+
+        <!-- Khối 2: Radar + Độ trễ -->
+        <div class="grid-2">
+          <div class="card-light" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <div class="radar-container">
+              <div class="radar-sweep"></div>
+              <div class="radar-dot"></div>
+            </div>
+            <div style="text-align:center; margin-top:15px;">
+              <div style="font-size:12px; color:var(--text-muted);">Quét lưu lượng</div>
+              <div style="font-size:14px; font-weight:700; color:var(--text);">Đang bảo vệ</div>
+              <div style="font-size:11px; color:var(--primary);">WAF • Bot • DDoS</div>
+            </div>
+          </div>
+          <div class="card-light">
+            <div class="card-header">
+              <span class="card-title">Độ trễ tới edge</span>
+              <span class="card-value">464<small>ms</small></span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); margin-top:10px;">
+              Giao thức<br><b style="color:var(--text); font-size:14px;">HTTP/3 (QUIC)</b>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khối 3: Thông số kỹ thuật -->
+        <div class="stats-grid">
+          <div class="stat-item"><div class="stat-label">Giao thức</div><div class="stat-val">HTTP/3 (QUIC)</div></div>
+          <div class="stat-item"><div class="stat-label">Mạng edge</div><div class="stat-val">Anycast · 330+ thành phố</div></div>
+          <div class="stat-item"><div class="stat-label">Lớp bảo vệ</div><div class="stat-val">Cloudflare</div></div>
+        </div>
+
+        <!-- Khối 4: Hướng dẫn khi bị kẹt -->
+        <div class="card-light">
+          <div style="font-size:14px; font-weight:700; margin-bottom:15px; color:var(--text);">Bị kẹt ở bước này?</div>
+          <div style="display:flex; gap:10px; margin-bottom:10px; font-size:13px; color:var(--text-muted);">
+            <div style="background:#e0e7ff; color:var(--primary); width:20px; height:20px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">1</div>
+            Đợi khoảng 10 giây; bấm tải lại liên tục chi khiến bị kiểm tra lại từ đầu.
+          </div>
+          <div style="display:flex; gap:10px; font-size:13px; color:var(--text-muted);">
+            <div style="background:#e0e7ff; color:var(--primary); width:20px; height:20px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">2</div>
+            Bật JavaScript và cookie, tạm tắt VPN hoặc trình chặn quảng cáo nếu có.
+          </div>
         </div>
       </div>
     </div>
+
     <script>
-      const term = document.getElementById('term');
-      const logs = ["Khởi tạo kết nối TLS 1.3...", "Phân tích dấu vết trình duyệt...", "Quét mẫu tấn công DDoS...", "Chờ xác minh Captcha..."];
-      let lIdx = 0;
-      setInterval(() => { if(lIdx < logs.length) { term.innerHTML += '<div class="log-line">> ' + logs[lIdx] + '</div>'; lIdx++; } }, 700);
-      
+      // Tạo cột cho biểu đồ
+      const graph = document.getElementById('graph');
+      for(let i=0; i<40; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; graph.appendChild(bar); }
+
+      let startTime;
       function onTurnstileSuccess(token) {
-        term.innerHTML += '<div class="log-line" style="color:#10b981">> Token hợp lệ. Đang chuyển hướng...</div>';
-        let t = 0; let int = setInterval(() => { t += 0.05; document.getElementById('timer').innerText = t.toFixed(3); }, 50);
+        startTime = performance.now();
+        setInterval(() => { document.getElementById('timer').innerHTML = ((performance.now() - startTime)/1000).toFixed(3) + '<small>s</small>'; }, 50);
         
         fetch('/api/verify-bot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) })
         .then(r => r.json()).then(d => {
-          clearInterval(int);
-          if(d.success) setTimeout(() => location.href = '/', 800);
-          else alert('Lỗi: ' + d.error);
+          if(d.success) {
+            document.querySelector('.step.active .step-label').innerText = "Đã xác minh!";
+            document.querySelector('.step.active .step-circle').style.background = '#10b981';
+            document.querySelector('.step.active .step-circle').style.borderColor = '#10b981';
+            setTimeout(() => location.href = '/', 800);
+          } else { alert('Lỗi: ' + d.error); }
         });
       }
     </script>
@@ -67,7 +134,6 @@ export function renderCheckpoint(env) {
 export function renderHome(env, error) {
   return layoutApp('Get Key | Hệ thống tự động', `
     <div class="container">
-      <!-- Cột Trái: Lấy Key -->
       <div class="glass-card hero">
         <div class="badge">✨ Tự động hóa 100%</div>
         <h1>Nhận Key <br><span class="grad">Bản Quyền</span></h1>
@@ -93,7 +159,6 @@ export function renderHome(env, error) {
         </form>
       </div>
 
-      <!-- Cột Phải: Tính năng & Trạng thái -->
       <div class="info-col">
         <div class="stat-card">
           <div class="stat-icon">🛡️</div>
