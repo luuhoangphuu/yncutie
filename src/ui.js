@@ -12,19 +12,17 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
-const layoutApp = (title, content, footer) => `${head(title)}<style>${CSS_APP}</style></head>
+const layoutApp = (title, content) => `${head(title)}<style>${CSS_APP}</style></head>
 <body>
   <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
   <div class="wrapper">${content}</div>
-  ${footer}
-  <a href="https://zalo.me/0996492296" target="_blank" class="float-support">
-    <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.83.5 3.54 1.35 5.02L2 22l4.98-1.35C8.46 21.5 10.17 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.27 14.23c-.18.5-1.04.96-1.42 1-.38.04-1.16.14-2.1-.2-.94-.34-1.72-.88-2.56-1.74-.84-.86-1.38-1.64-1.72-2.56-.34-.92-.24-1.7-.2-2.08.04-.38.5-1.24 1-1.42.5-.18 1.04-.22 1.4.2.36.42.66 1.5.8 1.88.14.38.06.64-.06.88-.12.24-.46.58-.6.72-.14.14-.28.34-.16.58.12.24.52.88 1.22 1.58.7.7 1.34 1.1 1.58 1.22.24.12.44-.02.58-.16.14-.14.48-.48.72-.6.24-.12.5-.2.88-.06.38.14 1.46.44 1.88.8.42.36.38.9.2 1.4z"/></svg>
-  </a>
+  <div class="float-widget"><i data-lucide="message-circle" style="width:28px;height:28px;"></i><div class="float-dot"></div></div>
   <script>${JS}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
 </body></html>`;
 
 export function renderCheckpoint(env) {
+  // (Giữ nguyên giao diện Checkpoint bảo mật)
   return layoutCheckpoint('Security Check', `
     <div class="top-nav">
       <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> getkeydpiconfig.site</div>
@@ -38,14 +36,11 @@ export function renderCheckpoint(env) {
         <div class="badge-security">Trạm kiểm tra bảo mật</div>
         <h1>Xác minh nhanh<br>trước khi vào <span>cửa hàng</span></h1>
         <p class="desc">Cloudflare đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
-        
         <div class="terminal-box" id="terminal"></div>
-
         <div class="challenge-module">
           <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" data-callback="onTurnstileSuccess"></div>
           <div class="help-text">Nếu thấy ô <b>Verify you are human</b>, bấm vào đó. Không cần tải lại trang, cửa hàng sẽ tự mở khi xác minh xong.</div>
         </div>
-
         <div class="stepper">
           <div class="step completed"><div class="step-circle"></div><div class="step-label">Kết nối TLS</div></div>
           <div class="step-line completed"></div>
@@ -56,24 +51,17 @@ export function renderCheckpoint(env) {
           <div class="step"><div class="step-circle"></div><div class="step-label">Vào cửa hàng</div></div>
         </div>
       </div>
-
       <div class="right">
         <div class="dash-card">
           <div class="dash-header"><span class="dash-title">Thời gian xác minh</span><span class="dash-value" id="timer">0.000<small>s</small></span></div>
           <div class="waveform" id="graph"></div>
         </div>
-
         <div class="dash-card">
           <div class="radar-wrapper">
             <div class="radar-container"><div class="radar-sweep"></div><div class="radar-dot"></div></div>
-            <div class="radar-info">
-              <h4>Đang bảo vệ</h4>
-              <p>WAF • Bot • DDoS</p>
-              <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Lưu lượng quét: 1.2 GB/s</div>
-            </div>
+            <div class="radar-info"><h4>Đang bảo vệ</h4><p>WAF • Bot • DDoS</p><div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Lưu lượng quét: 1.2 GB/s</div></div>
           </div>
         </div>
-
         <div class="dash-card" style="padding: 0;">
           <div class="stats-grid">
             <div class="stat-item"><div class="stat-label">Giao thức</div><div class="stat-val">HTTP/3 (QUIC)</div></div>
@@ -94,8 +82,8 @@ export function renderCheckpoint(env) {
         .then(r => r.json()).then(d => {
           if(d.success) {
             document.querySelector('.step.active .step-label').innerText = "Đã xác minh!";
-            document.querySelector('.step.active .step-circle').style.background = '#10b981';
-            document.querySelector('.step.active .step-circle').style.borderColor = '#10b981';
+            document.querySelector('.step.active .step-circle').style.background = '#facc15';
+            document.querySelector('.step.active .step-circle').style.borderColor = '#facc15';
             setTimeout(() => location.href = '/', 800);
           } else { showToast('Lỗi: ' + d.error, 'error'); }
         });
@@ -104,129 +92,166 @@ export function renderCheckpoint(env) {
   `);
 }
 
-const renderFooter = () => `
-  <div class="footer">
-    <p>© 2026 <b>getkeydpiconfig.site</b> • Phát triển bởi ZwicApex.</p>
-    <div>
-      <a href="https://zalo.me/0996492296" target="_blank" class="zalo">
-        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.83.5 3.54 1.35 5.02L2 22l4.98-1.35C8.46 21.5 10.17 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.27 14.23c-.18.5-1.04.96-1.42 1-.38.04-1.16.14-2.1-.2-.94-.34-1.72-.88-2.56-1.74-.84-.86-1.38-1.64-1.72-2.56-.34-.92-.24-1.7-.2-2.08.04-.38.5-1.24 1-1.42.5-.18 1.04-.22 1.4.2.36.42.66 1.5.8 1.88.14.38.06.64-.06.88-.12.24-.46.58-.6.72-.14.14-.28.34-.16.58.12.24.52.88 1.22 1.58.7.7 1.34 1.1 1.58 1.22.24.12.44-.02.58-.16.14-.14.48-.48.72-.6.24-.12.5-.2.88-.06.38.14 1.46.44 1.88.8.42.36.38.9.2 1.4z"/></svg>
-        Zalo Hỗ Trợ
-      </a>
-      <a href="https://youtube.com/@zwicxsharereg" target="_blank" class="yt">
-        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-        YouTube Channel
-      </a>
-    </div>
-  </div>
-`;
-
 export function renderHome(env, error) {
-  return layoutApp('Get Key | Hệ thống tự động', `
+  return layoutApp('SunnyMod Hub', `
     <div class="container">
-      <div class="glass-card hero">
-        <div class="badge"><i data-lucide="shield-check" style="width:16px;"></i> Hệ thống bảo mật</div>
-        <h1>Hệ Thống Nhận Key<br><span class="grad">Bản Quyền Cao Cấp</span></h1>
-        <p class="sub">Xác thực danh tính và phân phối Key tự động. Bảo mật đa lớp, an toàn tuyệt đối.</p>
-        
-        ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600;">${error}</div>` : ''}
-        
-        <div class="tier-selector">
-          <div class="tier-slider" id="tierSlider"></div>
-          <label class="tier-option selected" data-tier="Normal"><input type="radio" name="tier" value="Normal" checked><i data-lucide="zap" style="width:18px;"></i> Normal <span class="tier-badge">8H</span></label>
-          <label class="tier-option" data-tier="VIP"><input type="radio" name="tier" value="VIP"><i data-lucide="crown" style="width:18px;"></i> VIP <span class="tier-badge">2H</span></label>
-        </div>
+      <!-- CỘT TRÁI: LẤY KEY -->
+      <div>
+        <div class="glass-card">
+          <div class="header-title"><i data-lucide="key" style="color:#facc15;"></i> Lấy key miễn phí</div>
+          <div class="header-desc">Chào mừng mọi người đến với trang web của Sunny Mod.</div>
+          
+          <div class="telegram-banner">
+            <h4>Cộng đồng SunnyMod</h4>
+            <a href="#" class="telegram-btn"><i data-lucide="send"></i> Tham gia nhóm Telegram ↗</a>
+          </div>
 
-        <form method="POST" action="/start">
-          <input type="hidden" name="tier" id="tierInput" value="Normal">
-          <button type="submit" class="btn btn-primary"><i data-lucide="rocket"></i> Khởi tạo quy trình nhận Key</button>
-        </form>
-      </div>
-      <div class="info-col">
-        <div class="stat-card">
-          <div class="stat-icon"><i data-lucide="shield"></i></div>
-          <div class="stat-info"><h4><span class="status-dot"></span> Hệ thống ổn định</h4><p>Độ trễ API: 24ms • Uptime: 99.9%</p></div>
+          <div class="stepper">
+            <div class="step active"><div class="step-line"></div><div class="step-circle">1</div><div class="step-label">Chọn key</div></div>
+            <div class="step"><div class="step-line"></div><div class="step-circle">2</div><div class="step-label">Vượt link</div></div>
+            <div class="step"><div class="step-line"></div><div class="step-circle">3</div><div class="step-label">Xác thực</div></div>
+            <div class="step"><div class="step-circle">4</div><div class="step-label">Nhận key</div></div>
+          </div>
+          <div style="text-align:center; font-size:12px; color:#64748b; margin-bottom:20px;">Bước 1/4 • Chọn key</div>
+
+          <div style="font-weight:700; font-size:14px; margin-bottom:12px; display:flex; align-items:center; gap:6px;"><i data-lucide="info" style="width:16px;"></i> Hướng dẫn lấy key</div>
+          <div class="key-input-group">
+            <label>Chọn loại key</label>
+            <span class="key-badge">Bước 1</span>
+          </div>
+          <div class="key-input-group" style="background:#fff; border-color:#cbd5e1;">
+            <span style="font-weight:600; font-size:15px;">Key SunnyMod Tool</span>
+          </div>
+
+          <form method="POST" action="/start">
+            <input type="hidden" name="tier" value="Normal">
+            <button type="submit" class="btn btn-primary"><i data-lucide="download"></i> Get Key</button>
+          </form>
         </div>
-        
-        <div class="stat-card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #bbf7d0;">
-          <div class="stat-icon" style="background:#22c55e; color:#fff; box-shadow: 0 0 15px rgba(34,197,94,0.4);"><i data-lucide="monitor-smartphone"></i></div>
-          <div class="stat-info">
-            <h4>Thông tin thiết bị</h4>
-            <p style="font-size:12px; margin-top:4px;">HĐH: <b id="info-os">Đang tải...</b> • Trình duyệt: <b id="info-browser">Đang tải...</b></p>
+      </div>
+
+      <!-- CỘT PHẢI: THÔNG TIN & TẢI APP -->
+      <div>
+        <!-- THIẾT BỊ HIỆN TẠI -->
+        <div class="glass-card">
+          <div style="font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+            <span>THIẾT BỊ HIỆN TẠI</span>
+            <span style="background:#e2e8f0; padding:2px 8px; border-radius:10px; font-size:11px;">Hôm nay</span>
+          </div>
+          <div style="font-size:15px; font-weight:800; margin-bottom:16px;">Theo dõi nhanh lượt nhận key trong hôm nay</div>
+          
+          <div class="device-grid">
+            <div class="device-item">
+              <div class="device-label">TÊN KEY</div>
+              <div class="device-val" style="font-size:14px;">Key Customs</div>
+            </div>
+            <div class="device-item">
+              <div class="device-label">CÒN LẠI HÔM NAY</div>
+              <div class="device-val" id="dev-limit">5</div>
+              <div class="device-sub">Giới hạn: thiết bị 5 / IP 5 theo lịch sử thiết bị; server vẫn kiểm tra quota thật. Reset lúc 00:00 (GMT+7)</div>
+            </div>
+            <div class="device-item">
+              <div class="device-label">THÀNH CÔNG</div>
+              <div class="device-val" id="dev-success">0</div>
+              <div class="device-sub">lượt đã nhận key</div>
+            </div>
+            <div class="device-item">
+              <div class="device-label">LẦN GẦN NHẤT</div>
+              <div class="device-val" id="dev-last" style="font-size:16px;">Chưa có</div>
+              <div class="device-sub">Chưa lưu key gần đây</div>
+            </div>
+            <div class="device-item" style="grid-column: span 2;">
+              <div class="device-label">CÓ THỂ THỬ LẠI</div>
+              <div class="device-val" id="dev-retry">-</div>
+              <div class="device-sub">0 lượt đã bắt đầu, vui lòng chờ reset để thử lại.</div>
+            </div>
           </div>
         </div>
-        
-        <div class="stat-card">
-          <div class="stat-icon" style="background:rgba(236,72,153,0.1); color:#ec4899; box-shadow: 0 0 15px rgba(236,72,153,0.2);"><i data-lucide="gift"></i></div>
-          <div class="stat-info"><h4>Khám phá tiện ích</h4><p>Sự kiện tặng Key VIP, BXH người dùng, Hỗ trợ trực tuyến 24/7.</p></div>
+
+        <!-- THÔNG TIN TỪ SUNNYMOD -->
+        <div class="glass-card">
+          <div class="info-box">
+            <h4>Thông tin từ SunnyMod</h4>
+            <ul class="info-list">
+              <li>© Bản quyền thuộc về SunnyMod</li>
+              <li style="color:#ef4444; font-weight:700;">‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo sài key vượt để bán.</li>
+              <li>📦 Mua key Free Fire vui lòng liên hệ phía dưới</li>
+              <li style="margin-top:12px; font-weight:700;">Bảng giá key OB54</li>
+            </ul>
+            <div class="pricing">
+              <div><span>👉 Key 1 ngày</span> <b>10k</b></div>
+              <div><span>👉 Key 7 ngày</span> <b>50k</b></div>
+              <div><span>👉 Key 30 ngày</span> <b>150k</b></div>
+            </div>
+            <ul class="info-list" style="margin-top:12px;">
+              <li style="color:#ef4444; font-weight:700;">‼ Nhớ chọn đúng key trước khi vượt</li>
+            </ul>
+            
+            <div style="display:flex; gap:12px; margin-top:20px;">
+               <a href="https://zalo.me/0996492296" target="_blank" style="flex:1; padding:12px; border-radius:12px; border:1px solid #e2e8f0; text-decoration:none; color:#0f172a; font-weight:600; text-align:center; display:flex; justify-content:center; gap:8px;"><i data-lucide="message-circle"></i> Zalo</a>
+               <a href="https://youtube.com/@zwicxsharereg" target="_blank" style="flex:1; padding:12px; border-radius:12px; border:1px solid #e2e8f0; text-decoration:none; color:#0f172a; font-weight:600; text-align:center; display:flex; justify-content:center; gap:8px;"><i data-lucide="youtube"></i> YouTube</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- TẢI ỨNG DỤNG -->
+        <div class="glass-card">
+          <div class="header-title" style="font-size:18px; margin-bottom:4px;">Tải ứng dụng</div>
+          <div class="header-desc" style="font-size:13px; margin-bottom:16px;">Chọn đúng bản và đọc ghi chú trước khi tải.</div>
+
+          <div class="app-card">
+            <div class="app-header">
+              <img src="https://ui-avatars.com/api/?name=S+M&background=facc15&color=000&size=60&rounded=true" class="app-icon" alt="App">
+              <div>
+                <div class="app-title">SunnyMod Proxy V1.3 🍎</div>
+                <div class="app-note">⚠ Lưu ý!</div>
+              </div>
+            </div>
+            <div class="app-details">
+              - Sử dụng Free Fire Max / Normal CHPlay<br>
+              - Sử dụng một cách thông minh<br>
+              - Không làm dụng chức năng quá đà<br>
+              - Sử dụng duy nhất ESP sẽ anti hơn<br>
+              - Tự thêm domain block nếu cảm thấy nó sẽ anti hơn
+            </div>
+            <a href="#" class="btn-download"><i data-lucide="download"></i> Tải Xuống</a>
+          </div>
+
+          <div class="app-card">
+            <div class="app-header">
+              <img src="https://ui-avatars.com/api/?name=S+E&background=facc15&color=000&size=60&rounded=true" class="app-icon" alt="App">
+              <div>
+                <div class="app-title">Sunny Mod External - Root - Fix</div>
+                <div class="app-note" style="color:#ef4444;">‼ Đã fix "Lỗi ứng dụng chưa cài đặt"</div>
+              </div>
+            </div>
+            <div class="app-details">
+              <b style="color:#f59e0b;">⚠ Lưu ý!</b><br>
+              - Sử dụng Free Fire Max CHPlay ver2.132.x-2.133.x<br>
+              - Menu root<br>
+              - Sài chức năng cần thận đặc biệt là Aim
+            </div>
+            <a href="#" class="btn-download"><i data-lucide="download"></i> Tải Xuống</a>
+          </div>
         </div>
       </div>
     </div>
-    <script>
-      const slider = document.getElementById('tierSlider');
-      const options = document.querySelectorAll('.tier-option');
-      options.forEach((opt, index) => {
-        opt.addEventListener('click', () => {
-          options.forEach(o => o.classList.remove('selected'));
-          opt.classList.add('selected');
-          document.getElementById('tierInput').value = opt.dataset.tier;
-          slider.style.transform = 'translateX(' + (index * 100) + '%)';
-        });
-      });
-
-      const ua = navigator.userAgent;
-      let os = "Không xác định";
-      if (ua.indexOf("Win") != -1) os = "Windows";
-      if (ua.indexOf("Mac") != -1) os = "macOS";
-      if (ua.indexOf("Linux") != -1) os = "Linux";
-      if (ua.indexOf("Android") != -1) os = "Android";
-      if (ua.indexOf("like Mac") != -1) os = "iOS";
-      
-      let browser = "Không xác định";
-      if (ua.indexOf("Firefox") > -1) browser = "Firefox";
-      else if (ua.indexOf("SamsungBrowser") > -1) browser = "Samsung Internet";
-      else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
-      else if (ua.indexOf("Trident") > -1) browser = "Internet Explorer";
-      else if (ua.indexOf("Edge") > -1) browser = "Edge";
-      else if (ua.indexOf("Chrome") > -1) browser = "Chrome";
-      else if (ua.indexOf("Safari") > -1) browser = "Safari";
-
-      document.getElementById('info-os').innerText = os;
-      document.getElementById('info-browser').innerText = browser;
-    </script>
-  `, renderFooter());
+  `);
 }
 
 export function renderStep(title, stepNum, content) {
-  const steps = ['Ủng hộ', 'Vượt Ads', 'Nhận Key'];
+  const steps = ['Chọn key', 'Vượt link', 'Xác thực', 'Nhận key'];
   return layoutApp(title, `
     <div class="glass-card" style="max-width: 550px; margin: 0 auto;">
-      <div class="stepper">
-        ${steps.map((s, i) => `<div class="step ${stepNum > i ? 'active' : ''}"><div class="dot">${i+1}</div><small>${s}</small></div>`).join('<div class="line ' + (stepNum > i ? 'active' : '') + '"></div>')}
+      <div class="header-title">${title}</div>
+      <div class="stepper" style="margin-top:20px;">
+        ${steps.map((s, i) => `<div class="step ${stepNum > i ? 'active' : ''}"><div class="step-line"></div><div class="step-circle">${i+1}</div><div class="step-label">${s}</div></div>`).join('')}
       </div>
       ${content}
     </div>
-  `, renderFooter());
+  `);
 }
 
 export function renderFAQ() {
-  return layoutApp('FAQ', `
-    <div class="glass-card" style="max-width: 700px; margin: 0 auto;">
-      <h2 style="text-align:center; margin-bottom:20px;"><i data-lucide="help-circle"></i> Câu hỏi thường gặp</h2>
-      <div class="faq">
-        <details class="faq-item">
-          <summary>Key này dùng để làm gì?</summary>
-          <p>Key dùng để nâng cấp tài khoản, sử dụng các tính năng VIP trong ứng dụng của chúng tôi. Key Normal có hạn 8 giờ, Key VIP có hạn 2 giờ.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Tại sao tôi phải xem quảng cáo?</summary>
-          <p>Quảng cáo giúp duy trì máy chủ và hệ thống lấy Key tự động miễn phí. Key VIP yêu cầu 2 lần xem Ads, Key Normal yêu cầu 1 lần.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Tôi bị kẹt ở bước vượt Ads thì phải làm sao?</summary>
-          <p>Hãy chắc chắn bạn không dùng trình chặn quảng cáo (AdBlock), tắt VPN và giữ tab quảng cáo mở cho đến khi nó tự chuyển hướng về lại trang web.</p>
-        </details>
-      </div>
-      <a href="/" class="btn btn-primary" style="margin-top:20px;"><i data-lucide="arrow-left"></i> Về trang chủ</a>
-    </div>
-  `, renderFooter());
+  return layoutApp('FAQ', `<div class="glass-card"><h2>FAQ</h2><a href="/">Quay lại</a></div>`);
 }
