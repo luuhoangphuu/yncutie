@@ -93,7 +93,6 @@ export function renderCheckpoint(env) {
 }
 
 export function renderHome(env, error, notice) {
-  // Tạo Popup HTML nếu thông báo được bật
   const modalHtml = (notice && notice.enabled) ? `
   <div id="customModal" class="modal-overlay">
     <div class="modal-box">
@@ -246,8 +245,6 @@ export function renderStep(title, stepNum, content) {
 export function renderAdmin() {
   return layoutApp('Admin Dashboard', `
     <div class="admin-container">
-      
-      <!-- Form Đăng Nhập -->
       <div class="admin-card" id="loginView">
         <div class="login-form">
           <div class="login-icon"><i data-lucide="lock" style="width:32px;height:32px;"></i></div>
@@ -259,7 +256,6 @@ export function renderAdmin() {
         </div>
       </div>
 
-      <!-- Dashboard Quản Lý -->
       <div class="admin-card dashboard-content" id="dashboardView">
         <div class="admin-header">
           <div class="admin-title"><i data-lucide="layout-dashboard" style="width:24px;height:24px;"></i> Quản Lý Thông Báo</div>
@@ -298,7 +294,6 @@ export function renderAdmin() {
           </div>
         </div>
       </div>
-
     </div>
 
     <script>

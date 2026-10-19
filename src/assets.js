@@ -1,5 +1,5 @@
 export const CSS_CHECKPOINT = `
-:root { color-scheme: dark; --bg: #09090b; --text: #f4f4f5; --text-muted: #a1a1aa; --primary: #ffffff; --brand: #e4e4e7; --border: #27272a; --metal: linear-gradient(135deg, #f4f4f5 0%, #a1a1aa 50%, #52525b 100%); }
+:root { color-scheme: dark; --bg: #09090b; --text: #f4f4f5; --text-muted: #a1a1aa; --primary: #ffffff; --brand: #ff0055; --border: #27272a; --metal: linear-gradient(135deg, #f4f4f5 0%, #a1a1aa 50%, #52525b 100%); }
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; position: relative; background-image: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.03) 0%, transparent 70%); }
 #snow-bg { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
@@ -184,8 +184,84 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 @keyframes toastOut { to { opacity: 0; transform: translateY(20px); } }
 `;
 
+export const CSS_MOBILE = `
+@media (max-width: 900px) {
+  .wrapper { padding: 20px 15px; }
+  .glass-card { padding: 24px; margin-bottom: 15px; }
+  .header-title { font-size: 20px; }
+  .device-grid { grid-template-columns: 1fr; }
+  .stepper { margin-bottom: 20px; }
+  .step-circle { width: 28px; height: 28px; font-size: 12px; }
+  .step-label { font-size: 11px; }
+  .glass-card { animation: mobileFloat 6s ease-in-out infinite; }
+  .glass-card:nth-child(2) { animation-delay: -3s; }
+  @keyframes mobileFloat {
+    0% { transform: translateY(0px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5); }
+    50% { transform: translateY(-8px); box-shadow: 0 25px 45px -5px rgba(0,0,0,0.7); }
+    100% { transform: translateY(0px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5); }
+  }
+  .btn:active, .telegram-btn:active, .tier-option:active {
+    transform: scale(0.96) !important;
+    filter: brightness(0.8);
+  }
+  .float-widget { bottom: 20px; right: 20px; width: 50px; height: 50px; }
+  .float-widget svg { width: 24px; height: 24px; }
+}
+`;
+
+export const CSS_MODAL = `
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
+.modal-overlay.show { display: flex; opacity: 1; }
+.modal-box { background: #ffffff; border-radius: 24px; width: 100%; max-width: 400px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transform: translateY(20px) scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+.modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.modal-title { font-size: 16px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.modal-close-icon { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b; cursor: pointer; transition: 0.2s; }
+.modal-close-icon:hover { background: #e2e8f0; color: #0f172a; }
+.modal-content { background: #f8fafc; border-radius: 16px; padding: 20px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: #0f172a; border: 1px solid #e2e8f0; }
+.modal-content p { margin-bottom: 8px; }
+.modal-content p:last-child { margin-bottom: 0; }
+.modal-content .text-danger { color: #ef4444; font-weight: 700; }
+.modal-actions { display: flex; flex-direction: column; gap: 10px; }
+.btn-snooze { background: #0f172a; color: #fff; padding: 14px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+.btn-snooze:hover { background: #1e293b; }
+.btn-close { background: #ffffff; color: #0f172a; padding: 14px; border-radius: 12px; font-weight: 700; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; }
+.btn-close:hover { background: #f8fafc; }
+`;
+
+export const CSS_ADMIN = `
+.admin-container { max-width: 800px; margin: 0 auto; width: 100%; }
+.admin-card { background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(20px); border: 1px solid #333; border-radius: 20px; padding: 30px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); margin-bottom: 20px; }
+.admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid #333; padding-bottom: 16px; }
+.admin-title { font-size: 20px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
+.admin-title i { color: var(--brand); }
+.login-form { display: flex; flex-direction: column; gap: 16px; max-width: 400px; margin: 40px auto; text-align: center; }
+.login-icon { width: 64px; height: 64px; background: rgba(255,0,85,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--brand); }
+.input-field { background: #000; border: 1px solid #333; border-radius: 12px; padding: 16px; color: #fff; font-size: 15px; transition: 0.3s; outline: none; width: 100%; }
+.input-field:focus { border-color: var(--brand); box-shadow: 0 0 15px rgba(255,0,85,0.2); }
+.dashboard-content { display: none; }
+.dashboard-content.active { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; font-size: 13px; font-weight: 600; color: #a1a1aa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.toggle-switch { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.toggle-track { width: 50px; height: 28px; background: #333; border-radius: 30px; position: relative; transition: 0.3s; }
+.toggle-thumb { width: 24px; height: 24px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
+.toggle-switch input { display: none; }
+.toggle-switch input:checked + .toggle-track { background: #10b981; }
+.toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(22px); }
+.toggle-label { font-size: 14px; font-weight: 600; color: #fff; }
+.btn-save { background: var(--brand); color: #fff; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; border: none; cursor: pointer; transition: 0.3s; width: 100%; box-shadow: 0 10px 25px -5px rgba(255,0,85,0.4); }
+.btn-save:hover { transform: translateY(-2px); box-shadow: 0 15px 35px -5px rgba(255,0,85,0.6); }
+.btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.preview-box { background: #fff; border-radius: 24px; padding: 24px; max-width: 350px; margin: 20px auto 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.preview-title { font-size: 16px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+.preview-content { background: #f8fafc; border-radius: 16px; padding: 20px; font-size: 14px; line-height: 1.6; color: #0f172a; border: 1px solid #e2e8f0; white-space: pre-wrap; }
+`;
+
 export const JS = `
-// 1. Metal Dust / Snowfall (Hiệu ứng bụi kim loại)
+// 1. Metal Dust / Snowfall
 const canvas = document.createElement('canvas');
 canvas.id = 'snow-bg';
 document.body.prepend(canvas);
@@ -202,7 +278,7 @@ function initCanvas() {
 function drawSnow() {
   ctx.clearRect(0, 0, width, height);
   snowflakes.forEach(p => {
-    ctx.fillStyle = 'rgba(200, 200, 200, ' + p.opacity + ')'; // Màu xám bạc (Titanium)
+    ctx.fillStyle = 'rgba(200, 200, 200, ' + p.opacity + ')';
     ctx.shadowBlur = 4; ctx.shadowColor = 'rgba(255, 255, 255, 0.8)';
     ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2); ctx.fill();
     p.y += p.speedY; p.x += p.speedX + Math.sin(p.swayPhase) * p.sway; p.swayPhase += 0.02;
@@ -218,7 +294,7 @@ window.addEventListener('resize', initCanvas); initCanvas(); drawSnow();
 const spotlight = document.createElement('div'); spotlight.className = 'spotlight'; document.body.prepend(spotlight);
 document.addEventListener('mousemove', (e) => { spotlight.style.setProperty('--mouse-x', e.clientX + 'px'); spotlight.style.setProperty('--mouse-y', e.clientY + 'px'); });
 
-// 3. 3D Tilt Effect cho Glass Cards
+// 3. 3D Tilt Effect
 document.querySelectorAll('.glass-card').forEach(card => {
   card.addEventListener('mousemove', e => {
     const rect = card.getBoundingClientRect();
@@ -226,7 +302,7 @@ document.querySelectorAll('.glass-card').forEach(card => {
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -5; // Nghiêng tối đa 5 độ
+    const rotateX = ((y - centerY) / centerY) * -5;
     const rotateY = ((x - centerX) / centerX) * 5;
     card.style.transform = \`perspective(1000px) rotateX(\${rotateX}deg) rotateY(\${rotateY}deg) scale3d(1.02, 1.02, 1.02)\`;
   });
@@ -314,60 +390,6 @@ document.addEventListener('click', function(e) {
 });
 `;
 
-// Thêm CSS cho Mobile và hiệu ứng chạm
-export const CSS_MOBILE = `
-@media (max-width: 900px) {
-  .wrapper { padding: 20px 15px; }
-  .glass-card { padding: 24px; margin-bottom: 15px; }
-  .header-title { font-size: 20px; }
-  .device-grid { grid-template-columns: 1fr; }
-  .stepper { margin-bottom: 20px; }
-  .step-circle { width: 28px; height: 28px; font-size: 12px; }
-  .step-label { font-size: 11px; }
-  
-  /* Hiệu ứng lơ lửng cho thẻ trên Mobile (thay cho 3D Tilt) */
-  .glass-card { animation: mobileFloat 6s ease-in-out infinite; }
-  .glass-card:nth-child(2) { animation-delay: -3s; }
-  
-  @keyframes mobileFloat {
-    0% { transform: translateY(0px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5); }
-    50% { transform: translateY(-8px); box-shadow: 0 25px 45px -5px rgba(0,0,0,0.7); }
-    100% { transform: translateY(0px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5); }
-  }
-
-  /* Hiệu ứng chạm (Touch feedback) cho nút bấm */
-  .btn:active, .telegram-btn:active, .tier-option:active {
-    transform: scale(0.96) !important;
-    filter: brightness(0.8);
-  }
-  
-  .float-widget { bottom: 20px; right: 20px; width: 50px; height: 50px; }
-  .float-widget svg { width: 24px; height: 24px; }
-}
-`;
-
-// CSS cho Popup Modal
-export const CSS_MODAL = `
-.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
-.modal-overlay.show { display: flex; opacity: 1; }
-.modal-box { background: #ffffff; border-radius: 24px; width: 100%; max-width: 400px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transform: translateY(20px) scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
-.modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.modal-title { font-size: 16px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-.modal-close-icon { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b; cursor: pointer; transition: 0.2s; }
-.modal-close-icon:hover { background: #e2e8f0; color: #0f172a; }
-.modal-content { background: #f8fafc; border-radius: 16px; padding: 20px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: #0f172a; border: 1px solid #e2e8f0; }
-.modal-content p { margin-bottom: 8px; }
-.modal-content p:last-child { margin-bottom: 0; }
-.modal-content .text-danger { color: #ef4444; font-weight: 700; }
-.modal-actions { display: flex; flex-direction: column; gap: 10px; }
-.btn-snooze { background: #0f172a; color: #fff; padding: 14px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-.btn-snooze:hover { background: #1e293b; }
-.btn-close { background: #ffffff; color: #0f172a; padding: 14px; border-radius: 12px; font-weight: 700; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; }
-.btn-close:hover { background: #f8fafc; }
-`;
-
-// Logic JS cho Modal
 export const JS_MODAL = `
 window.closeModal = function(snooze) {
   const modal = document.getElementById('customModal');
@@ -390,105 +412,11 @@ window.addEventListener('DOMContentLoaded', () => {
   const snoozeUntil = localStorage.getItem('modal_snooze_until');
   const closed = sessionStorage.getItem('modal_closed');
   
-  // Nếu chưa bấm tắt 1 giờ và chưa bấm đóng trong phiên này
   if ((!snoozeUntil || Date.now() > parseInt(snoozeUntil)) && !closed) {
     setTimeout(() => {
       modal.style.display = 'flex';
-      setTimeout(() => modal.classList.add('show'), 10); // Trigger transition
-    }, 1000); // Hiện sau 1 giây
+      setTimeout(() => modal.classList.add('show'), 10);
+    }, 1000);
   }
 });
-`;
-
-// CSS cho Popup Modal
-export const CSS_MODAL = `
-.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
-.modal-overlay.show { display: flex; opacity: 1; }
-.modal-box { background: #ffffff; border-radius: 24px; width: 100%; max-width: 400px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transform: translateY(20px) scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
-.modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.modal-title { font-size: 16px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-.modal-close-icon { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b; cursor: pointer; transition: 0.2s; }
-.modal-close-icon:hover { background: #e2e8f0; color: #0f172a; }
-.modal-content { background: #f8fafc; border-radius: 16px; padding: 20px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: #0f172a; border: 1px solid #e2e8f0; }
-.modal-content p { margin-bottom: 8px; }
-.modal-content p:last-child { margin-bottom: 0; }
-.modal-content .text-danger { color: #ef4444; font-weight: 700; }
-.modal-actions { display: flex; flex-direction: column; gap: 10px; }
-.btn-snooze { background: #0f172a; color: #fff; padding: 14px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
-.btn-snooze:hover { background: #1e293b; }
-.btn-close { background: #ffffff; color: #0f172a; padding: 14px; border-radius: 12px; font-weight: 700; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; }
-.btn-close:hover { background: #f8fafc; }
-`;
-
-// Logic JS cho Modal
-export const JS_MODAL = `
-window.closeModal = function(snooze) {
-  const modal = document.getElementById('customModal');
-  if(modal) {
-    modal.classList.remove('show');
-    setTimeout(() => { modal.style.display = 'none'; }, 300);
-  }
-  if (snooze) {
-    const snoozeTime = Date.now() + 3600000; // 1 giờ
-    localStorage.setItem('modal_snooze_until', snoozeTime);
-  } else {
-    sessionStorage.setItem('modal_closed', 'true');
-  }
-};
-
-window.addEventListener('DOMContentLoaded', () => {
-  const modal = document.getElementById('customModal');
-  if (!modal) return;
-  
-  const snoozeUntil = localStorage.getItem('modal_snooze_until');
-  const closed = sessionStorage.getItem('modal_closed');
-  
-  // Nếu chưa bấm tắt 1 giờ và chưa bấm đóng trong phiên này
-  if ((!snoozeUntil || Date.now() > parseInt(snoozeUntil)) && !closed) {
-    setTimeout(() => {
-      modal.style.display = 'flex';
-      setTimeout(() => modal.classList.add('show'), 10); // Trigger transition
-    }, 1000); // Hiện sau 1 giây
-  }
-});
-`;
-
-export const CSS_ADMIN = `
-.admin-container { max-width: 800px; margin: 0 auto; width: 100%; }
-.admin-card { background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(20px); border: 1px solid #333; border-radius: 20px; padding: 30px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); margin-bottom: 20px; }
-.admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid #333; padding-bottom: 16px; }
-.admin-title { font-size: 20px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
-.admin-title i { color: var(--brand); }
-
-/* Login Form */
-.login-form { display: flex; flex-direction: column; gap: 16px; max-width: 400px; margin: 40px auto; text-align: center; }
-.login-icon { width: 64px; height: 64px; background: rgba(255,0,85,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--brand); }
-.input-field { background: #000; border: 1px solid #333; border-radius: 12px; padding: 16px; color: #fff; font-size: 15px; transition: 0.3s; outline: none; width: 100%; }
-.input-field:focus { border-color: var(--brand); box-shadow: 0 0 15px rgba(255,0,85,0.2); }
-
-/* Dashboard Content */
-.dashboard-content { display: none; }
-.dashboard-content.active { display: block; animation: fadeIn 0.4s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-.form-group { margin-bottom: 20px; }
-.form-label { display: block; font-size: 13px; font-weight: 600; color: #a1a1aa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-.toggle-switch { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-.toggle-track { width: 50px; height: 28px; background: #333; border-radius: 30px; position: relative; transition: 0.3s; }
-.toggle-thumb { width: 24px; height: 24px; background: #fff; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
-.toggle-switch input { display: none; }
-.toggle-switch input:checked + .toggle-track { background: #10b981; }
-.toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(22px); }
-.toggle-label { font-size: 14px; font-weight: 600; color: #fff; }
-
-.btn-save { background: var(--brand); color: #fff; padding: 16px; border-radius: 12px; font-weight: 800; font-size: 16px; border: none; cursor: pointer; transition: 0.3s; width: 100%; box-shadow: 0 10px 25px -5px rgba(255,0,85,0.4); }
-.btn-save:hover { transform: translateY(-2px); box-shadow: 0 15px 35px -5px rgba(255,0,85,0.6); }
-.btn-save:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-/* Preview Modal */
-.preview-box { background: #fff; border-radius: 24px; padding: 24px; max-width: 350px; margin: 20px auto 0; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.preview-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.preview-title { font-size: 16px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
-.preview-content { background: #f8fafc; border-radius: 16px; padding: 20px; font-size: 14px; line-height: 1.6; color: #0f172a; border: 1px solid #e2e8f0; white-space: pre-wrap; }
 `;
