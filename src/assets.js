@@ -345,3 +345,57 @@ export const CSS_MOBILE = `
   .float-widget svg { width: 24px; height: 24px; }
 }
 `;
+
+// CSS cho Popup Modal
+export const CSS_MODAL = `
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; opacity: 0; transition: opacity 0.3s ease; }
+.modal-overlay.show { display: flex; opacity: 1; }
+.modal-box { background: #ffffff; border-radius: 24px; width: 100%; max-width: 400px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transform: translateY(20px) scale(0.95); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; }
+.modal-overlay.show .modal-box { transform: translateY(0) scale(1); }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.modal-title { font-size: 16px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.modal-close-icon { background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #64748b; cursor: pointer; transition: 0.2s; }
+.modal-close-icon:hover { background: #e2e8f0; color: #0f172a; }
+.modal-content { background: #f8fafc; border-radius: 16px; padding: 20px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; color: #0f172a; border: 1px solid #e2e8f0; }
+.modal-content p { margin-bottom: 8px; }
+.modal-content p:last-child { margin-bottom: 0; }
+.modal-content .text-danger { color: #ef4444; font-weight: 700; }
+.modal-actions { display: flex; flex-direction: column; gap: 10px; }
+.btn-snooze { background: #0f172a; color: #fff; padding: 14px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+.btn-snooze:hover { background: #1e293b; }
+.btn-close { background: #ffffff; color: #0f172a; padding: 14px; border-radius: 12px; font-weight: 700; border: 1px solid #e2e8f0; cursor: pointer; transition: 0.2s; }
+.btn-close:hover { background: #f8fafc; }
+`;
+
+// Logic JS cho Modal
+export const JS_MODAL = `
+window.closeModal = function(snooze) {
+  const modal = document.getElementById('customModal');
+  if(modal) {
+    modal.classList.remove('show');
+    setTimeout(() => { modal.style.display = 'none'; }, 300);
+  }
+  if (snooze) {
+    const snoozeTime = Date.now() + 3600000; // 1 giờ
+    localStorage.setItem('modal_snooze_until', snoozeTime);
+  } else {
+    sessionStorage.setItem('modal_closed', 'true');
+  }
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('customModal');
+  if (!modal) return;
+  
+  const snoozeUntil = localStorage.getItem('modal_snooze_until');
+  const closed = sessionStorage.getItem('modal_closed');
+  
+  // Nếu chưa bấm tắt 1 giờ và chưa bấm đóng trong phiên này
+  if ((!snoozeUntil || Date.now() > parseInt(snoozeUntil)) && !closed) {
+    setTimeout(() => {
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('show'), 10); // Trigger transition
+    }, 1000); // Hiện sau 1 giây
+  }
+});
+`;

@@ -1,4 +1,4 @@
-import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE } from './assets.js';
+import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE, CSS_MODAL, JS_MODAL } from './assets.js';
 
 const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
@@ -9,16 +9,64 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
 <body>
   ${content}
   <script>${JS}</script>
+  <script>${JS_MODAL}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+
+  <div id="customModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title"><i data-lucide="alert-triangle" style="width:20px;"></i> THÔNG BÁO</div>
+        <button class="modal-close-icon" onclick="closeModal(false)"><i data-lucide="x" style="width:18px;"></i></button>
+      </div>
+      <div class="modal-content">
+        ${notice ? `<div style="white-space: pre-wrap;">${notice}</div>` : `
+        <p>© Bản quyền thuộc về <b>GETKEYDPICONFIG.SITE</b>.</p>
+        <p class="text-danger">‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo sài key vượt để bán.</p>
+        <p>🔥 IB Tele: <b>@Anmaster18</b></p>
+        <p>✅ Hoặc: <b>@Mityangho</b></p>
+        <p>👤 Để mua key</p>
+        `}
+      </div>
+      <div class="modal-actions">
+        <button class="btn-snooze" onclick="closeModal(true)"><i data-lucide="clock" style="width:18px;"></i> Tắt 1 giờ</button>
+        <button class="btn-close" onclick="closeModal(false)">Đóng</button>
+      </div>
+    </div>
+  </div>
+
 </body></html>`;
 
-const layoutApp = (title, content) => `${head(title)}<style>${CSS_APP}${CSS_MOBILE}</style></head>
+const layoutApp = (title, content) => `${head(title)}<style>${CSS_APP}${CSS_MOBILE}${CSS_MODAL}</style></head>
 <body>
   <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
   <div class="wrapper">${content}</div>
   <a href="https://zalo.me/0996492296" target="_blank" class="float-widget"><i data-lucide="message-circle" style="width:28px;height:28px;"></i><div class="float-dot"></div></a>
   <script>${JS}</script>
+  <script>${JS_MODAL}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+
+  <div id="customModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title"><i data-lucide="alert-triangle" style="width:20px;"></i> THÔNG BÁO</div>
+        <button class="modal-close-icon" onclick="closeModal(false)"><i data-lucide="x" style="width:18px;"></i></button>
+      </div>
+      <div class="modal-content">
+        ${notice ? `<div style="white-space: pre-wrap;">${notice}</div>` : `
+        <p>© Bản quyền thuộc về <b>GETKEYDPICONFIG.SITE</b>.</p>
+        <p class="text-danger">‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo sài key vượt để bán.</p>
+        <p>🔥 IB Tele: <b>@Anmaster18</b></p>
+        <p>✅ Hoặc: <b>@Mityangho</b></p>
+        <p>👤 Để mua key</p>
+        `}
+      </div>
+      <div class="modal-actions">
+        <button class="btn-snooze" onclick="closeModal(true)"><i data-lucide="clock" style="width:18px;"></i> Tắt 1 giờ</button>
+        <button class="btn-close" onclick="closeModal(false)">Đóng</button>
+      </div>
+    </div>
+  </div>
+
 </body></html>`;
 
 export function renderCheckpoint(env) {
@@ -99,15 +147,7 @@ export function renderHome(env, error, notice) {
           <div class="header-title"><i data-lucide="key" style="color:#fff;"></i> Lấy Key Miễn Phí</div>
           <div class="header-desc">Chào mừng bạn đến với hệ thống của GETKEYDPICONFIG.SITE.</div>
           
-          ${notice ? `
-          <div class="announcement" id="announcementBanner">
-            <div class="announcement-icon"><i data-lucide="bell" style="width:20px;"></i></div>
-            <div class="announcement-content">
-              <h5>THÔNG BÁO TỪ ADMIN</h5>
-              <p style="white-space: pre-wrap;">${notice}</p>
-            </div>
-            <button class="announcement-close" onclick="document.getElementById('announcementBanner').style.display='none'"><i data-lucide="x" style="width:16px;"></i></button>
-          </div>` : ''}
+          
 
           <div class="telegram-banner">
             <h4>Cộng đồng GETKEYDPICONFIG</h4>
