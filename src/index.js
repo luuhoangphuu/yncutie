@@ -1,95 +1,149 @@
 // ============================================================================
-// Key System Worker v8.0 - Pro Security Checkpoint + Light Mode App
+// Key System Worker v9.0 - Ultimate Cyberpunk Checkpoint + Light App
 // ============================================================================
 
-// 1. GIAO DIỆN TRẠM KIỂM TRA (DARK MODE / CYBERPUNK)
 const CHECKPOINT_CSS = `
 :root { color-scheme: dark; }
 *{margin:0;padding:0;box-sizing:border-box}
 body {
-  font-family: 'Inter', -apple-system, sans-serif; background: #080d16; color: #94a3b8;
+  font-family: 'Inter', -apple-system, sans-serif; background: #050a14; color: #94a3b8;
   min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
-  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 30px 30px; overflow: hidden;
+  overflow: hidden; position: relative;
 }
+.bg-grid { position: fixed; inset: 0; background-image: linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px); background-size: 40px 40px; z-index: 0; }
+.bg-glow { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.1), transparent 60%); z-index: 0; }
+
 .container { position: relative; z-index: 10; width: 100%; max-width: 1100px; display: flex; gap: 40px; }
 @media (max-width: 900px) { .container { flex-direction: column; } }
 
-/* Left Panel */
 .left { flex: 1; max-width: 550px; }
-.badge-security { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #38bdf8; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
-.badge-security::before { content: ''; display: block; width: 20px; height: 2px; background: #38bdf8; }
-h1 { font-size: 42px; font-weight: 800; color: #f8fafc; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em; }
-.desc { font-size: 16px; line-height: 1.6; color: #64748b; margin-bottom: 30px; }
+.badge-security { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #38bdf8; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(56,189,248,0.5); }
+.badge-security::before { content: ''; display: block; width: 20px; height: 2px; background: #38bdf8; box-shadow: 0 0 10px #38bdf8; }
+h1 { font-size: 42px; font-weight: 800; color: #f8fafc; line-height: 1.1; margin-bottom: 20px; letter-spacing: -0.02em; text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
+.desc { font-size: 16px; line-height: 1.6; color: #94a3b8; margin-bottom: 30px; }
 
-/* Checkbox Area */
-.challenge-box { background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; padding: 24px; position: relative; overflow: hidden; }
-.challenge-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #38bdf8, transparent); opacity: 0.5; }
+.challenge-box { background: #0b1120; border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 12px; padding: 24px; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(56, 189, 248, 0.05); transition: all 0.3s; }
+.challenge-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, #38bdf8, transparent); opacity: 0.8; }
+.challenge-box:hover { border-color: rgba(56, 189, 248, 0.5); box-shadow: 0 10px 40px rgba(0,0,0,0.6), inset 0 0 30px rgba(56, 189, 248, 0.1); }
 .cf-turnstile { margin-bottom: 15px; display: flex; justify-content: center; }
-.status-text { text-align: center; font-size: 13px; color: #64748b; margin-top: 15px; }
-.status-text span { color: #38bdf8; cursor: pointer; }
+.status-text { text-align: center; font-size: 13px; color: #64748b; margin-top: 15px; transition: color 0.3s; }
 
-/* Stepper Bottom */
 .stepper { display: flex; align-items: center; justify-content: space-between; margin-top: 40px; padding: 0 10px; }
 .step { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.step-circle { width: 24px; height: 24px; border-radius: 50%; background: #1e293b; border: 2px solid #334155; display: flex; align-items: center; justify-content: center; }
-.step.completed .step-circle { background: #064e3b; border-color: #10b981; }
+.step-circle { width: 24px; height: 24px; border-radius: 50%; background: #0b1120; border: 2px solid #1e293b; display: flex; align-items: center; justify-content: center; transition: all 0.5s; }
+.step.completed .step-circle { background: #064e3b; border-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
 .step.completed .step-circle::after { content: '✓'; color: #10b981; font-size: 12px; font-weight: bold; }
-.step.active .step-circle { background: #0c4a6e; border-color: #38bdf8; animation: pulse 1.5s infinite; }
-.step-line { flex: 1; height: 2px; background: #1e293b; margin: 0 10px; margin-bottom: 24px; }
-.step-line.completed { background: #10b981; }
-.step-line.active { background: linear-gradient(90deg, #10b981, #38bdf8); }
-.step-label { font-size: 12px; font-weight: 600; color: #475569; }
-.step.completed .step-label, .step.active .step-label { color: #cbd5e1; }
-@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(56, 189, 248, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); } }
+.step.active .step-circle { background: #0c4a6e; border-color: #38bdf8; box-shadow: 0 0 20px rgba(56, 189, 248, 0.6); animation: pulse 1.5s infinite; }
+.step-line { flex: 1; height: 2px; background: #1e293b; margin: 0 10px; margin-bottom: 24px; transition: all 0.5s; }
+.step-line.completed { background: #10b981; box-shadow: 0 0 10px #10b981; }
+.step-line.active { background: linear-gradient(90deg, #10b981, #38bdf8); box-shadow: 0 0 10px #38bdf8; }
+.step-label { font-size: 12px; font-weight: 600; color: #475569; transition: all 0.3s; }
+.step.completed .step-label, .step.active .step-label { color: #cbd5e1; text-shadow: 0 0 8px rgba(255,255,255,0.3); }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.4); } 70% { box-shadow: 0 0 0 12px rgba(56, 189, 248, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); } }
 
-/* Right Panel (Stats) */
 .right { flex: 1; display: flex; flex-direction: column; gap: 16px; }
-.card { background: #0f172a; border: 1px solid #1e293b; border-radius: 16px; padding: 24px; position: relative; overflow: hidden; }
+.card { background: #0b1120; border: 1px solid #1e293b; border-radius: 16px; padding: 24px; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
 .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 13px; font-weight: 600; color: #64748b; }
-.card-value { font-size: 32px; font-weight: 800; color: #f8fafc; font-family: 'JetBrains Mono', monospace; }
+.card-value { font-size: 32px; font-weight: 800; color: #f8fafc; font-family: 'JetBrains Mono', monospace; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
 .card-value small { font-size: 16px; color: #64748b; font-weight: 600; margin-left: 4px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-/* Radar */
-.radar-container { width: 100px; height: 100px; position: relative; margin: 0 auto; border-radius: 50%; border: 1px solid #1e293b; background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%); }
-.radar-sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0%, rgba(56, 189, 248, 0.4) 25%, transparent 25%); animation: sweep 2s linear infinite; }
-.radar-dot { position: absolute; top: 30%; left: 60%; width: 4px; height: 4px; background: #38bdf8; border-radius: 50%; box-shadow: 0 0 8px #38bdf8; }
-@keyframes sweep { 100% { transform: rotate(360deg); } }
+/* Terminal Log */
+.terminal { background: #000000; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #38bdf8; height: 120px; overflow: hidden; display: flex; flex-direction: column; gap: 6px; }
+.log-line { opacity: 0; animation: fadeIn 0.3s forwards; }
+.log-line.success { color: #10b981; }
+@keyframes fadeIn { to { opacity: 1; } }
 
-/* Graph */
-.graph { height: 50px; display: flex; align-items: flex-end; gap: 2px; margin-top: 10px; }
-.bar { flex: 1; background: #1e293b; border-radius: 2px; transition: height 0.3s; }
-.bar.active { background: #38bdf8; box-shadow: 0 0 8px rgba(56, 189, 248, 0.5); }
+/* Radar */
+.radar-container { width: 100px; height: 100px; position: relative; margin: 0 auto; border-radius: 50%; border: 1px solid rgba(56, 189, 248, 0.3); background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%); box-shadow: 0 0 20px rgba(56, 189, 248, 0.1); }
+.radar-sweep { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 0deg, transparent 0%, rgba(56, 189, 248, 0.5) 25%, transparent 25%); animation: sweep 2s linear infinite; }
+.radar-dot { position: absolute; top: 30%; left: 60%; width: 4px; height: 4px; background: #38bdf8; border-radius: 50%; box-shadow: 0 0 10px #38bdf8; animation: blink 2s infinite; }
+@keyframes sweep { 100% { transform: rotate(360deg); } }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+/* Error Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 100; display: none; align-items: center; justify-content: center; }
+.modal-box { background: #0f172a; border: 1px solid #ef4444; border-radius: 16px; padding: 30px; text-align: center; max-width: 400px; box-shadow: 0 10px 40px rgba(239, 68, 68, 0.2); }
+.modal-icon { color: #ef4444; font-size: 40px; margin-bottom: 15px; }
+.modal-title { color: #f8fafc; font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+.modal-msg { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+.modal-btn { background: #ef4444; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+.modal-btn:hover { background: #dc2626; }
 `;
 
 const CHECKPOINT_JS = `
+const logs = [
+  "> Khởi tạo kết nối TLS 1.3...",
+  "> Đang lấy chứng chỉ Edge...",
+  "> Kiểm tra danh tiếng IP...",
+  "> Phân tích dấu vết trình duyệt...",
+  "> Quét các mẫu DDoS...",
+  "> Hệ thống sẵn sàng xác minh."
+];
+let logIndex = 0;
+function addLog(text, isSuccess) {
+  const terminal = document.getElementById('terminal');
+  const line = document.createElement('div');
+  line.className = 'log-line' + (isSuccess ? ' success' : '');
+  line.textContent = text;
+  terminal.appendChild(line);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+setInterval(() => {
+  if(logIndex < logs.length) {
+    addLog(logs[logIndex]);
+    logIndex++;
+  }
+}, 600);
+
 function onTurnstileSuccess(token) {
+  document.getElementById('statusText').style.color = '#38bdf8';
   document.getElementById('statusText').innerHTML = 'Đang thiết lập kết nối an toàn...';
-  document.querySelector('.step:nth-child(5)').classList.add('active');
-  document.querySelector('.step:nth-child(5)').classList.remove('completed');
   
+  const stepVerify = document.querySelector('.step:nth-child(5)');
+  stepVerify.classList.add('active');
+  stepVerify.classList.remove('completed');
+  
+  addLog("> Token Captcha hợp lệ. Đang xác thực...", false);
+
   fetch('/api/verify-bot', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token: token })
   }).then(res => res.json()).then(data => {
     if(data.success) {
-      document.querySelector('.step:nth-child(5)').classList.add('completed');
-      document.querySelector('.step:nth-child(5)').classList.remove('active');
-      document.getElementById('statusText').innerHTML = '<span style="color:#10b981;font-weight:bold;">Xác minh thành công! Đang chuyển hướng...</span>';
-      setTimeout(() => { window.location.href = '/'; }, 800);
+      addLog("> XÁC MINH THÀNH CÔNG!", true);
+      document.getElementById('statusText').style.color = '#10b981';
+      document.getElementById('statusText').innerHTML = '<b>Xác minh thành công! Đang vào cửa hàng...</b>';
+      
+      stepVerify.classList.add('completed');
+      stepVerify.classList.remove('active');
+      
+      const steps = document.querySelectorAll('.step');
+      const lines = document.querySelectorAll('.step-line');
+      lines[2].classList.add('completed');
+      steps[3].classList.add('active');
+      steps[3].classList.remove('completed');
+      
+      setTimeout(() => { window.location.href = '/'; }, 1000);
     } else {
-      alert('Lỗi xác minh: ' + data.error);
-      window.location.reload();
+      showError(data.error || 'Xác thực thất bại. Vui lòng thử lại.');
     }
   }).catch(() => {
-    alert('Lỗi kết nối. Vui lòng thử lại.');
-    window.location.reload();
+    showError('Lỗi kết nối mạng. Vui lòng thử lại.');
   });
 }
 
-// Hiệu ứng nhịp tim cho Graph
+function showError(msg) {
+  document.getElementById('modalMsg').textContent = msg;
+  document.getElementById('errorModal').style.display = 'flex';
+  addLog("> LỖI: " + msg, false);
+}
+
+function reloadPage() {
+  window.location.reload();
+}
+
 setInterval(() => {
   const bars = document.querySelectorAll('.bar');
   bars.forEach((bar, index) => {
@@ -102,7 +156,6 @@ setInterval(() => {
 }, 150);
 `;
 
-// 2. GIAO DIỆN WEB CHÍNH (LIGHT MODE - DÀNH CHO NGƯỜI ĐÃ VƯỢT CHECK)
 const APP_CSS = `
 :root { color-scheme: light only; --bg-color: #f0f4f8; --text-main: #0f172a; --text-muted: #475569; --primary: #4f46e5; --accent: #ec4899; --card-bg: #ffffff; --border-color: #e2e8f0; }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -200,10 +253,11 @@ function log(level, msg, extra = {}) { console.log(JSON.stringify({ ts: new Date
 // ============ GIAO DIỆN TRẠM KIỂM TRA ============
 function renderCheckpoint(env) {
   return html(`<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><meta name="color-scheme" content="dark"><title>Trạm kiểm tra bảo mật</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <style>${CHECKPOINT_CSS}</style></head>
   <body>
+    <div class="bg-grid"></div><div class="bg-glow"></div>
     <div class="container">
       <div class="left">
         <div class="badge-security">Trạm kiểm tra bảo mật</div>
@@ -249,16 +303,22 @@ function renderCheckpoint(env) {
             <div style="font-size:12px; color:#64748b; margin-top:10px;">Giao thức<br><b style="color:#f8fafc;">HTTP/3 (QUIC)</b></div>
           </div>
         </div>
+
+        <div class="terminal" id="terminal"></div>
       </div>
     </div>
+    
+    <div class="modal-overlay" id="errorModal">
+      <div class="modal-box">
+        <div class="modal-icon">!</div>
+        <div class="modal-title">Xác minh thất bại</div>
+        <div class="modal-msg" id="modalMsg">Đã xảy ra lỗi.</div>
+        <button class="modal-btn" onclick="reloadPage()">Thử lại</button>
+      </div>
+    </div>
+
     <script>
-      // Tạo cột Graph
-      for(let i=0; i<30; i++) {
-        let bar = document.createElement('div');
-        bar.className = 'bar';
-        bar.style.height = '20%';
-        document.getElementById('graph').appendChild(bar);
-      }
+      for(let i=0; i<30; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; document.getElementById('graph').appendChild(bar); }
       ${CHECKPOINT_JS}
     </script>
   </body></html>`);
@@ -317,7 +377,7 @@ async function shortenUrl(longUrl, env) {
 
 async function fetchKeyFromIssuer(env) {
   try {
-    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/8.0', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: env.KEY_TIER || 'Normal' }) });
+    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY, 'User-Agent': 'KeySystem-Worker/9.0', 'Origin': 'https://getkeydpiconfig.site' }, body: JSON.stringify({ tier: env.KEY_TIER || 'Normal' }) });
     const data = await res.json().catch(() => null);
     if (data && data.success === true && data.key) return { ok: true, key: data.key, expiresAt: data.expires_at, durationHours: data.duration_hours };
     return { ok: false };
@@ -382,14 +442,17 @@ async function verifyCheckpoint(request, env) {
     const { token } = await request.json();
     const ip = request.headers.get('cf-connecting-ip') || 'local';
     const ok = await verifyTurnstile(token, ip, env);
-    if (!ok) return new Response(JSON.stringify({ success: false, error: 'Captcha không hợp lệ' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+    if (!ok) {
+      log('error', 'checkpoint turnstile failed', { ip });
+      return new Response(JSON.stringify({ success: false, error: 'Captcha không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+    }
     
-    // Cấp Cookie thông hành (hạn 15 phút)
     const passToken = crypto.randomUUID();
     const headers = new Headers({ 'Content-Type': 'application/json', 'Set-Cookie': `bot_passed=${passToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=900; Secure` });
     return new Response(JSON.stringify({ success: true }), { headers });
   } catch (e) {
-    return new Response(JSON.stringify({ success: false, error: 'Dữ liệu lỗi' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+    log('error', 'checkpoint exception', { msg: e.message });
+    return new Response(JSON.stringify({ success: false, error: 'Lỗi máy chủ nội bộ.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
 
@@ -399,19 +462,14 @@ export default {
     const botPassed = getCookie(request, 'bot_passed');
 
     try {
-      // Static Assets
       if (p === '/style.css') return withHeaders(new Response(APP_CSS, { headers: { 'Content-Type': 'text/css' } }));
       if (p === '/app.js') return withHeaders(new Response(APP_JS, { headers: { 'Content-Type': 'application/javascript' } }));
-
-      // Endpoint nhận Token từ Trạm kiểm tra
       if (p === '/api/verify-bot' && m === 'POST') return verifyCheckpoint(request, env);
 
-      // BẮT BUỘC PHẢI VƯỢT QUA TRẠM KIỂM TRA (NẾU CHƯA CÓ COOKIE)
       if (!botPassed && p !== '/api/verify-bot') {
         return renderCheckpoint(env);
       }
 
-      // Các Route của Web chính (Chỉ hiển thị khi đã có Cookie)
       if (p === '/' && m === 'GET') return home(env);
       if (p === '/start' && m === 'POST') return start(request, env);
       if (p === '/step1' && m === 'GET') return step1(request, env);
