@@ -1,21 +1,46 @@
-import { CSS, JS } from './assets.js';
+import { CSS_CHECKPOINT, CSS_APP, JS } from './assets.js';
 
-const layout = (title, content) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
+const layoutCheckpoint = (title, content) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<style>${CSS}</style></head>
+<style>${CSS_CHECKPOINT}</style></head>
+<body class="dark-theme">
+  <div class="bg-glow"></div>
+  ${content}
+  <script>${JS}</script>
+</body></html>`;
+
+const layoutApp = (title, content) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<style>${CSS_APP}</style></head>
 <body>
   ${content}
   <script>${JS}</script>
 </body></html>`;
 
+// --- GIAO DIỆN CHECK BOT (DARK) ---
 export function renderCheckpoint(env) {
-  return layout('Security Check', `
-    <div class="glass-card" style="max-width: 500px; text-align: center;">
-      <h1 style="margin-bottom:20px;">Xác minh <span class="grad">Bảo mật</span></h1>
-      <p class="sub">Hệ thống đang kiểm tra kết nối của bạn để chống lại Bot và DDoS.</p>
-      <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" data-callback="onTurnstileSuccess" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
-      <div class="terminal" id="term"></div>
+  return layoutCheckpoint('Security Check', `
+    <div class="container-check">
+      <div class="left">
+        <div class="glass-dark">
+          <h1 class="dark-title">Xác minh <br>Bảo mật</h1>
+          <p class="sub-dark">Hệ thống đang kiểm tra kết nối của bạn bằng Trí tuệ Nhân tạo để chặn bot và spam.</p>
+          <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
+          <div class="terminal" id="term"></div>
+        </div>
+      </div>
+      <div class="right" style="display:flex; flex-direction:column; justify-content:center;">
+        <div class="stat-box">
+          <div style="font-size:12px; color:#64748b; text-transform:uppercase; margin-bottom:5px;">Thời gian xác minh</div>
+          <div class="stat-val"><span id="timer">0.000</span>s</div>
+        </div>
+        <div class="stat-box">
+          <div style="font-size:12px; color:#64748b; text-transform:uppercase; margin-bottom:5px;">Lưu lượng quét</div>
+          <div class="stat-val" style="color:#10b981;">An toàn</div>
+        </div>
+      </div>
     </div>
     <script>
       const term = document.getElementById('term');
@@ -25,8 +50,11 @@ export function renderCheckpoint(env) {
       
       function onTurnstileSuccess(token) {
         term.innerHTML += '<div class="log-line" style="color:#10b981">> Token hợp lệ. Đang chuyển hướng...</div>';
+        let t = 0; let int = setInterval(() => { t += 0.05; document.getElementById('timer').innerText = t.toFixed(3); }, 50);
+        
         fetch('/api/verify-bot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) })
         .then(r => r.json()).then(d => {
+          clearInterval(int);
           if(d.success) setTimeout(() => location.href = '/', 800);
           else alert('Lỗi: ' + d.error);
         });
@@ -35,14 +63,15 @@ export function renderCheckpoint(env) {
   `);
 }
 
+// --- GIAO DIỆN TRANG CHỦ (LIGHT) ---
 export function renderHome(env, error) {
-  return layout('Get Key | Hệ thống tự động', `
+  return layoutApp('Get Key | Hệ thống tự động', `
     <div class="container">
       <!-- Cột Trái: Lấy Key -->
       <div class="glass-card hero">
         <div class="badge">✨ Tự động hóa 100%</div>
         <h1>Nhận Key <br><span class="grad">Bản Quyền</span></h1>
-        <p class="sub">Chọn hạng Key, vượt qua Captcha và nhận Key tự động trong 30 giây. Không cần đăng ký.</p>
+        <p class="sub">Chọn hạng Key, vượt qua Captcha và nhận Key tự động trong 30 giây.</p>
         
         ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600;">${error}</div>` : ''}
 
@@ -62,7 +91,6 @@ export function renderHome(env, error) {
           <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" style="display:flex; justify-content:center; margin-bottom:20px;"></div>
           <button type="submit" class="btn btn-primary">🚀 Bắt đầu nhận Key</button>
         </form>
-        <p style="font-size:12px; color:var(--text-muted); margin-top:15px;">Bảo mật bởi Cloudflare Turnstile</p>
       </div>
 
       <!-- Cột Phải: Tính năng & Trạng thái -->
@@ -101,9 +129,10 @@ export function renderHome(env, error) {
   `);
 }
 
+// --- GIAO DIỆN CÁC BƯỚC (CÓ STEPPER) ---
 export function renderStep(title, stepNum, content) {
   const steps = ['Xác thực', 'Ủng hộ', 'Nhận Key'];
-  return layout(title, `
+  return layoutApp(title, `
     <div class="glass-card" style="max-width: 550px; margin: 0 auto;">
       <div class="stepper">
         ${steps.map((s, i) => `<div class="step ${stepNum > i ? 'active' : ''}"><div class="dot">${i+1}</div><small>${s}</small></div>`).join('<div class="line ' + (stepNum > i ? 'active' : '') + '"></div>')}
