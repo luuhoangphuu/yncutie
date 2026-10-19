@@ -24,13 +24,13 @@ const layoutApp = (title, content, footer) => `${head(title)}<style>${CSS_APP}</
 export function renderCheckpoint(env) {
   return layoutCheckpoint('Security Check', `
     <div class="top-nav">
-      <div class="logo"><i data-lucide="shield-check" style="color:var(--primary)"></i> DOMAINCHEAP.WTF</div>
+      <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:18px;"></i></div> getkeydpiconfig.site</div>
       <div class="status-badge"><div class="status-dot"></div> Kết nối đang được bảo vệ</div>
     </div>
     <div class="container-check">
       <div class="left">
         <div class="badge-security">Trạm kiểm tra bảo mật</div>
-        <h1>Xác minh nhanh trước<br>khi vào cửa hàng</h1>
+        <h1>Xác minh nhanh trước<br>khi vào <span>cửa hàng</span></h1>
         <p class="desc">Cloudflare đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
         <div class="challenge-box">
           <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="light" data-callback="onTurnstileSuccess"></div>
