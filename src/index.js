@@ -6,26 +6,29 @@ async function saveSession(req, env, data) { data.expiresAt = Date.now() + 90000
 const html = (s) => new Response(s, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
 const redirect = (loc, cookie) => { const h = { 'Location': loc }; if(cookie) h['Set-Cookie'] = cookie; return new Response('', { status: 302, headers: h }); };
 
-// Hàm lấy thông báo: Ưu tiên KV, nếu không có thì trả về rỗng
+// Mặc định thông báo nếu chưa có
+const DEFAULT_NOTICE = {
+  enabled: true,
+  title: "THÔNG BÁO QUAN TRỌNG",
+  content: "© Bản quyền thuộc về GETKEYDPICONFIG.SITE.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n🔥 IB Tele: @Anmaster18\n✅ Hoặc: @Mityangho\n👤 Để mua key."
+};
+
 async function getNotice(env) {
   if (env.ANNOUNCEMENT_KV) {
     try {
-      return await env.ANNOUNCEMENT_KV.get('notice') || '';
+      const data = await env.ANNOUNCEMENT_KV.get('notice_json');
+      if (data) return JSON.parse(data);
     } catch (e) { console.error('KV get error:', e); }
   }
-  return '';
+  return DEFAULT_NOTICE;
 }
 
-// Hàm lưu thông báo: Bắt buộc phải có KV
-async function saveNotice(env, notice) {
+async function saveNotice(env, noticeData) {
   if (!env.ANNOUNCEMENT_KV) return false;
   try {
-    await env.ANNOUNCEMENT_KV.put('notice', notice);
+    await env.ANNOUNCEMENT_KV.put('notice_json', JSON.stringify(noticeData));
     return true;
-  } catch (e) { 
-    console.error('KV put error:', e); 
-    return false; 
-  }
+  } catch (e) { console.error('KV put error:', e); return false; }
 }
 
 export default {
@@ -36,19 +39,26 @@ export default {
     try {
       if (p === '/ynsociuu/lhp' && m === 'GET') return html(renderAdmin());
 
+      // API Quản lý thông báo
       if (p === '/api/admin/notice' && m === 'POST') {
-        const { password, notice } = await request.json();
+        const body = await request.json();
         const adminPass = 'lhp_admin_2026';
         
-        if (password !== adminPass) {
+        if (body.password !== adminPass) {
           return new Response(JSON.stringify({ success: false, error: 'Mật khẩu Admin không đúng!' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
         }
-        
-        const saved = await saveNotice(env, notice);
-        if (saved) {
-          return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
-        } else {
-          return new Response(JSON.stringify({ success: false, error: 'Lỗi: Chưa cấu hình Cloudflare KV. Vui lòng làm theo hướng dẫn.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+
+        // Hành động GET
+        if (body.action === 'get') {
+           const notice = await getNotice(env);
+           return new Response(JSON.stringify({ success: true, notice }), { headers: { 'Content-Type': 'application/json' } });
+        }
+
+        // Hành động SAVE
+        if (body.action === 'save') {
+           const saved = await saveNotice(env, body.notice);
+           if (saved) return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });
+           return new Response(JSON.stringify({ success: false, error: 'Lỗi: Chưa cấu hình Cloudflare KV.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
         }
       }
 
@@ -150,6 +160,6 @@ export default {
       }
 
       return new Response('Not Found', { status: 404 });
-    } catch (e) { console.error(e); return html(renderHome(env, "Hệ thống bảo trì: " + e.message, '')); }
+    } catch (e) { console.error(e); return html(renderHome(env, "Hệ thống bảo trì: " + e.message, DEFAULT_NOTICE)); }
   }
 };

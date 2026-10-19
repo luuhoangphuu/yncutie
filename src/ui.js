@@ -1,4 +1,4 @@
-import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE, CSS_MODAL, JS_MODAL } from './assets.js';
+import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE, CSS_MODAL, JS_MODAL, CSS_ADMIN } from './assets.js';
 
 const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
@@ -9,17 +9,138 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
 <body>
   ${content}
   <script>${JS}</script>
+  <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+</body></html>`;
+
+const layoutApp = (title, content, isAdmin = false) => `${head(title)}<style>${CSS_APP}${CSS_MOBILE}${CSS_MODAL}${isAdmin ? CSS_ADMIN : ''}</style></head>
+<body>
+  <div class="bg-shapes"><div class="shape circle"></div><div class="shape triangle"></div><div class="shape square"></div></div>
+  <div class="wrapper">${content}</div>
+  <a href="https://zalo.me/0996492296" target="_blank" class="float-widget"><i data-lucide="message-circle" style="width:28px;height:28px;"></i><div class="float-dot"></div></a>
+  <script>${JS}</script>
   <script>${JS_MODAL}</script>
   <script>window.addEventListener('DOMContentLoaded', () => lucide.createIcons());</script>
+</body></html>`;
 
+export function renderCheckpoint(env) {
+  return layoutCheckpoint('Security Check', `
+    <div class="top-nav">
+      <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> GETKEYDPICONFIG.SITE</div>
+      <div style="display:flex; gap:16px; align-items:center;">
+        <div class="time-badge"><i data-lucide="clock" style="width:16px;height:16px;"></i> <span id="vn-clock">00:00:00</span> (GMT+7)</div>
+        <div class="status-badge"><div class="status-dot"></div> Bảo vệ</div>
+      </div>
+    </div>
+    <div class="container-check">
+      <div class="left">
+        <div class="badge-security">Trạm kiểm tra bảo mật</div>
+        <h1>Xác minh nhanh<br>trước khi vào <span>cửa hàng</span></h1>
+        <p class="desc">Cloudflare đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
+        <div class="terminal-box" id="terminal"></div>
+        <div class="challenge-module">
+          <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
+          <div class="help-text">Nếu thấy ô <b>Verify you are human</b>, bấm vào đó. Không cần tải lại trang, cửa hàng sẽ tự mở khi xác minh xong.</div>
+        </div>
+        <div class="stepper">
+          <div class="step completed"><div class="step-circle"></div><div class="step-label">Kết nối TLS</div></div>
+          <div class="step-line completed"></div>
+          <div class="step completed"><div class="step-circle"></div><div class="step-label">Lọc tại edge</div></div>
+          <div class="step-line completed"></div>
+          <div class="step active"><div class="step-circle"></div><div class="step-label">Xác minh trình duyệt</div></div>
+          <div class="step-line"></div>
+          <div class="step"><div class="step-circle"></div><div class="step-label">Vào cửa hàng</div></div>
+        </div>
+      </div>
+      <div class="right">
+        <div class="dash-card">
+          <div class="dash-header"><span class="dash-title">Thời gian xác minh</span><span class="dash-value" id="timer">0.000<small>s</small></span></div>
+          <div class="waveform" id="graph"></div>
+        </div>
+        <div class="dash-card">
+          <div class="radar-wrapper">
+            <div class="radar-container"><div class="radar-sweep"></div><div class="radar-dot"></div></div>
+            <div class="radar-info"><h4>Đang bảo vệ</h4><p>WAF • Bot • DDoS</p><div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Lưu lượng quét: 1.2 GB/s</div></div>
+          </div>
+        </div>
+        <div class="dash-card" style="padding: 0;">
+          <div class="stats-grid">
+            <div class="stat-item"><div class="stat-label">Giao thức</div><div class="stat-val">HTTP/3</div></div>
+            <div class="stat-item"><div class="stat-label">Mạng Edge</div><div class="stat-val">Anycast</div></div>
+            <div class="stat-item"><div class="stat-label">Độ trễ</div><div class="stat-val">464 ms</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const graph = document.getElementById('graph');
+      for(let i=0; i<50; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; graph.appendChild(bar); }
+      let startTime;
+      function onTurnstileSuccess(token) {
+        startTime = performance.now();
+        setInterval(() => { document.getElementById('timer').innerHTML = ((performance.now() - startTime)/1000).toFixed(3) + '<small>s</small>'; }, 50);
+        fetch('/api/verify-bot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) })
+        .then(r => r.json()).then(d => {
+          if(d.success) {
+            document.querySelector('.step.active .step-label').innerText = "Đã xác minh!";
+            document.querySelector('.step.active .step-circle').style.background = '#fff';
+            document.querySelector('.step.active .step-circle').style.borderColor = '#fff';
+            setTimeout(() => location.href = '/', 800);
+          } else { showToast('Lỗi: ' + d.error, 'error'); }
+        });
+      }
+    </script>
+  `);
+}
+
+export function renderHome(env, error, notice) {
+  // Tạo Popup HTML nếu thông báo được bật
+  const modalHtml = (notice && notice.enabled) ? `
   <div id="customModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title"><i data-lucide="alert-triangle" style="width:20px;"></i> THÔNG BÁO</div>
+        <div class="modal-title"><i data-lucide="alert-triangle" style="width:20px;"></i> ${notice.title || 'THÔNG BÁO'}</div>
         <button class="modal-close-icon" onclick="closeModal(false)"><i data-lucide="x" style="width:18px;"></i></button>
       </div>
       <div class="modal-content">
-        
+        <div style="white-space: pre-wrap;">${notice.content || ''}</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-snooze" onclick="closeModal(true)"><i data-lucide="clock" style="width:18px;"></i> Tắt 1 giờ</button>
+        <button class="btn-close" onclick="closeModal(false)">Đóng</button>
+      </div>
+    </div>
+  </div>` : '';
+
+  return layoutApp('GETKEYDPICONFIG.SITE', `
+    ${modalHtml}
+    <div class="container">
+      <div>
+        <div class="glass-card">
+          <div class="header-title"><i data-lucide="key" style="color:#fff;"></i> Lấy Key Miễn Phí</div>
+          <div class="header-desc">Chào mừng bạn đến với hệ thống của GETKEYDPICONFIG.SITE.</div>
+          
+          <div class="telegram-banner">
+            <h4>Cộng đồng GETKEYDPICONFIG</h4>
+            <a href="#" class="telegram-btn"><i data-lucide="send"></i> Tham gia nhóm Telegram ↗</a>
+          </div>
+
+          <div class="stepper">
+            <div class="step active"><div class="step-line"></div><div class="step-circle">1</div><div class="step-label">Chọn key</div></div>
+            <div class="step"><div class="step-line"></div><div class="step-circle">2</div><div class="step-label">Vượt link</div></div>
+            <div class="step"><div class="step-line"></div><div class="step-circle">3</div><div class="step-label">Xác thực</div></div>
+            <div class="step"><div class="step-circle">4</div><div class="step-label">Nhận key</div></div>
+          </div>
+          <div style="text-align:center; font-size:12px; color:#a1a1aa; margin-bottom:20px;">Bước 1/4 • Chọn key</div>
+
+          <div style="font-weight:700; font-size:14px; margin-bottom:12px; display:flex; align-items:center; gap:6px; color:#fff;"><i data-lucide="info" style="width:16px;"></i> Hướng dẫn lấy key</div>
+          
+          <div class="tier-selector">
+            <div class="tier-slider" id="tierSlider"></div>
+            <label class="tier-option selected" data-tier="Normal"><input type="radio" name="tier" value="Normal" checked><i data-lucide="zap" style="width:18px;"></i> Normal <span class="tier-badge">8H</span></label>
+            <label class="tier-option" data-tier="VIP"><input type="radio" name="tier" value="VIP"><i data-lucide="crown" style="width:18px;"></i> VIP <span class="tier-badge">2H</span></label>
+          </div>
+
+          ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600; text-align:center; animation: slideDown 0.3s ease-out;">${error}</div>` : ''}
 
           <form method="POST" action="/start" id="startForm">
             <input type="hidden" name="tier" id="tierInput" value="Normal">
@@ -98,7 +219,6 @@ const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPO
         });
       });
       
-      // SKELETON LOADING KHI BẤM NÚT
       document.getElementById('startForm').addEventListener('submit', () => {
         const btn = document.getElementById('startBtn');
         btn.disabled = true;
@@ -124,58 +244,142 @@ export function renderStep(title, stepNum, content) {
 }
 
 export function renderAdmin() {
-  return layoutApp('Admin Panel', `
-    <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-color: #555;">
-      <div class="header-title" style="color: #fff;"><i data-lucide="terminal" style="color:#fff;"></i> HỆ THỐNG QUẢN TRỊ ẨN</div>
-      <div class="header-desc">Cập nhật thông báo hiển thị trên trang chủ.</div>
+  return layoutApp('Admin Dashboard', `
+    <div class="admin-container">
       
-      <form id="adminForm" style="display:flex; flex-direction:column; gap:15px;">
-        <input type="password" id="adminPass" placeholder="Nhập mật khẩu Admin..." required style="padding:15px; border-radius:12px; border:1px solid #333; background:#000; color:#fff; font-size:15px; outline:none;">
-        <textarea id="adminNotice" rows="5" placeholder="Nhập nội dung thông báo..." required style="padding:15px; border-radius:12px; border:1px solid #333; background:#000; color:#fff; font-size:15px; resize:none; outline:none;"></textarea>
-        <button type="submit" class="btn btn-primary" id="submitBtn">Cập nhật thông báo</button>
-      </form>
-      
-      <div id="adminResult" style="margin-top:20px; text-align:center; font-weight:700;"></div>
-      <a href="/" class="btn btn-ghost" style="margin-top:20px; border:1px solid #333; color:#fff;"><i data-lucide="arrow-left"></i> Về trang chủ</a>
+      <!-- Form Đăng Nhập -->
+      <div class="admin-card" id="loginView">
+        <div class="login-form">
+          <div class="login-icon"><i data-lucide="lock" style="width:32px;height:32px;"></i></div>
+          <h2 style="color:#fff; font-size:24px; font-weight:800;">Hệ Thống Quản Trị</h2>
+          <p style="color:#a1a1aa; font-size:14px; margin-bottom:20px;">Vui lòng đăng nhập để tiếp tục.</p>
+          <input type="password" id="adminPass" class="input-field" placeholder="Nhập mật khẩu Admin...">
+          <button class="btn-save" onclick="loginAdmin()">Đăng Nhập</button>
+          <div id="loginError" style="color:#ef4444; font-size:13px; font-weight:600; margin-top:10px;"></div>
+        </div>
+      </div>
+
+      <!-- Dashboard Quản Lý -->
+      <div class="admin-card dashboard-content" id="dashboardView">
+        <div class="admin-header">
+          <div class="admin-title"><i data-lucide="layout-dashboard" style="width:24px;height:24px;"></i> Quản Lý Thông Báo</div>
+          <button onclick="logoutAdmin()" style="background:#ef4444; color:#fff; border:none; padding:8px 16px; border-radius:8px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:6px;"><i data-lucide="log-out" style="width:16px;"></i> Thoát</button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Trạng thái hiển thị</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="noticeEnabled">
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+            <span class="toggle-label" id="toggleText">Bật thông báo</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Tiêu đề thông báo</label>
+          <input type="text" id="noticeTitle" class="input-field" placeholder="VD: CẢNH BÁO BẢO TRÌ...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nội dung thông báo</label>
+          <textarea id="noticeContent" class="input-field" rows="5" placeholder="Nhập nội dung..."></textarea>
+        </div>
+
+        <button class="btn-save" id="saveBtn" onclick="saveNotice()"><i data-lucide="save" style="width:20px;"></i> Lưu Thay Đổi</button>
+
+        <div style="margin-top:30px;">
+          <label class="form-label">Xem trước (Live Preview)</label>
+          <div class="preview-box">
+            <div class="preview-header">
+              <div class="preview-title"><i data-lucide="alert-triangle" style="width:20px;"></i> <span id="previewTitle">THÔNG BÁO</span></div>
+              <i data-lucide="x" style="color:#94a3b8;"></i>
+            </div>
+            <div class="preview-content" id="previewContent">Nội dung thông báo sẽ hiện ở đây...</div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    
+
     <script>
-      document.getElementById('adminForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const password = document.getElementById('adminPass').value;
-        const notice = document.getElementById('adminNotice').value;
-        const resDiv = document.getElementById('adminResult');
-        const btn = document.getElementById('submitBtn');
+      let currentPassword = '';
+      
+      function loginAdmin() {
+        const pass = document.getElementById('adminPass').value;
+        if(!pass) return;
         
-        btn.disabled = true;
-        btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="30 10"/></svg> Đang lưu...';
-        resDiv.style.color = '#a1a1aa';
-        resDiv.innerText = 'Đang kết nối tới Cloudflare KV...';
-        
-        try {
-          const res = await fetch('/api/admin/notice', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password, notice })
-          });
-          const data = await res.json();
-          if (data.success) {
-            resDiv.style.color = '#10b981';
-            resDiv.innerText = '✅ Đã lưu thông báo thành công! Hãy về trang chủ để xem.';
-            btn.innerHTML = '<i data-lucide="check"></i> Đã cập nhật';
+        currentPassword = pass;
+        const btn = document.querySelector('#loginView .btn-save');
+        btn.disabled = true; btn.innerText = 'Đang đăng nhập...';
+
+        fetch('/api/admin/notice', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'get', password: pass })
+        }).then(r => r.json()).then(d => {
+          if(d.success) {
+            document.getElementById('loginView').style.display = 'none';
+            document.getElementById('dashboardView').classList.add('active');
+            document.getElementById('noticeEnabled').checked = d.notice.enabled;
+            document.getElementById('noticeTitle').value = d.notice.title;
+            document.getElementById('noticeContent').value = d.notice.content;
+            updatePreview();
           } else {
-            throw new Error(data.error || 'Lỗi không xác định');
+            throw new Error(d.error);
           }
-        } catch (err) {
-          resDiv.style.color = '#ef4444';
-          resDiv.innerText = '❌ Lỗi: ' + err.message;
-          btn.disabled = false;
-          btn.innerHTML = 'Cập nhật thông báo';
-        }
-      });
+        }).catch(e => {
+          document.getElementById('loginError').innerText = e.message;
+          btn.disabled = false; btn.innerText = 'Đăng Nhập';
+        });
+      }
+
+      function logoutAdmin() {
+        document.getElementById('loginView').style.display = 'block';
+        document.getElementById('dashboardView').classList.remove('active');
+        document.getElementById('adminPass').value = '';
+        document.getElementById('loginError').innerText = '';
+        document.querySelector('#loginView .btn-save').disabled = false;
+        document.querySelector('#loginView .btn-save').innerText = 'Đăng Nhập';
+      }
+
+      function updatePreview() {
+        document.getElementById('previewTitle').innerText = document.getElementById('noticeTitle').value || 'THÔNG BÁO';
+        document.getElementById('previewContent').innerText = document.getElementById('noticeContent').value || 'Nội dung...';
+        const isEnabled = document.getElementById('noticeEnabled').checked;
+        document.getElementById('toggleText').innerText = isEnabled ? 'Đang bật (User sẽ thấy)' : 'Đang tắt (User không thấy)';
+        document.getElementById('toggleText').style.color = isEnabled ? '#10b981' : '#a1a1aa';
+      }
+
+      document.getElementById('noticeTitle').addEventListener('input', updatePreview);
+      document.getElementById('noticeContent').addEventListener('input', updatePreview);
+      document.getElementById('noticeEnabled').addEventListener('change', updatePreview);
+
+      function saveNotice() {
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true; btn.innerHTML = 'Đang lưu...';
+
+        const noticeData = {
+          enabled: document.getElementById('noticeEnabled').checked,
+          title: document.getElementById('noticeTitle').value,
+          content: document.getElementById('noticeContent').value
+        };
+
+        fetch('/api/admin/notice', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'save', password: currentPassword, notice: noticeData })
+        }).then(r => r.json()).then(d => {
+          if(d.success) {
+            btn.innerHTML = '<i data-lucide="check"></i> Đã Lưu!';
+            btn.style.background = '#10b981';
+            if(window.lucide) lucide.createIcons();
+            setTimeout(() => { btn.innerHTML = '<i data-lucide="save" style="width:20px;"></i> Lưu Thay Đổi'; btn.style.background = 'var(--brand)'; btn.disabled = false; if(window.lucide) lucide.createIcons(); }, 2000);
+          } else { throw new Error(d.error); }
+        }).catch(e => {
+          alert('Lỗi: ' + e.message);
+          btn.innerHTML = '<i data-lucide="save" style="width:20px;"></i> Lưu Thay Đổi'; btn.disabled = false; if(window.lucide) lucide.createIcons();
+        });
+      }
     </script>
-    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
-  `);
+  `, true);
 }
 
 export function renderFAQ() {
