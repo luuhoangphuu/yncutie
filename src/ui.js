@@ -96,7 +96,7 @@ export function renderHome(env, error, notice) {
     <div class="container">
       <div>
         <div class="glass-card">
-          <div class="header-title"><i data-lucide="key" style="color:var(--brand);"></i> Lấy Key Miễn Phí</div>
+          <div class="header-title"><i data-lucide="key" style="color:#fff;"></i> Lấy Key Miễn Phí</div>
           <div class="header-desc">Chào mừng bạn đến với hệ thống của GETKEYDPICONFIG.SITE.</div>
           
           ${notice ? `
@@ -179,7 +179,7 @@ export function renderHome(env, error, notice) {
           <div class="info-box">
             <h4>Thông tin bản quyền</h4>
             <ul class="info-list">
-              <li>© Bản quyền thuộc về <b style="color:var(--brand);">GETKEYDPICONFIG.SITE</b>.</li>
+              <li>© Bản quyền thuộc về <b style="color:#fff;">GETKEYDPICONFIG.SITE</b>.</li>
               <li style="color:#ef4444; font-weight:700;">‼ Mọi hành vi buôn bán key không rõ nguồn gốc đều là lừa đảo.</li>
               <li>📦 Mua key VIP vui lòng liên hệ Admin.</li>
               <li style="margin-top:12px; font-weight:700; color:#fff;">Bảng giá Key VIP</li>
@@ -208,12 +208,16 @@ export function renderHome(env, error, notice) {
           slider.style.transform = 'translateX(' + (index * 100) + '%)';
         });
       });
+      
+      // SKELETON LOADING KHI BẤM NÚT
       document.getElementById('startForm').addEventListener('submit', () => {
         const btn = document.getElementById('startBtn');
         btn.disabled = true;
         btn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-dasharray="30 10"/></svg> Đang khởi tạo...';
+        btn.style.background = 'rgba(255,255,255,0.5)';
       });
     </script>
+    <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
   `);
 }
 
@@ -232,8 +236,8 @@ export function renderStep(title, stepNum, content) {
 
 export function renderAdmin() {
   return layoutApp('Admin Panel', `
-    <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-color: var(--brand);">
-      <div class="header-title" style="color: var(--brand);"><i data-lucide="terminal" style="color:var(--brand);"></i> HỆ THỐNG QUẢN TRỊ ẨN</div>
+    <div class="glass-card" style="max-width: 800px; margin: 0 auto; border-color: #555;">
+      <div class="header-title" style="color: #fff;"><i data-lucide="terminal" style="color:#fff;"></i> HỆ THỐNG QUẢN TRỊ ẨN</div>
       <div class="header-desc">Cập nhật thông báo hiển thị trên trang chủ.</div>
       
       <form id="adminForm" style="display:flex; flex-direction:column; gap:15px;">
