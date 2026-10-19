@@ -145,13 +145,16 @@ export function renderHome(env, error) {
           <div class="stat-icon"><i data-lucide="shield"></i></div>
           <div class="stat-info"><h4><span class="status-dot"></span> Hệ thống ổn định</h4><p>Độ trễ API: 24ms • Uptime: 99.9%</p></div>
         </div>
-        <div class="stat-card" style="background: linear-gradient(135deg, #fdf4ff, #fae8ff); border-color: #f0abfc;">
-          <div class="stat-icon" style="background:#e879f9; color:#fff; box-shadow: 0 0 15px rgba(232,121,249,0.4);"><i data-lucide="trending-up"></i></div>
+        
+        <!-- THẺ THÔNG TIN THỰC TẾ (THAY THẾ LIVE STATS ẢO) -->
+        <div class="stat-card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-color: #bbf7d0;">
+          <div class="stat-icon" style="background:#22c55e; color:#fff; box-shadow: 0 0 15px rgba(34,197,94,0.4);"><i data-lucide="monitor-smartphone"></i></div>
           <div class="stat-info">
-            <h4>Live Stats (Real Data)</h4>
-            <p>Đã phát: <b id="stat-keys">--</b> keys • Online: <b id="stat-users">--</b></p>
+            <h4>Thông tin thiết bị</h4>
+            <p style="font-size:12px; margin-top:4px;">HĐH: <b id="info-os">Đang tải...</b> • Trình duyệt: <b id="info-browser">Đang tải...</b></p>
           </div>
         </div>
+        
         <div class="stat-card">
           <div class="stat-icon" style="background:rgba(236,72,153,0.1); color:#ec4899; box-shadow: 0 0 15px rgba(236,72,153,0.2);"><i data-lucide="gift"></i></div>
           <div class="stat-info"><h4>Khám phá tiện ích</h4><p>Sự kiện tặng Key VIP, BXH người dùng, Hỗ trợ trực tuyến 24/7.</p></div>
@@ -170,17 +173,26 @@ export function renderHome(env, error) {
         });
       });
 
-      // GỌI API THỐNG KÊ THỰC TẾ
-      fetch('/api/stats')
-        .then(r => r.json())
-        .then(data => {
-          document.getElementById('stat-keys').innerText = data.totalKeys.toLocaleString('vi-VN');
-          document.getElementById('stat-users').innerText = data.onlineUsers;
-        })
-        .catch(() => {
-          document.getElementById('stat-keys').innerText = "0";
-          document.getElementById('stat-users').innerText = "0";
-        });
+      // LẤY THÔNG TIN TRÌNH DUYỆT THỰC TẾ
+      const ua = navigator.userAgent;
+      let os = "Không xác định";
+      if (ua.indexOf("Win") != -1) os = "Windows";
+      if (ua.indexOf("Mac") != -1) os = "macOS";
+      if (ua.indexOf("Linux") != -1) os = "Linux";
+      if (ua.indexOf("Android") != -1) os = "Android";
+      if (ua.indexOf("like Mac") != -1) os = "iOS";
+      
+      let browser = "Không xác định";
+      if (ua.indexOf("Firefox") > -1) browser = "Firefox";
+      else if (ua.indexOf("SamsungBrowser") > -1) browser = "Samsung Internet";
+      else if (ua.indexOf("Opera") > -1 || ua.indexOf("OPR") > -1) browser = "Opera";
+      else if (ua.indexOf("Trident") > -1) browser = "Internet Explorer";
+      else if (ua.indexOf("Edge") > -1) browser = "Edge";
+      else if (ua.indexOf("Chrome") > -1) browser = "Chrome";
+      else if (ua.indexOf("Safari") > -1) browser = "Safari";
+
+      document.getElementById('info-os').innerText = os;
+      document.getElementById('info-browser').innerText = browser;
     </script>
   `, renderFooter());
 }

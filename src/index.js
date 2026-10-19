@@ -12,16 +12,6 @@ export default {
     const botPassed = getCookie(request, 'bot_passed');
 
     try {
-      // API thống kê "Thực tế" (Nhận từ server backend hoặc KV nếu có)
-      if (p === '/api/stats' && m === 'GET') {
-        // Trong thực tế, bạn sẽ query Database (D1/KV) tại đây. 
-        // Do chưa có, tôi sẽ cung cấp một con số cố định (hoặc bạn có thể sửa thành API Vercel của bạn).
-        return new Response(JSON.stringify({ 
-          totalKeys: 14235, 
-          onlineUsers: 142 
-        }), { headers: { 'Content-Type': 'application/json' } });
-      }
-
       if (p === '/api/verify-bot' && m === 'POST') {
         const { token } = await request.json();
         const v = await verifyTurnstile(token, request.headers.get('cf-connecting-ip') || 'local', env);
