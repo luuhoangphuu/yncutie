@@ -4,6 +4,7 @@ export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&a
 function layout(title, body, nonce, head = '') {
   return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} · GetKey DPIConfig</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body>
 <div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<canvas id="particle-canvas"></canvas>
 <canvas id="snow-canvas"></canvas>
 ${body}
 <script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
@@ -38,12 +39,16 @@ export function renderCheckpoint(env, nonce, next = '/') {
       </div>
       <div class="radar-box">
         <svg class="radar-svg" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-          <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-          <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-          <path d="M50 50 L50 5 A45 45 0 0 1 95 50 Z" fill="rgba(255,255,255,0.2)"/>
-          <circle cx="50" cy="50" r="5" fill="#ffffff"/>
-          <circle cx="70" cy="30" r="3" fill="#fff" class="blink-dot"/>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+          <g class="radar-sweep">
+             <path d="M50 50 L50 5 A45 45 0 0 1 95 50 Z" fill="rgba(255,255,255,0.15)"/>
+             <line x1="50" y1="50" x2="50" y2="5" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+          </g>
+          <circle cx="50" cy="50" r="3" fill="#ffffff" />
+          <circle cx="70" cy="30" r="2" fill="#fff" class="blink-dot"/>
+          <circle cx="30" cy="60" r="2" fill="#fff" class="blink-dot" style="animation-delay: 0.5s"/>
         </svg>
       </div>
     </aside>
