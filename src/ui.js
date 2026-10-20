@@ -1,4 +1,4 @@
-import { CSS, COMMON_JS, CHECKPOINT_JS, JS_FX } from './assets.js';
+import { CSS, COMMON_JS, CHECKPOINT_JS } from './assets.js';
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function layout(title, body, nonce, head = '') {
@@ -8,7 +8,7 @@ function layout(title, body, nonce, head = '') {
 <div class="bg-grid"></div>
 <div class="bg-glow"></div>
 ${body}
-<script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
+<script nonce="${nonce}">${COMMON_JS}</script></body></html>`;
 }
 const nav = (active = '') => `<header class="nav"><a class="logo" href="/"><i></i>GETKEY DPICONFIG</a><nav class="nav-links"><a href="/" class="${active==='home'?'on':''}">Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}">FAQ</a></nav></header>`;
 const foot = () => `<footer class="foot">© GETKEYDPICONFIG.SITE · Bản quyền thuộc về GetKey DPIConfig.</footer>`;
@@ -22,9 +22,9 @@ export function renderCheckpoint(env, nonce, next = '/') {
   <div class="ckpt-grid">
     <section class="ckpt-left">
       <h1>Xác minh kết nối</h1>
-      <p class="lead">Hệ thống kiểm tra kết nối để chặn bot và spam.</p>
+      <p class="lead">Hệ thống kiểm tra kết nối để chặn bot và spam tự động.</p>
       <div class="term-shell">
-        <div class="term-bar"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></div>
+        <div class="term-bar"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span><code>~/security-check</code></div>
         <div class="term" id="terminal"></div>
       </div>
       <div class="ts-wrap" id="tsWrap">
@@ -47,16 +47,16 @@ export function renderCheckpoint(env, nonce, next = '/') {
 }
 
 export function renderHome(env, error, notice, quota, nonce) {
-  const inner = `${error ? `<div class="titan-card" style="padding:14px;border-color:#ef4444;color:#fca5a5">⚠ ${esc(error)}</div>` : ''}
+  const inner = `${error ? `<div class="titan-card" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:700">⚠ ${esc(error)}</div>` : ''}
 ${stepper(1)}
 <div class="titan-card">
   <h2>🔑 Lấy key miễn phí</h2>
-  <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Chào mừng bạn đến với GetKey DPIConfig. Vui lòng chọn loại key bên dưới.</p>
+  <p style="color:var(--muted);font-size:15px;margin-bottom:24px">Chào mừng bạn đến với GetKey DPIConfig. Vui lòng chọn loại key bên dưới.</p>
   
   <div class="titan-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span style="font-weight:900;font-size:14px;color:#fff">Chọn loại key</span>
-      <span style="background:rgba(255,255,255,.1);color:#fff;font-size:12px;font-weight:800;padding:4px 12px;border-radius:99px">Bước 1</span>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span style="font-weight:900;font-size:15px;color:#fff;letter-spacing:.02em">Chọn loại key</span>
+      <span style="background:rgba(255,255,255,.1);color:#fff;font-size:12px;font-weight:800;padding:4px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.1)">Bước 1</span>
     </div>
     <form method="POST" action="/start">
       <div class="radio-group">
@@ -79,16 +79,16 @@ ${stepper(1)}
   <div class="titan-box">
     <p>© Bản quyền thuộc về <b>GetKey DPIConfig</b>.</p>
     <p style="color:#ef4444;font-weight:700;margin-top:8px">‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.</p>
-    <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
+    <div style="margin-top:16px;border-top:1px solid rgba(255,255,255,.1);padding-top:16px">
       <b style="color:#fff;font-size:15px">Bảng giá key</b>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-weight:700"><span>Key 1 ngày</span><span style="color:#22d3ee">10k</span></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-weight:700"><span>Key 7 ngày</span><span style="color:#22d3ee">50k</span></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-weight:700"><span>Key 30 ngày</span><span style="color:#22d3ee">150k</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;color:var(--muted);font-weight:700;border-bottom:1px dashed rgba(255,255,255,.05)"><span>Key 1 ngày</span><span style="color:#22d3ee;font-family:'JetBrains Mono'">10k</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;color:var(--muted);font-weight:700;border-bottom:1px dashed rgba(255,255,255,.05)"><span>Key 7 ngày</span><span style="color:#22d3ee;font-family:'JetBrains Mono'">50k</span></div>
+      <div style="display:flex;justify-content:space-between;padding:10px 0;color:var(--muted);font-weight:700;"><span>Key 30 ngày</span><span style="color:#22d3ee;font-family:'JetBrains Mono'">150k</span></div>
     </div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-    <a href="https://zalo.me/0996492296" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:1px solid var(--border);border-radius:12px;color:#fff;font-weight:800;font-size:14px;text-decoration:none;background:rgba(255,255,255,.03);transition:.3s"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.83.5 3.54 1.35 5.02L2 22l4.98-1.35C8.46 21.5 10.17 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.27 14.23c-.18.5-1.04.96-1.42 1-.38.04-1.16.14-2.1-.2-.94-.34-1.72-.88-2.56-1.74-.84-.86-1.38-1.64-1.72-2.56-.34-.92-.24-1.7-.2-2.08.04-.38.5-1.24 1-1.42.5-.18 1.04-.22 1.4.2.36.42.66 1.5.8 1.88.14.38.06.64-.06.88-.12.24-.46.58-.6.72-.14.14-.28.34-.16.58.12.24.52.88 1.22 1.58.7.7 1.34 1.1 1.58 1.22.24.12.44-.02.58-.16.14-.14.48-.48.72-.6.24-.12.5-.2.88-.06.38.14 1.46.44 1.88.8.42.36.38.9.2 1.4z"/></svg>Zalo</a>
-    <a href="${esc(env.YOUTUBE_CHANNEL_URL)}" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border:1px solid var(--border);border-radius:12px;color:#fff;font-weight:800;font-size:14px;text-decoration:none;background:rgba(255,255,255,.03);transition:.3s"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>YouTube</a>
+    <a href="https://zalo.me/0996492296" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;border:1px solid var(--border);border-radius:14px;color:#fff;font-weight:800;font-size:14px;text-decoration:none;background:rgba(255,255,255,.03);transition:.3s"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.83.5 3.54 1.35 5.02L2 22l4.98-1.35C8.46 21.5 10.17 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm4.27 14.23c-.18.5-1.04.96-1.42 1-.38.04-1.16.14-2.1-.2-.94-.34-1.72-.88-2.56-1.74-.84-.86-1.38-1.64-1.72-2.56-.34-.92-.24-1.7-.2-2.08.04-.38.5-1.24 1-1.42.5-.18 1.04-.22 1.4.2.36.42.66 1.5.8 1.88.14.38.06.64-.06.88-.12.24-.46.58-.6.72-.14.14-.28.34-.16.58.12.24.52.88 1.22 1.58.7.7 1.34 1.1 1.58 1.22.24.12.44-.02.58-.16.14-.14.48-.48.72-.6.24-.12.5-.2.88-.06.38.14 1.46.44 1.88.8.42.36.38.9.2 1.4z"/></svg>Zalo</a>
+    <a href="${esc(env.YOUTUBE_CHANNEL_URL)}" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:16px;border:1px solid var(--border);border-radius:14px;color:#fff;font-weight:800;font-size:14px;text-decoration:none;background:rgba(255,255,255,.03);transition:.3s"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>YouTube</a>
   </div>
 </div>`;
   return layout('Trang chủ', shell('home', inner));
@@ -96,42 +96,42 @@ ${stepper(1)}
 
 export function renderStep({ link, current, required, error }, nonce) {
   const isVip = required > 1;
-  const inner = `${error ? `<div class="titan-card" style="padding:14px;border-color:#ef4444;color:#fca5a5">⚠ ${esc(error)}</div>` : ''}
+  const inner = `${error ? `<div class="titan-card" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:700">⚠ ${esc(error)}</div>` : ''}
 ${stepper(2)}
 <div class="titan-card center">
   <h2 style="justify-content:center">${isVip ? 'Vượt link VIP' : 'Vượt link'} (${current}/${required})</h2>
-  <p style="color:var(--muted);font-size:14px;margin:12px 0 24px">Mở liên kết, hoàn thành các bước trên trang đó. Hệ thống tự nhận khi bạn quay lại.</p>
+  <p style="color:var(--muted);font-size:15px;margin:12px 0 24px">Mở liên kết, hoàn thành các bước trên trang đó. Hệ thống tự nhận khi bạn quay lại.</p>
   
-  <div style="position:relative;width:100px;height:100px;margin:0 auto 20px">
-    <svg viewBox="0 0 100 100" style="transform:rotate(-90deg);width:100px;height:100px;filter:drop-shadow(0 0 10px rgba(255,255,255,.3))">
+  <div style="position:relative;width:110px;height:110px;margin:0 auto 24px">
+    <svg viewBox="0 0 100 100" style="transform:rotate(-90deg);width:110px;height:110px;filter:drop-shadow(0 0 15px rgba(255,255,255,.4))">
       <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="6"/>
       <circle cx="50" cy="50" r="45" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="0" id="cdRing"/>
     </svg>
-    <div id="cdText" style="position:absolute;inset:0;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:900;color:#fff">3</div>
+    <div id="cdText" style="position:absolute;inset:0;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:32px;font-weight:900;color:#fff;text-shadow:0 0 20px rgba(255,255,255,.5)">3</div>
   </div>
-  <p id="cdLabel" style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:20px">Đang chuẩn bị...</p>
+  <p id="cdLabel" style="font-size:14px;font-weight:800;color:var(--muted);margin-bottom:24px">Đang chuẩn bị...</p>
   
   <a class="btn btn-primary" href="${esc(link)}" target="_blank" rel="noopener noreferrer" id="openBtn">Mở liên kết ↗</a>
 </div>
-<script nonce="${nonce}">(function(){var fg=document.getElementById('cdRing'),txt=document.getElementById('cdText'),lbl=document.getElementById('cdLabel');if(!fg)return;var t=3,total=3,circ=283;var iv=setInterval(function(){t--;if(t<0)t=0;txt.textContent=t>0?t:'▶';fg.style.strokeDashoffset=circ*(1-t/total);if(t<=0){clearInterval(iv);lbl.innerHTML='<span style="color:#10b981">Đã sẵn sàng</span>';}},1000);})();</script>`;
+<script nonce="${nonce}">(function(){var fg=document.getElementById('cdRing'),txt=document.getElementById('cdText'),lbl=document.getElementById('cdLabel');if(!fg)return;var t=3,total=3,circ=283;var iv=setInterval(function(){t--;if(t<0)t=0;txt.textContent=t>0?t:'▶';fg.style.strokeDashoffset=circ*(1-t/total);if(t<=0){clearInterval(iv);lbl.innerHTML='<span style="color:#10b981;text-shadow:0 0 10px rgba(16,185,129,.5)">Đã sẵn sàng</span>';}},1000);})();</script>`;
   return layout('Vượt liên kết', shell('', inner, 'narrow'), nonce);
 }
 
 export function renderSuccess(key, duration, tier, nonce) {
   const t = tier || 'Normal';
   const inner = `${stepper(4)}
-<div class="titan-card center" style="padding:36px 24px">
+<div class="titan-card center" style="padding:40px 24px">
   <div class="badge-ok">✓</div>
-  <h2 style="justify-content:center">Nhận key thành công</h2>
-  <div style="margin:12px 0">
-    <span style="background:rgba(255,255,255,.1);padding:6px 14px;border-radius:99px;font-size:12px;font-weight:800;border:1px solid var(--border)">Tier: <b style="color:#fff">${esc(t)}</b></span>
+  <h2 style="justify-content:center;font-size:24px">Nhận key thành công</h2>
+  <div style="margin:16px 0">
+    <span style="background:rgba(255,255,255,.1);padding:6px 16px;border-radius:99px;font-size:13px;font-weight:800;border:1px solid var(--border)">Tier: <b style="color:#fff">${esc(t)}</b></span>
   </div>
   <div class="keybox" id="keyText">${esc(key)}</div>
   <div class="btn-row">
     <button class="btn btn-primary" type="button" data-copy="keyText">Sao chép</button>
     <button class="btn btn-secondary" type="button" id="dlBtn">Tải .txt</button>
   </div>
-  <a href="/" style="display:block;margin-top:16px;font-size:14px;font-weight:700;color:var(--muted);text-decoration:underline">Nhận key mới</a>
+  <a href="/" style="display:block;margin-top:20px;font-size:14px;font-weight:800;color:var(--muted);text-decoration:underline">Nhận key mới</a>
 </div>
 <script nonce="${nonce}">(function(){var k=document.getElementById('keyText');if(!k)return;var key=k.textContent.trim();var dl=document.getElementById('dlBtn');if(dl)dl.onclick=function(){var txt='GetKey DPIConfig\n===========\n\n'+key+'\n\nTier: ${esc(t)}\nNhận lúc: '+new Date().toLocaleString('vi-VN')+'\n\n© GetKey DPIConfig';var b=new Blob([txt],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='getkeydpiconfig-${esc(t)}.txt';a.click();window.__toast('Đã tải file key','ok');};})();</script>`;
   return layout('Nhận key', shell('', inner, 'narrow'), nonce);
@@ -145,7 +145,7 @@ export function renderFAQ(nonce) {
     ['Hết lượt hôm nay?', 'Mỗi IP được nhận tối đa 12 key mỗi ngày. Reset lúc 0h giờ VN.'],
     ['Mua key ở đâu?', 'Liên hệ Zalo 0996492296 hoặc qua kênh YouTube chính thức.']
   ];
-  const inner = `<h1 class="center" style="margin-bottom:24px">Câu hỏi thường gặp</h1><div style="max-width:700px;margin:0 auto">${qa.map(([q, a]) => `<div class="titan-card" style="padding:20px;margin-bottom:12px"><h3 style="margin-bottom:8px;color:#fff;font-size:16px">${esc(q)}</h3><p style="color:var(--muted);font-size:14px;margin:0">${esc(a)}</p></div>`).join('')}</div>`;
+  const inner = `<h1 class="center" style="margin-bottom:32px">Câu hỏi thường gặp</h1><div style="max-width:700px;margin:0 auto">${qa.map(([q, a]) => `<div class="titan-card" style="padding:24px;margin-bottom:14px"><h3 style="margin-bottom:10px;color:#fff;font-size:16px;font-weight:800">${esc(q)}</h3><p style="color:var(--muted);font-size:14px;margin:0;line-height:1.7">${esc(a)}</p></div>`).join('')}</div>`;
   return layout('FAQ', shell('faq', inner));
 }
 
@@ -156,6 +156,6 @@ export function renderAdmin(nonce) {
 }
 
 export function renderError(code, msg, nonce) {
-  const inner = `<div class="titan-card center" style="padding:44px 24px"><h1 style="font-size:72px;color:#ef4444;margin-bottom:12px;">${esc(code)}</h1><h2 style="color:#fff;margin-bottom:24px;">${esc(msg)}</h2><a class="btn btn-primary" href="/" style="max-width:240px;margin:0 auto">Về trang chủ</a></div>`;
+  const inner = `<div class="titan-card center" style="padding:48px 24px"><h1 style="font-size:80px;color:#ef4444;margin-bottom:16px;text-shadow:0 0 40px rgba(239,68,68,.5)">${esc(code)}</h1><h2 style="color:#fff;margin-bottom:24px;">${esc(msg)}</h2><a class="btn btn-primary" href="/" style="max-width:240px;margin:0 auto">Về trang chủ</a></div>`;
   return layout('Lỗi ' + code, shell('', inner, 'narrow'));
 }
