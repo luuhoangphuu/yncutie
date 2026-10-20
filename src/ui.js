@@ -1,7 +1,5 @@
 import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE, CSS_MODAL, JS_MODAL, CSS_ADMIN, CSS_PREMIUM, JS_PREMIUM } from './assets.js';
 
-
-// Chống XSS: Escape tất cả user input trước khi render
 function esc(str) {
   if (str === null || str === undefined) return '';
   return String(str)
@@ -42,43 +40,25 @@ const layoutApp = (title, content, isAdmin = false) => `${head(title)}<style>${C
 
 export function renderCheckpoint(env) {
   return layoutCheckpoint('Security Check', `
-    <div class="top-nav">
-      <div class="logo"><div class="logo-icon"><i data-lucide="shield-check" style="width:20px;"></i></div> GETKEYDPICONFIG.SITE</div>
-      <div style="display:flex; gap:16px; align-items:center;">
-        <div class="time-badge"><i data-lucide="clock" style="width:16px;height:16px;"></i> <span id="vn-clock">00:00:00</span> (GMT+7)</div>
-        <div class="status-badge"><div class="status-dot"></div> Bảo vệ</div>
-      </div>
-    </div>
     <div class="container-check">
       <div class="left">
-        <div class="badge-security">Trạm kiểm tra bảo mật</div>
         <h1>Xác minh nhanh<br>trước khi vào <span>cửa hàng</span></h1>
         <p class="desc">Cloudflare đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
+        
         <div class="terminal-box" id="terminal">
-           <div class="term-line">> Khởi tạo kết nối TLS 1.3...</div>
-           <div class="term-line">> Phân tích dấu vết trình duyệt...</div>
-           <div class="term-line">> Quét mẫu tấn công DDoS...</div>
-           <div class="term-line">> Chờ xác minh Captcha...</div>
+          <!-- Nội dung sẽ được JS chèn tự động để tránh lặp -->
         </div>
+
         <div class="challenge-module">
           <div class="turnstile-wrapper">
             <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
           </div>
           <div class="help-text">Nếu thấy ô <b>Verify you are human</b>, bấm vào đó. Không cần tải lại trang, cửa hàng sẽ tự mở khi xác minh xong.</div>
-        </div>
-        <div class="stepper">
-          <div class="step completed"><div class="step-circle"></div><div class="step-label">Kết nối TLS</div></div>
-          <div class="step-line completed"></div>
-          <div class="step completed"><div class="step-circle"></div><div class="step-label">Lọc tại edge</div></div>
-          <div class="step-line completed"></div>
-          <div class="step active"><div class="step-circle"></div><div class="step-label">Xác minh trình duyệt</div></div>
-          <div class="step-line"></div>
-          <div class="step"><div class="step-circle"></div><div class="step-label">Vào cửa hàng</div></div>
+          <div class="error-box" id="errorBox"></div>
         </div>
       </div>
       
       <div class="right">
-        <!-- Box 1: Timer & Waveform -->
         <div class="dash-card">
           <div class="dash-header">
             <span class="dash-title">Thời gian xác minh</span>
@@ -87,7 +67,6 @@ export function renderCheckpoint(env) {
           <div class="waveform" id="graph"></div>
         </div>
 
-        <!-- Box 2: Radar -->
         <div class="dash-card">
           <div class="radar-wrapper">
             <div class="radar-container">
@@ -102,66 +81,97 @@ export function renderCheckpoint(env) {
             <div class="radar-info">
               <h4>Đang bảo vệ</h4>
               <p>WAF • Bot • DDoS</p>
-              <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Lưu lượng quét: 1.2 GB/s</div>
             </div>
           </div>
         </div>
 
-        <!-- Box 3: WAF Rules -->
-        <div class="dash-card" style="padding: 0;">
-          <div class="stats-grid">
-            <div class="stat-item"><div class="stat-label">WAF RULE 01</div><div class="stat-val" style="color:#10b981;">Passed</div></div>
-            <div class="stat-item"><div class="stat-label">WAF RULE 02</div><div class="stat-val" style="color:#10b981;">Passed</div></div>
-            <div class="stat-item"><div class="stat-label">WAF RULE 03</div><div class="stat-val" style="color:#f59e0b;">Scanning...</div></div>
-          </div>
-        </div>
-
-        <!-- Box 4: Protocol -->
-        <div class="dash-card" style="padding: 0;">
-          <div class="stats-grid">
-            <div class="stat-item"><div class="stat-label">Giao thức</div><div class="stat-val">HTTP/3</div></div>
-            <div class="stat-item"><div class="stat-label">Mạng Edge</div><div class="stat-val">Anycast</div></div>
-            <div class="stat-item"><div class="stat-label">Độ trễ</div><div class="stat-val">464 ms</div></div>
-          </div>
+        <div class="stats-grid">
+          <div class="stat-item"><div class="stat-label">WAF 01</div><div class="stat-val" style="color:#10b981;">Passed</div></div>
+          <div class="stat-item"><div class="stat-label">WAF 02</div><div class="stat-val" style="color:#10b981;">Passed</div></div>
+          <div class="stat-item"><div class="stat-label">WAF 03</div><div class="stat-val" style="color:#f59e0b;">Scan...</div></div>
         </div>
       </div>
     </div>
     
     <script>
-      // Vẽ Graph
+      // 1. Chạy hiệu ứng Graph
       const graph = document.getElementById('graph');
-      for(let i=0; i<50; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; graph.appendChild(bar); }
-      
-      let timerInterval = null;
-      let startTime = 0;
-      let hasStarted = false;
+      for(let i=0; i<40; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; graph.appendChild(bar); }
+      setInterval(() => {
+        const bars = document.querySelectorAll('.bar');
+        bars.forEach((bar, index) => {
+          if(index > bars.length - 10) {
+            bar.style.height = Math.floor(Math.random() * 80 + 20) + '%';
+            bar.classList.add('active');
+            setTimeout(() => bar.classList.remove('active'), 200);
+          }
+        });
+      }, 150);
 
+      // 2. Chạy hiệu ứng Terminal
+      const logs = ["Khởi tạo kết nối TLS 1.3...", "Phân tích dấu vết trình duyệt...", "Quét mẫu tấn công DDoS...", "Chờ xác minh Captcha..."];
+      let logIdx = 0;
+      const term = document.getElementById('terminal');
+      
+      function printLog() {
+        if(logIdx < logs.length) {
+          const line = document.createElement('div');
+          line.className = 'term-line';
+          line.innerHTML = '> ' + logs[logIdx];
+          term.appendChild(line);
+          term.scrollTop = term.scrollHeight;
+          logIdx++;
+          if(logIdx < logs.length) setTimeout(printLog, 800);
+        }
+      }
+      printLog();
+
+      // 3. Xử lý khi Turnstile thành công
+      let isVerifying = false;
+      let startTime = 0;
+      let timerInterval = null;
+      
       function onTurnstileSuccess(token) {
-        if (hasStarted) return; // Chống bấm 2 lần
-        hasStarted = true;
+        if (isVerifying) return; 
+        isVerifying = true;
+        document.getElementById('errorBox').style.display = 'none'; 
         
         startTime = performance.now();
         timerInterval = setInterval(() => { 
           document.getElementById('timer').innerHTML = ((performance.now() - startTime)/1000).toFixed(3) + '<small>s</small>'; 
         }, 50);
         
-        fetch('/api/verify-bot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) })
-        .then(r => r.json()).then(d => {
-          clearInterval(timerInterval); // Dừng đếm khi xong
-          if(d.success) {
-            document.getElementById('timer').innerHTML = '1.254<small>s</small>'; // Chốt số đẹp
-            document.querySelector('.step.active .step-label').innerText = "Đã xác minh!";
-            document.querySelector('.step.active .step-circle').style.background = '#fff';
-            document.querySelector('.step.active .step-circle').style.borderColor = '#fff';
-            setTimeout(() => location.href = '/', 800);
-          } else { 
-            hasStarted = false; // Cho thử lại nếu lỗi
-            showToast('Lỗi: ' + d.error, 'error'); 
+        fetch('/api/verify-bot', { 
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
+          body: JSON.stringify({ token: token }) 
+        })
+        .then(async r => {
+          if(!r.ok) { 
+            const text = await r.text();
+            // FIXED: Dùng nối chuỗi thay vì template literal để tránh lỗi backtick
+            throw new Error('Lỗi Server (' + r.status + '): ' + text.substring(0, 100)); 
           }
-        }).catch(e => {
+          return r.json();
+        })
+        .then(d => {
+          clearInterval(timerInterval); 
+          if(d.success) {
+            document.getElementById('timer').innerHTML = '1.254<small>s</small>';
+            document.querySelector('.help-text').innerHTML = '<b style="color:#10b981;">Xác minh thành công! Đang chuyển hướng...</b>';
+            setTimeout(() => location.href = '/', 800);
+          } else {
+            throw new Error(d.error || 'Xác thực thất bại.');
+          }
+        })
+        .catch(e => {
           clearInterval(timerInterval);
-          hasStarted = false;
-          showToast('Lỗi kết nối mạng', 'error');
+          isVerifying = false;
+          document.getElementById('errorBox').style.display = 'block';
+          document.getElementById('errorBox').innerText = e.message;
+          document.getElementById('timer').innerHTML = '0.000<small>s</small>';
+          // FIXED: Reset Turnstile để user có thể thử lại
+          if (window.turnstile) turnstile.reset();
         });
       }
     </script>
@@ -518,7 +528,7 @@ export function renderError(code, message) {
       <div style="width: 80px; height: 80px; background: rgba(239,68,68,0.1); border: 2px solid #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: #ef4444; font-size: 36px; font-weight: 900;">
         ${code}
       </div>
-      <h2 style="color:#fff; margin-bottom:12px;">${message || 'Đã xảy ra lỗi'}</h2>
+      <h2 style="color:#fff; margin-bottom:12px;">${esc(message) || 'Đã xảy ra lỗi'}</h2>
       <p style="color:#a1a1aa; margin-bottom:24px;">Trang bạn tìm kiếm không tồn tại hoặc đã xảy ra sự cố.</p>
       <a href="/" class="btn btn-primary"><i data-lucide="home"></i> Về trang chủ</a>
     </div>

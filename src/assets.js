@@ -11,13 +11,14 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; display: fl
 .logo { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: 2px; }
 .status-badge { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: #fff; background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 30px; border: 1px solid var(--border); }
 .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 10px #10b981; animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.2); } }
 
 .container-check { position: relative; z-index: 10; width: 100%; max-width: 1200px; margin: 60px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding: 0 40px; align-items: center; }
 @media (max-width: 900px) { .container-check { grid-template-columns: 1fr; gap: 40px; padding: 0 20px; margin: 30px auto; } }
 
 .left { display: flex; flex-direction: column; }
 h1 { font-size: 52px; font-weight: 800; line-height: 1.1; margin-bottom: 24px; color: #fff; letter-spacing: -0.03em; }
-h1 span { color: #a1a1aa; } /* Xóa gradient lỗi, dùng màu xám */
+h1 span { color: #a1a1aa; }
 .desc { font-size: 16px; line-height: 1.7; color: var(--text-muted); margin-bottom: 30px; font-weight: 500; }
 
 /* TERMINAL */
@@ -66,7 +67,6 @@ h1 span { color: #a1a1aa; } /* Xóa gradient lỗi, dùng màu xám */
 .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
 .stat-val { font-size: 14px; font-weight: 800; color: #fff; }
 `;
-
 
 export const CSS_APP = `
 :root { color-scheme: dark; --bg: #09090b; --text: #f4f4f5; --text-muted: #a1a1aa; --primary: #ffffff; --brand: #e4e4e7; --border: #27272a; --metal: linear-gradient(135deg, #f4f4f5 0%, #a1a1aa 50%, #52525b 100%); }
