@@ -1,9 +1,9 @@
-import { CSS, COMMON_JS, CHECKPOINT_JS, MODAL_JS, ADMIN_JS, JS_FX } from './assets.js';
+import { CSS, COMMON_JS, CHECKPOINT_JS, MODAL_JS, ADMIN_JS, JS_FX, CONFETTI_JS } from './assets.js';
 
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function layout(title, body, nonce, head = '') {
-  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)} · GetKey DPIConfig</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body><div class="bg-grid"></div><div class="bg-glow"></div>${body}<script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
+  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07070b"><title>${esc(title)} · GetKey DPIConfig</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;900&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body><div class="bg-grid"></div><div class="bg-glow"></div>${body}<script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
 }
 
 const nav = (active = '') => `<header class="nav"><a class="logo" href="/"><i></i>GETKEY&nbsp;DPICONFIG</a><nav class="nav-links"><a href="/" class="${active === 'home' ? 'on' : ''}">Trang chủ</a><a href="/faq" class="${active === 'faq' ? 'on' : ''}">FAQ</a><span class="pill hide-m"><span class="dot"></span>Hệ thống hoạt động</span></nav></header>`;
@@ -23,6 +23,7 @@ export function renderCheckpoint(env, nonce, next = '/') {
       <div class="ts"><div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"></div></div>
       <p class="muted center" id="helpText">Nếu thấy ô <b>Verify you are human</b>, hãy bấm vào đó. Trang sẽ tự mở khi xác minh xong.</p>
       <div class="err" id="errorBox" role="alert"></div>
+      <div class="trust-badges"><span><i></i>WAF Active</span><span><i></i>DDoS Shield</span><span><i></i>Bot Guard</span></div>
     </div>
   </section>
   <aside>
@@ -43,12 +44,12 @@ export function renderHome(env, error, notice, quota, nonce) {
     <div class="modal-box">
       <div class="modal-header"><div class="modal-title">${esc(notice.title || 'Thông báo')}</div><button class="modal-close" aria-label="Đóng">×</button></div>
       <div class="modal-body">${esc(notice.content || '')}</div>
-      <div class="modal-footer"><button class="modal-btn snooze" data-snooze>Tắt 1 giờ</button><button class="modal-btn close" data-close>Đóng</button></div>
+      <div class="modal-footer"><button class="modal-btn snooze" type="button" data-snooze>Tắt 1 giờ</button><button class="modal-btn close" type="button" data-close>Đóng</button></div>
     </div>
   </div>` : '';
 
-  const inner = `${modal}${error ? `<div class="alert" role="alert">⚠ ${esc(error)}</div>` : ''}
-<section class="hero"><span class="pill"><span class="dot"></span>Nhận key miễn phí · cập nhật liên tục</span><h1 style="margin-top:6px">Nhận key <em>DPIConfig</em><br>nhanh, gọn, an toàn</h1><p class="lead">Chọn loại key, hoàn thành vài bước ngắn và nhận key ngay trên trang.</p></section>
+  const inner = `${modal}${error ? `<div class="alert" role="alert"><span>⚠</span><span>${esc(error)}</span></div>` : ''}
+<section class="hero"><span class="pill"><span class="dot"></span>Nhận key miễn phí · cập nhật liên tục</span><h1 style="margin-top:14px">Nhận key <em>DPIConfig</em><br>nhanh, gọn, an toàn</h1><p class="lead">Chọn loại key, hoàn thành vài bước ngắn và nhận key ngay trên trang.</p></section>
 <div class="card" style="max-width:640px;margin:0 auto">
   <div class="meter"><div class="meter-top"><span>Lượt nhận key hôm nay</span><span><b>${Math.max(0, limit - used)}</b> / ${limit} còn lại</span></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div></div>
   <form method="POST" action="/start">
@@ -72,13 +73,13 @@ export function renderHome(env, error, notice, quota, nonce) {
 }
 
 export function renderStep({ link, current, required, error }, nonce) {
-  const inner = `${stepper(1)}${error ? `<div class="alert" role="alert">⚠ ${esc(error)}</div>` : ''}<section class="card center"><h2>Vượt liên kết (${current}/${required})</h2><p class="muted mt">Mở liên kết, hoàn thành các bước trên trang đó. Bạn sẽ được đưa về đây tự động, đừng đổi mạng giữa chừng.</p><a class="btn btn-warn mt" href="${esc(link)}" target="_blank" rel="noopener noreferrer">Mở liên kết ↗</a></section>`;
+  const inner = `${stepper(1)}${error ? `<div class="alert" role="alert"><span>⚠</span><span>${esc(error)}</span></div>` : ''}<section class="card center"><h2>Vượt liên kết (${current}/${required})</h2><p class="muted mt">Mở liên kết, hoàn thành các bước trên trang đó. Bạn sẽ được đưa về đây tự động, đừng đổi mạng giữa chừng.</p><a class="btn btn-warn mt" href="${esc(link)}" target="_blank" rel="noopener noreferrer">Mở liên kết ↗</a></section>`;
   return layout('Vượt liên kết', shell('', inner, true), nonce);
 }
 
 export function renderSuccess(key, duration, nonce) {
   const inner = `${stepper(2)}<section class="card center"><div class="badge-ok">✓</div><h2>Nhận key thành công</h2><div class="keybox" id="keyText">${esc(key)}</div><button class="btn btn-primary" type="button" data-copy="keyText">Sao chép key</button><p class="muted mt">${duration ? 'Thời hạn: <b>' + esc(duration) + ' giờ</b>. ' : ''}Hãy lưu key lại ngay.</p></section>`;
-  return layout('Nhận key', shell('', inner, true), nonce);
+  return layout('Nhận key', shell('', inner, true) + `<script nonce="${nonce}">${CONFETTI_JS}</script>`, nonce);
 }
 
 export function renderFAQ(nonce) {
@@ -94,7 +95,7 @@ export function renderFAQ(nonce) {
 }
 
 export function renderAdmin(nonce) {
-  const inner = `<section class="card"><h2>Quản trị thông báo</h2><p class="muted mt">Nhập mật khẩu để tải và chỉnh sửa.</p><label class="f" for="pw">Mật khẩu</label><div class="row"><input id="pw" type="password" autocomplete="current-password"><button id="loadBtn" class="btn btn-ghost" type="button" style="width:auto;white-space:nowrap">Tải</button></div><div id="editor" style="display:none"><label class="chk"><input id="en" type="checkbox"> Hiển thị thông báo</label><label class="f" for="tt">Tiêu đề</label><input id="tt" type="text" maxlength="100"><label class="f" for="ct">Nội dung</label><textarea id="ct" maxlength="1000"></textarea><button id="saveBtn" class="btn btn-primary mt" type="button">Lưu</button></div><div id="status" class="status" role="status"></div></section>`;
+  const inner = `<section class="card"><h2>Quản trị thông báo</h2><p class="muted mt">Nhập mật khẩu để tải và chỉnh sửa.</p><label class="f" for="pw">Mật khẩu</label><div class="row"><input id="pw" type="password" autocomplete="current-password"><button id="loadBtn" class="btn btn-ghost" type="button" style="width:auto;white-space:nowrap;padding-left:20px;padding-right:20px">Tải</button></div><div id="editor" style="display:none"><label class="chk"><input id="en" type="checkbox"> Hiển thị thông báo</label><label class="f" for="tt">Tiêu đề</label><input id="tt" type="text" maxlength="100"><label class="f" for="ct">Nội dung</label><textarea id="ct" maxlength="1000"></textarea><button id="saveBtn" class="btn btn-primary mt" type="button">Lưu</button></div><div id="status" class="status" role="status"></div></section>`;
   return layout('Admin', shell('', inner, true) + `<script nonce="${nonce}">${ADMIN_JS}</script>`, nonce);
 }
 
