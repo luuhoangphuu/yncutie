@@ -10,6 +10,8 @@ function layout(title, body, nonce, head = '') {
 <div class="cursor-dot"></div><div class="cursor-ring"></div>
 <div class="cyber-grid"></div><div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
 <canvas id="particle-canvas"></canvas>
+<div class="snow-layer"></div>
+<div class="snow-layer-2"></div>
 ${body}
 <script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
 }
@@ -22,25 +24,60 @@ const shell = (active, inner, width = '') => `${nav(active)}<main class="wrap ${
 export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
   const body = `${nav('')}<main class="wrap"><div class="checkpoint-layout" id="app" data-next="${esc(next)}">
+  
   <div class="ckpt-left">
     <h1 class="scramble">Xác minh kết nối</h1>
     <p class="lead">Hệ thống AI đang kiểm tra kết nối để chặn bot và spam tự động.</p>
+    
     <div class="ts-box" id="tsWrap">
       <div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError"></div>
       <div class="err" id="errorBox" style="display:none;color:#ef4444;margin-top:10px;font-size:12px"></div>
     </div>
     <p class="ts-help" id="helpText">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</p>
+
+    <div class="stepper-4">
+      <div class="step-item done"><i><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></i><span>Kết nối TLS</span></div>
+      <div class="step-item done"><i><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></i><span>Lọc tại edge</span></div>
+      <div class="step-item active"><i><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></i><span>Xác minh<br>trình duyệt</span></div>
+      <div class="step-item"><i><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></i><span>Vào cửa hàng</span></div>
+    </div>
   </div>
+
   <div class="ckpt-right">
     <div class="telemetry-card">
-      <span class="telemetry-label">Thời gian xác minh</span>
-      <span class="telemetry-value" id="timer">0.00<small>s</small></span>
-    </div>
-    <div class="telemetry-card" style="display:flex;justify-content:center;align-items:center;padding:40px">
-      <div class="radar-container">
-        <div class="radar-sweep"></div>
-        <div class="radar-ring"></div><div class="radar-ring"></div><div class="radar-ring"></div>
+      <div class="telemetry-card-header">
+        <span class="telemetry-label">Thời gian xác minh</span>
+        <span class="telemetry-value" id="timer">0.00<small>s</small></span>
       </div>
+      <div class="wave-graph">${Array(40).fill('<div class="wave-bar"></div>').join('')}</div>
+    </div>
+
+    <div class="split-cards">
+      <div class="mini-card">
+        <div style="display:flex;align-items:center;gap:12px">
+          <svg class="radar-svg-mini" viewBox="0 0 60 60">
+            <circle cx="30" cy="30" r="28" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <circle cx="30" cy="30" r="18" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <circle cx="30" cy="30" r="8" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <g class="radar-sweep-circle"><path d="M30 30 L30 2 A28 28 0 0 1 58 30 Z" fill="rgba(255,255,255,0.15)"/><line x1="30" y1="30" x2="30" y2="2" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/></g>
+            <circle cx="40" cy="20" r="2" fill="#fff" class="radar-ping" style="animation-delay: 0s"/>
+          </svg>
+          <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">Quét lưu lượng</div><div style="font-size:14px;color:#fff;font-weight:800">Bảo vệ</div></div>
+        </div>
+      </div>
+      
+      <div class="mini-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:var(--muted)">Độ trễ</span><span style="font-size:13px;color:#fff;font-weight:800">316 ms</span>
+        </div>
+        <div class="line-chart-container">
+          <svg class="line-chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path class="line-path" d="M0,15 L10,15 L20,15 L30,15 L40,15 L50,15 L60,15 L70,15 L80,15 L90,15 L100,15" /><circle class="line-dot" cx="100" cy="15" r="2" /></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="telemetry-card">
+      <div class="hacker-term" id="hex-dump"></div>
     </div>
   </div>
 </div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
