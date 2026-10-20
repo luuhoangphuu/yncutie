@@ -12,7 +12,7 @@ const MESSAGES = {
   quota: 'Bạn đã hết lượt nhận key hôm nay. Vui lòng quay lại vào ngày mai!',
   issuer: 'Máy chủ cấp key đang bận. Vui lòng thử lại sau ít phút.'
 };
-const DEFAULT_NOTICE = { enabled: true, title: 'THÔNG BÁO QUAN TRỌNG', content: '© Bản quyền thuộc về GETKEYDPICONFIG.SITE.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n🔥 Liên hệ Zalo: 0996492296\n📺 Hoặc qua kênh YouTube chính thức.' };
+const DEFAULT_NOTICE = { enabled: true, title: 'THÔNG BÁO QUAN TRỌNG', content: '© Bản quyền thuộc về GETKEYZWICAPEX.SITE.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n🔥 Liên hệ Zalo: 0996492296\n📺 Hoặc qua kênh YouTube chính thức.' };
 
 const getSecret = (env, key) => { if (!env[key]) throw new Error('MISSING_ENV:' + key); return env[key]; };
 const rawIP = (req) => req.headers.get('cf-connecting-ip') || 'local';
@@ -179,7 +179,7 @@ export default {
 
       if (p === '/success' && m === 'GET') {
         if (!s || !s.key) return redirect('/');
-        return html(renderSuccess(s.key, s.duration, nonce));
+        return html(renderSuccess(s.key, s.duration, s.tier, nonce));
       }
 
       return html(renderError(404, 'Không tìm thấy trang', nonce), 404);

@@ -1,19 +1,19 @@
-import { CSS, COMMON_JS, CHECKPOINT_JS, MODAL_JS, ADMIN_JS, JS_FX, CONFETTI_JS } from './assets.js';
+import { CSS, COMMON_JS, CHECKPOINT_JS, MODAL_JS, ADMIN_JS, JS_FX, CONFETTI_JS, STEP_PAGE_JS, SUCCESS_JS, HOME_HISTORY_JS } from './assets.js';
 
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function layout(title, body, nonce, head = '') {
-  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07070b"><title>${esc(title)} · GetKey DPIConfig</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;900&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body><div class="bg-grid"></div><div class="bg-glow"></div>${body}<script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
+  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07070b"><title>${esc(title)} · GetKey ZwicApex</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;900&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body><div class="bg-grid"></div><div class="bg-glow"></div>${body}<script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
 }
 
-const nav = (active = '') => `<header class="nav"><a class="logo" href="/"><i></i>GETKEY&nbsp;DPICONFIG</a><nav class="nav-links"><a href="/" class="${active === 'home' ? 'on' : ''}">Trang chủ</a><a href="/faq" class="${active === 'faq' ? 'on' : ''}">FAQ</a><span class="pill hide-m"><span class="dot"></span>Hệ thống hoạt động</span></nav></header>`;
-const foot = () => `<footer class="foot">© GETKEYDPICONFIG.SITE · Mọi nơi bán key khác nguồn đều là giả mạo.</footer>`;
+const nav = (active = '') => `<header class="nav"><a class="logo" href="/"><i></i>GETKEY&nbsp;ZWICAPEX</a><nav class="nav-links"><a href="/" class="${active === 'home' ? 'on' : ''}">Trang chủ</a><a href="/faq" class="${active === 'faq' ? 'on' : ''}">FAQ</a><span class="pill hide-m"><span class="dot"></span>Hệ thống hoạt động</span></nav></header>`;
+const foot = () => `<footer class="foot">© ZWICAPEX.SITE · Mọi nơi bán key khác nguồn đều là giả mạo.</footer>`;
 const shell = (active, inner, narrow = false) => `${nav(active)}<main class="wrap${narrow ? ' narrow' : ''}">${inner}</main>${foot()}`;
 const stepper = (n) => '<ol class="stepper">' + ['Vượt liên kết', 'Nhận key'].map((t, i) => `<li class="${i + 1 < n ? 'done' : i + 1 === n ? 'on' : ''}"><b>${i + 1 < n ? '✓' : i + 1}</b><span>${t}</span></li>`).join('') + '</ol>';
 
 export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
-  const body = `<header class="nav"><a class="logo" href="/"><i></i>GETKEY&nbsp;DPICONFIG</a><span class="pill"><span class="dot"></span>Bảo vệ bởi Cloudflare</span></header>
+  const body = `<header class="nav"><a class="logo" href="/"><i></i>GETKEY&nbsp;ZWICAPEX</a><span class="pill"><span class="dot"></span>Bảo vệ bởi Cloudflare</span></header>
 <main class="wrap ckpt"><div class="ckpt-shell" id="app" data-next="${esc(next)}">
   <div class="ckpt-brackets" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
   <div class="ckpt-grid">
@@ -88,6 +88,7 @@ export function renderHome(env, error, notice, quota, nonce) {
   const used = quota ? quota.count : 0, limit = quota ? quota.limit : 12;
   const pct = Math.min(100, Math.round((used / limit) * 100));
   const showNotice = notice && notice.enabled;
+  const historyCard = `<div class="card" id="histCard" style="max-width:640px;margin:16px auto 0;display:none"><div class="hist-head"><h3>Key đã nhận gần đây</h3><button type="button" class="hist-clear" id="histClear">Xoá</button></div><div id="histList"></div></div>`;
   const modal = showNotice ? `
   <div class="modal-overlay" id="noticeModal">
     <div class="modal-box">
@@ -98,7 +99,7 @@ export function renderHome(env, error, notice, quota, nonce) {
   </div>` : '';
 
   const inner = `${modal}${error ? `<div class="alert" role="alert"><span>⚠</span><span>${esc(error)}</span></div>` : ''}
-<section class="hero"><span class="pill"><span class="dot"></span>Nhận key miễn phí · cập nhật liên tục</span><h1 style="margin-top:14px">Nhận key <em>DPIConfig</em><br>nhanh, gọn, an toàn</h1><p class="lead">Chọn loại key, hoàn thành vài bước ngắn và nhận key ngay trên trang.</p></section>
+<section class="hero"><span class="pill"><span class="dot"></span>Nhận key miễn phí · cập nhật liên tục</span><h1 style="margin-top:14px">Nhận key <em>ZwicApex</em><br>nhanh, gọn, an toàn</h1><p class="lead">Chọn loại key, hoàn thành vài bước ngắn và nhận key ngay trên trang.</p></section>
 <div class="card" style="max-width:640px;margin:0 auto">
   <div class="meter"><div class="meter-top"><span>Lượt nhận key hôm nay</span><span><b>${Math.max(0, limit - used)}</b> / ${limit} còn lại</span></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div></div>
   <form method="POST" action="/start">
@@ -113,27 +114,68 @@ export function renderHome(env, error, notice, quota, nonce) {
     <a class="social-btn yt" href="${esc(env.YOUTUBE_CHANNEL_URL)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>YouTube</a>
   </div>
 </div>
+${historyCard}
 <div class="grid3" style="margin-top:26px">
   <div class="card feat"><div class="ico">1</div><div><b>Vượt liên kết</b><span>Mở Link4M và hoàn thành.</span></div></div>
   <div class="card feat"><div class="ico">2</div><div><b>Quay về tự động</b><span>Hệ thống tự nhận và cấp key.</span></div></div>
   <div class="card feat"><div class="ico">3</div><div><b>Nhận key</b><span>Key hiện ngay, sao chép 1 chạm.</span></div></div>
 </div>`;
-  return layout('Trang chủ', shell('home', inner) + `<script nonce="${nonce}">${MODAL_JS}</script>`, nonce);
+  return layout('Trang chủ', shell('home', inner) + `<script nonce="${nonce}">${MODAL_JS}</script><script nonce="${nonce}">${HOME_HISTORY_JS}</script>`, nonce);
 }
 
 export function renderStep({ link, current, required, error }, nonce) {
-  const inner = `${stepper(1)}${error ? `<div class="alert" role="alert"><span>⚠</span><span>${esc(error)}</span></div>` : ''}<section class="card center"><h2>Vượt liên kết (${current}/${required})</h2><p class="muted mt">Mở liên kết, hoàn thành các bước trên trang đó. Bạn sẽ được đưa về đây tự động, đừng đổi mạng giữa chừng.</p><a class="btn btn-warn mt" href="${esc(link)}" target="_blank" rel="noopener noreferrer">Mở liên kết ↗</a></section>`;
-  return layout('Vượt liên kết', shell('', inner, true), nonce);
+  const isVip = required > 1;
+  const vipTl = isVip ? `<div class="vip-tl">
+    <div class="vip-tl-step ${current > 1 ? 'done' : 'active'}"><i>${current > 1 ? '✓' : '1'}</i><span>Bước 1</span></div>
+    <div class="vip-tl-conn ${current > 1 ? 'done' : ''}"></div>
+    <div class="vip-tl-step ${current > 1 ? 'active' : ''}"><i>2</i><span>Bước 2</span></div>
+  </div>` : '';
+  const inner = `${stepper(1)}${error ? `<div class="alert" role="alert"><span>⚠</span><span>${esc(error)}</span></div>` : ''}
+<section class="card center">
+  <h2>${isVip ? 'Vượt liên kết VIP' : 'Vượt liên kết'} <span style="color:var(--muted);font-weight:600;font-size:16px">(${current}/${required})</span></h2>
+  ${vipTl}
+  <p class="muted mt">Mở liên kết, hoàn thành các bước trên trang đó. Bạn sẽ được đưa về đây tự động, đừng đổi mạng giữa chừng.</p>
+  <div class="cd-wrap">
+    <div class="cd-container">
+      <svg class="cd-ring" viewBox="0 0 100 100" id="cdRing">
+        <defs><linearGradient id="cdGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#0891b2"/></linearGradient></defs>
+        <circle cx="50" cy="50" r="45" class="bg"/>
+        <circle cx="50" cy="50" r="45" class="fg"/>
+      </svg>
+      <div class="cd-text" id="cdText">3</div>
+    </div>
+    <div class="cd-label" id="cdLabel">Đang chuẩn bị...</div>
+  </div>
+  <a class="btn btn-warn mt" href="${esc(link)}" target="_blank" rel="noopener noreferrer" id="openBtn">Mở liên kết ↗</a>
+  <p class="muted mt" style="font-size:12px">Hoàn thành trang ads ≥ 15 giây. Hệ thống tự xác nhận khi bạn quay lại.</p>
+</section>`;
+  return layout('Vượt liên kết', shell('', inner, true) + `<script nonce="${nonce}">${STEP_PAGE_JS}</script>`, nonce);
 }
 
-export function renderSuccess(key, duration, nonce) {
-  const inner = `${stepper(2)}<section class="card center"><div class="badge-ok">✓</div><h2>Nhận key thành công</h2><div class="keybox" id="keyText">${esc(key)}</div><button class="btn btn-primary" type="button" data-copy="keyText">Sao chép key</button><p class="muted mt">${duration ? 'Thời hạn: <b>' + esc(duration) + ' giờ</b>. ' : ''}Hãy lưu key lại ngay.</p></section>`;
-  return layout('Nhận key', shell('', inner, true) + `<script nonce="${nonce}">${CONFETTI_JS}</script>`, nonce);
+export function renderSuccess(key, duration, tier, nonce) {
+  const t = tier || 'Normal';
+  const inner = `${stepper(2)}<section class="card center">
+  <div class="badge-ok">✓</div>
+  <h2>Nhận key thành công</h2>
+  <div class="success-meta">
+    <span>Tier: <b>${esc(t)}</b></span>
+    ${duration ? `<span>Hạn: <b>${esc(duration)}h</b></span>` : ''}
+    <span>Key: <b>${esc(key).slice(0, 4)}••••</b></span>
+  </div>
+  <div class="keybox" id="keyText" data-tier="${esc(t)}" data-dur="${esc(duration || '')}">${esc(key)}</div>
+  <div class="btn-row">
+    <button class="btn btn-primary" type="button" data-copy="keyText">Sao chép key</button>
+    <button class="btn btn-secondary" type="button" id="dlBtn">Tải .txt</button>
+  </div>
+  <a class="btn btn-ghost" href="/" style="margin-top:4px">Nhận key mới</a>
+  <p class="muted mt">${duration ? 'Thời hạn: <b>' + esc(duration) + ' giờ</b>. ' : ''}Hãy lưu key lại ngay.</p>
+</section>`;
+  return layout('Nhận key', shell('', inner, true) + `<script nonce="${nonce}">${CONFETTI_JS}</script><script nonce="${nonce}">${SUCCESS_JS}</script>`, nonce);
 }
 
 export function renderFAQ(nonce) {
   const qa = [
-    ['Key này dùng để làm gì?', 'Key dùng để kích hoạt ứng dụng DPIConfig.'],
+    ['Key này dùng để làm gì?', 'Key dùng để kích hoạt ứng dụng ZwicApex.'],
     ['Vì sao phải vượt liên kết?', 'Quảng cáo giúp duy trì hệ thống và giữ cho việc nhận key miễn phí.'],
     ['Mất phiên thì làm sao?', 'Phiên gắn với IP. Nếu đổi Wi-Fi/4G hoặc bật VPN giữa chừng, bạn cần bắt đầu lại.'],
     ['Hết lượt hôm nay?', 'Mỗi IP được nhận tối đa 12 key mỗi ngày. Reset lúc 0h giờ VN.'],
