@@ -1,4 +1,4 @@
-import { renderCheckpoint, renderHome, renderStep1, renderStep2, renderSuccess, renderFAQ, renderAdmin, renderError } from './ui.js';
+import { renderCheckpoint, renderHome, renderStep, renderSuccess, renderFAQ, renderAdmin, renderError } from './ui.js';
 import { signToken, verifyToken, getCookie, setCookie, verifyTurnstile, safeEqual, normalizeIP } from './auth.js';
 
 const SESSION_TTL = 900;
@@ -12,12 +12,9 @@ const MESSAGES = {
   quota: 'Bạn đã hết lượt nhận key hôm nay. Vui lòng quay lại vào ngày mai!',
   issuer: 'Máy chủ cấp key đang bận. Vui lòng thử lại sau ít phút.'
 };
-const DEFAULT_NOTICE = { enabled: true, title: 'THÔNG BÁO QUAN TRỌNG', content: '© Bản quyền thuộc về GETKEYDPICONFIG.SITE.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n🔥 IB Tele: @Anmaster18\n✅ Hoặc: @Mityangho\n👤 Để mua key.' };
+const DEFAULT_NOTICE = { enabled: true, title: 'THÔNG BÁO QUAN TRỌNG', content: '© Bản quyền thuộc về GETKEYDPICONFIG.SITE.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n🔥 Liên hệ Zalo: 0996492296\n📺 Hoặc qua kênh YouTube chính thức.' };
 
-const getSecret = (env, key) => {
-  if (!env[key]) throw new Error('MISSING_ENV:' + key);
-  return env[key];
-};
+const getSecret = (env, key) => { if (!env[key]) throw new Error('MISSING_ENV:' + key); return env[key]; };
 const rawIP = (req) => req.headers.get('cf-connecting-ip') || 'local';
 const getIP = (req) => normalizeIP(rawIP(req));
 const makeNonce = () => btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
@@ -31,21 +28,9 @@ function secHeaders(nonce) {
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
   };
 }
-const htmlRes = (body, nonce, status = 200, cookie) => {
-  const h = new Headers({ 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', ...secHeaders(nonce) });
-  if (cookie) h.append('Set-Cookie', cookie);
-  return new Response(body, { status, headers: h });
-};
-const jsonRes = (obj, status = 200, cookie) => {
-  const h = new Headers({ 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
-  if (cookie) h.append('Set-Cookie', cookie);
-  return new Response(JSON.stringify(obj), { status, headers: h });
-};
-const redirect = (loc, cookie) => {
-  const h = new Headers({ Location: loc, 'Cache-Control': 'no-store' });
-  if (cookie) h.append('Set-Cookie', cookie);
-  return new Response(null, { status: 302, headers: h });
-};
+const htmlRes = (body, nonce, status = 200, cookie) => { const h = new Headers({ 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', ...secHeaders(nonce) }); if (cookie) h.append('Set-Cookie', cookie); return new Response(body, { status, headers: h }); };
+const jsonRes = (obj, status = 200, cookie) => { const h = new Headers({ 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }); if (cookie) h.append('Set-Cookie', cookie); return new Response(JSON.stringify(obj), { status, headers: h }); };
+const redirect = (loc, cookie) => { const h = new Headers({ Location: loc, 'Cache-Control': 'no-store' }); if (cookie) h.append('Set-Cookie', cookie); return new Response(null, { status: 302, headers: h }); };
 
 async function getSession(req, env) {
   const sid = getCookie(req, 'sid');
@@ -66,38 +51,18 @@ async function saveSession(req, env, s) {
 }
 
 const quotaKey = (req) => 'quota:' + getIP(req) + ':' + new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
-async function getQuota(req, env) {
-  const c = parseInt((await env.ANNOUNCEMENT_KV.get(quotaKey(req))) || '0', 10) || 0;
-  return { ok: c < DAILY_LIMIT, count: c, limit: DAILY_LIMIT };
-}
-async function incQuota(req, env) {
-  const k = quotaKey(req);
-  const c = parseInt((await env.ANNOUNCEMENT_KV.get(k)) || '0', 10) || 0;
-  await env.ANNOUNCEMENT_KV.put(k, String(c + 1), { expirationTtl: 90000 });
-}
+async function getQuota(req, env) { const c = parseInt((await env.ANNOUNCEMENT_KV.get(quotaKey(req))) || '0', 10) || 0; return { ok: c < DAILY_LIMIT, count: c, limit: DAILY_LIMIT }; }
+async function incQuota(req, env) { const k = quotaKey(req); const c = parseInt((await env.ANNOUNCEMENT_KV.get(k)) || '0', 10) || 0; await env.ANNOUNCEMENT_KV.put(k, String(c + 1), { expirationTtl: 90000 }); }
 
 async function adminLocked(ip, env) { return (parseInt((await env.ANNOUNCEMENT_KV.get('admin_fail:' + ip)) || '0', 10) || 0) >= 5; }
-async function adminFail(ip, env) {
-  const n = (parseInt((await env.ANNOUNCEMENT_KV.get('admin_fail:' + ip)) || '0', 10) || 0) + 1;
-  await env.ANNOUNCEMENT_KV.put('admin_fail:' + ip, String(n), { expirationTtl: 3600 });
-}
+async function adminFail(ip, env) { const n = (parseInt((await env.ANNOUNCEMENT_KV.get('admin_fail:' + ip)) || '0', 10) || 0) + 1; await env.ANNOUNCEMENT_KV.put('admin_fail:' + ip, String(n), { expirationTtl: 3600 }); }
 const cleanNotice = (n) => ({ enabled: !!(n && n.enabled), title: String((n && n.title) || '').slice(0, 100), content: String((n && n.content) || '').slice(0, 1000) });
-async function getNotice(env) {
-  try { const raw = await env.ANNOUNCEMENT_KV.get('notice_json'); if (raw) return cleanNotice(JSON.parse(raw)); } catch {}
-  return DEFAULT_NOTICE;
-}
-async function saveNotice(env, n) {
-  try { await env.ANNOUNCEMENT_KV.put('notice_json', JSON.stringify(cleanNotice(n))); return true; } catch { return false; }
-}
+async function getNotice(env) { try { const raw = await env.ANNOUNCEMENT_KV.get('notice_json'); if (raw) return cleanNotice(JSON.parse(raw)); } catch {} return DEFAULT_NOTICE; }
+async function saveNotice(env, n) { try { await env.ANNOUNCEMENT_KV.put('notice_json', JSON.stringify(cleanNotice(n))); return true; } catch { return false; } }
 
 async function issueKey(env, tier) {
   try {
-    const res = await fetch(env.KEY_ISSUER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-API-Key': getSecret(env, 'KEY_ISSUER_API_KEY') },
-      body: JSON.stringify({ tier }),
-      signal: AbortSignal.timeout(10000)
-    });
+    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': getSecret(env, 'KEY_ISSUER_API_KEY') }, body: JSON.stringify({ tier }), signal: AbortSignal.timeout(10000) });
     if (!res.ok) return null;
     const d = await res.json();
     return d && d.success && typeof d.key === 'string' ? d : null;
@@ -130,10 +95,7 @@ export default {
         if (!sameOrigin()) return jsonRes({ success: false, error: 'Forbidden' }, 403);
         if (await adminLocked(ip, env)) return jsonRes({ success: false, error: 'Quá nhiều lần thử sai. Thử lại sau 1 giờ.' }, 429);
         let body; try { body = await request.json(); } catch { return jsonRes({ success: false, error: 'Dữ liệu không hợp lệ.' }, 400); }
-        if (!(await safeEqual(body && body.password, getSecret(env, 'ADMIN_PASSWORD')))) {
-          await adminFail(ip, env);
-          return jsonRes({ success: false, error: 'Sai mật khẩu!' }, 401);
-        }
+        if (!(await safeEqual(body && body.password, getSecret(env, 'ADMIN_PASSWORD')))) { await adminFail(ip, env); return jsonRes({ success: false, error: 'Sai mật khẩu!' }, 401); }
         await env.ANNOUNCEMENT_KV.delete('admin_fail:' + ip);
         if (body.action === 'get') return jsonRes({ success: true, notice: await getNotice(env) });
         if (body.action === 'save') return (await saveNotice(env, body.notice)) ? jsonRes({ success: true }) : jsonRes({ success: false, error: 'Lỗi lưu dữ liệu.' }, 500);
@@ -170,23 +132,12 @@ export default {
         const form = await request.formData();
         const t = form.get('tier');
         const tier = typeof t === 'string' && Object.prototype.hasOwnProperty.call(TIERS, t) ? t : 'Normal';
-        const session = { sub: false, ads: 0, key: null, tier, adsToken: null, adsStartTime: null, adsLink: null };
-        return redirect('/step1', await saveSession(request, env, session));
+        const session = { ads: 0, key: null, tier, adsToken: null, adsStartTime: null, adsLink: null };
+        return redirect('/step', await saveSession(request, env, session));
       }
 
-      if (p === '/step1' && m === 'GET') {
-        if (!s) return redirect('/?e=bypass');
-        return html(renderStep1(env, nonce));
-      }
-
-      if (p === '/verify/sub' && m === 'POST') {
-        if (!sameOrigin() || !s) return redirect('/');
-        s.sub = true;
-        return redirect('/step2', await saveSession(request, env, s));
-      }
-
-      if (p === '/step2' && m === 'GET') {
-        if (!s || !s.sub) return redirect('/');
+      if (p === '/step' && m === 'GET') {
+        if (!s) return redirect('/');
         const required = TIERS[s.tier] || 1;
         if (s.key) return redirect('/success');
         if (s.ads >= required) return redirect('/');
@@ -201,29 +152,26 @@ export default {
           s.adsToken = token; s.adsLink = link; s.adsStartTime = Date.now();
           cookie = await saveSession(request, env, s);
         }
-        return html(renderStep2({ link: s.adsLink, current: s.ads + 1, required, error: errMsg }, nonce), 200, cookie);
+        return html(renderStep({ link: s.adsLink, current: s.ads + 1, required, error: errMsg }, nonce), 200, cookie);
       }
 
       if (p === '/ads-return' && m === 'GET') {
-        if (!s || !s.sub) return redirect('/?e=bypass');
+        if (!s) return redirect('/?e=bypass');
         if (s.key) return redirect('/success');
         const tok = url.searchParams.get('token');
         if (!tok || !s.adsToken || !(await safeEqual(tok, s.adsToken))) return redirect('/?e=bypass');
-        if (Date.now() - (s.adsStartTime || 0) < MIN_ADS_SECONDS * 1000) return redirect('/step2?e=fast');
+        if (Date.now() - (s.adsStartTime || 0) < MIN_ADS_SECONDS * 1000) return redirect('/step?e=fast');
 
         const required = TIERS[s.tier] || 1;
         s.ads += 1; s.adsToken = null; s.adsStartTime = null; s.adsLink = null;
-        if (s.ads < required) return redirect('/step2', await saveSession(request, env, s));
+        if (s.ads < required) return redirect('/step', await saveSession(request, env, s));
 
         const q = await getQuota(request, env);
         if (!q.ok) return redirect('/?e=quota');
 
         await saveSession(request, env, s);
         const issued = await issueKey(env, s.tier);
-        if (!issued) {
-          s.ads = required - 1;
-          return redirect('/step2?e=issuer', await saveSession(request, env, s));
-        }
+        if (!issued) { s.ads = required - 1; return redirect('/step?e=issuer', await saveSession(request, env, s)); }
         await incQuota(request, env);
         s.key = issued.key; s.duration = issued.duration_hours || null;
         return redirect('/success', await saveSession(request, env, s));
