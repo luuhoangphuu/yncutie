@@ -17,7 +17,8 @@ ${body}
 const logoHtml = `<a class="logo-text" href="/" aria-label="Zwic Apex"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>Zwic Apex</a>`;
 const nav = (active = '') => `<header class="nav">${logoHtml}<nav class="nav-links"><a href="/" class="${active==='home'?'on':''}">Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}">FAQ</a></nav></header>`;
 const foot = () => `<footer class="foot">© 2026 Zwic Apex · Bảo mật bởi HoangPhu</footer>`;
-const shell = (active, inner, width = '') => `${nav(active)}<main class="wrap ${width}">${inner}</main>${foot()}`;
+const fab = `<a class="fab" href="https://zalo.me/0996492296" target="_blank" rel="noopener noreferrer" aria-label="Hỗ trợ qua Zalo"><i>Zalo</i><span>Hỗ trợ Zalo</span></a>`;
+const shell = (active, inner, width = '', withFab = true) => `${nav(active)}<main class="wrap ${width}">${inner}</main>${foot()}${withFab ? fab : ''}`;
 const errorBox = (error) => error ? `<div class="alert" role="alert">${esc(error)}</div>` : '';
 
 const shieldIcon = `<svg viewBox="0 0 24 24" aria-hidden="true"><path class="shield" d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path class="tick" d="M8.5 12.2l2.5 2.5 4.5-5"/></svg>`;
@@ -32,20 +33,47 @@ const stepper = (states) => {
 
 export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
-  const body = `${nav('')}<main class="wrap narrow">
-<section class="ti cp reveal" id="app" data-next="${esc(next)}">
-  <div class="cp-icon">${shieldIcon}</div>
-  <h1 class="cp-title">Xác minh bạn là người thật</h1>
-  <p class="cp-sub">Bấm vào ô bên dưới để tiếp tục. Việc này giúp chặn bot và spam tự động, chỉ mất vài giây.</p>
+  const body = `${nav('')}<main class="wrap"><div class="cp-grid reveal">
 
-  <div class="ts-box" id="tsWrap">
-    <div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError"></div>
-    <div class="err" id="errorBox" role="alert" style="display:none;margin-top:12px;font-size:13px"></div>
-  </div>
+  <section class="ti cp" id="app" data-next="${esc(next)}">
+    <div class="cp-icon">${shieldIcon}</div>
+    <h1 class="cp-title">Kiểm tra bảo mật kết nối</h1>
+    <p class="cp-sub">Hệ thống đang xác nhận bạn là người thật để chặn bot, spam và truy cập bất thường.</p>
 
-  <div class="cp-bar" aria-hidden="true"><i></i></div>
-  <p class="cp-status" id="helpText" aria-live="polite">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</p>
-</section></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
+    <ol class="cp-steps" aria-label="Tiến trình xác minh">
+      <li data-s="1" class="active">Kết nối an toàn</li>
+      <li data-s="2">Kiểm tra trình duyệt</li>
+      <li data-s="3">Xác nhận máy chủ</li>
+    </ol>
+
+    <div class="ts-box" id="tsWrap">
+      <div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError"></div>
+      <div class="err" id="errorBox" role="alert" style="display:none;margin-top:12px;font-size:13px"></div>
+    </div>
+    <p class="cp-status" id="helpText" aria-live="polite">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</p>
+  </section>
+
+  <aside class="console" aria-label="Giám sát bảo mật">
+    <div class="con-head">
+      <div class="con-title"><span class="live-dot"></span>Giám sát bảo mật</div>
+      <span class="con-pill">Đang bảo vệ</span>
+    </div>
+
+    <div class="con-metrics">
+      <div class="metric"><p>Thời gian xác minh</p><b id="timer">0.00<small>s</small></b></div>
+      <div class="metric"><p>Phản hồi máy chủ</p><b id="mTtfb">—</b></div>
+      <div class="metric"><p>Giao thức</p><b id="mProto">—</b></div>
+      <div class="metric"><p>Mã hoá</p><b id="mTls">—</b></div>
+    </div>
+
+    <div class="con-log">
+      <div class="con-label">Nhật ký sự kiện</div>
+      <div class="con-logbox"><ul class="cp-log" id="cpLog" aria-live="polite"></ul></div>
+    </div>
+
+    <div class="con-chips"><span>Cloudflare Turnstile</span><span>Chống bot</span><span>Giới hạn truy cập</span></div>
+  </aside>
+</div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
   return layout('Xác minh', body, nonce, head);
 }
 
@@ -87,7 +115,27 @@ export function renderHome(env, error, notice, quota, nonce) {
     <div class="kc-foot"><a class="link-quiet" href="https://t.me/" target="_blank" rel="noopener noreferrer">Tham gia nhóm Telegram để nhận thông báo</a></div>
   </section>
 
-  <section class="info reveal" style="--d:.24s">
+  <section class="support reveal" style="--d:.2s">
+    <a class="sup sup-zalo" href="https://zalo.me/0996492296" target="_blank" rel="noopener noreferrer">
+      <span class="sup-ic">Zalo</span>
+      <span class="sup-tx"><b>Hỗ trợ qua Zalo</b><small>Nhắn trực tiếp cho admin</small></span>
+      <span class="sup-go" aria-hidden="true">↗</span>
+    </a>
+    <a class="sup sup-yt" href="${esc(env.YOUTUBE_CHANNEL_URL || 'https://youtube.com/@zwicxsharereg')}" target="_blank" rel="noopener noreferrer">
+      <span class="sup-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 0 0 2.4 7.2C2 8.8 2 12 2 12s0 3.2.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.6.4-4.8.4-4.8s0-3.2-.4-4.8zM10 15V9l5.2 3L10 15z"/></svg></span>
+      <span class="sup-tx"><b>Kênh YouTube</b><small>Video và cập nhật mới</small></span>
+      <span class="sup-go" aria-hidden="true">↗</span>
+    </a>
+  </section>
+
+  <section class="trust reveal" style="--d:.28s" aria-label="Cam kết bảo mật">
+    <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path d="M8.5 12.2l2.5 2.5 4.5-5"/></svg><b>Chống bot</b><small>Xác minh bằng Cloudflare Turnstile</small></div>
+    <div><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><b>Mã hoá HTTPS</b><small>Kết nối được bảo vệ toàn trình</small></div>
+    <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4-6"/></svg><b>12 lượt mỗi ngày</b><small>Giới hạn theo IP, chống lạm dụng</small></div>
+    <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3L5 13h6l-1 8 8-10h-6l1-8z"/></svg><b>Giao key tự động</b><small>Nhận ngay khi hoàn tất các bước</small></div>
+  </section>
+
+  <section class="info reveal" style="--d:.34s">
     <div>
       <h3 class="sec-title">Bảng giá</h3>
       <div class="price-row"><span>Key 1 ngày</span><span>10k</span></div>
@@ -100,18 +148,11 @@ export function renderHome(env, error, notice, quota, nonce) {
       <div class="stat-row"><span>Còn lại</span><span>12</span></div>
       <div class="stat-row"><span>Thành công</span><span>0</span></div>
       <div class="stat-row"><span>Lần gần nhất</span><span>Chưa có</span></div>
-    </div>
-    <div>
-      <h3 class="sec-title">Hỗ trợ</h3>
-      <div class="contact">
-        <a href="https://zalo.me/0996492296">Zalo hỗ trợ <span aria-hidden="true">↗</span></a>
-        <a href="${esc(env.YOUTUBE_CHANNEL_URL || 'https://youtube.com/@zwicxsharereg')}">Kênh YouTube <span aria-hidden="true">↗</span></a>
-      </div>
-      <p style="font-size:13px;color:var(--dim);margin-top:14px">Lượt nhận key làm mới lúc 00:00 giờ VN.</p>
+      <p style="font-size:13px;color:var(--dim);margin-top:12px">Làm mới lúc 00:00 giờ VN.</p>
     </div>
   </section>
 
-  <section class="apps reveal" style="--d:.34s">
+  <section class="apps reveal" style="--d:.42s">
     <h3 class="sec-title">Tải ứng dụng</h3>
     <div class="app-grid">
       <div class="app">
@@ -233,7 +274,7 @@ export function renderAdmin(nonce) {
   };
 })();
 </script>`;
-  return layout('Admin', shell('', inner, 'narrow'), nonce);
+  return layout('Admin', shell('', inner, 'narrow', false), nonce);
 }
 
 export function renderError(code, msg, nonce) {
