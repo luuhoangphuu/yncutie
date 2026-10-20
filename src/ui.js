@@ -8,6 +8,7 @@ const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF
 
 const layoutCheckpoint = (title, content) => `${head(title)}<style>${CSS_CHECKPOINT}${CSS_PREMIUM}</style></head>
 <body>
+  <div class="bg-grid-move"></div>
   ${content}
   <script>${JS}</script>
   <script>${JS_PREMIUM}</script>
@@ -43,7 +44,9 @@ export function renderCheckpoint(env) {
         <p class="desc">Cloudflare đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
         <div class="terminal-box" id="terminal"></div>
         <div class="challenge-module">
-          <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
+          <div class="turnstile-wrapper">
+            <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
+          </div>
           <div class="help-text">Nếu thấy ô <b>Verify you are human</b>, bấm vào đó. Không cần tải lại trang, cửa hàng sẽ tự mở khi xác minh xong.</div>
         </div>
         <div class="stepper">
@@ -77,7 +80,18 @@ export function renderCheckpoint(env) {
         </div>
         <div class="dash-card" style="padding: 0;">
           <div class="stats-grid">
+            <div class="stat-item"><div class="stat-label">WAF RULE 01</div><div class="stat-val" style="color:#10b981;">Passed</div></div>
+            <div class="stat-item"><div class="stat-label">WAF RULE 02</div><div class="stat-val" style="color:#10b981;">Passed</div></div>
+            <div class="stat-item"><div class="stat-label">WAF RULE 03</div><div class="stat-val" style="color:#f59e0b;">Scanning...</div></div>
+          </div>
+        </div>
+        <div class="dash-card" style="padding: 0; margin-top: 10px;">
+          <div class="stats-grid">
             <div class="stat-item"><div class="stat-label">Giao thức</div><div class="stat-val">HTTP/3</div></div>
+            <div class="stat-item"><div class="stat-label">Mạng Edge</div><div class="stat-val">Anycast</div></div>
+            <div class="stat-item"><div class="stat-label">Độ trễ</div><div class="stat-val">464 ms</div></div>
+          </div>
+        </div>
             <div class="stat-item"><div class="stat-label">Mạng Edge</div><div class="stat-val">Anycast</div></div>
             <div class="stat-item"><div class="stat-label">Độ trễ</div><div class="stat-val">464 ms</div></div>
           </div>
