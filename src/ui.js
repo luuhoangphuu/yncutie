@@ -2,7 +2,10 @@ import { CSS, COMMON_JS, CHECKPOINT_JS, JS_FX } from './assets.js';
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function layout(title, body, nonce, head = '') {
-  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} · ZwicApex</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body><div class="bg-grid"></div><div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>${body}
+  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} · ZwicApex</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body>
+<div class="bg-grid"></div>
+<div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+${body}
 <div class="chat-float" onclick="window.open('https://zalo.me/0996492296','_blank')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
 <script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
 }
@@ -30,10 +33,14 @@ export function renderCheckpoint(env, nonce, next = '/') {
       </div>
     </section>
     <aside class="ckpt-side">
+      <div class="radar-container" aria-hidden="true">
+        <div class="orbit"></div>
+        <div class="orbit"><div class="orbit-dot"></div></div>
+        <div class="orbit"><div class="orbit-dot white"></div></div>
+        <div class="radar-core"></div>
+      </div>
       <div class="stat-card"><div class="stat-label">Session</div><div class="stat-value" style="font-size:18px">#ZWI·APEX</div><div class="stat-sub">IP masked · <b>VN</b></div></div>
-      <div class="stat-card"><div class="stat-label">Verification time</div><div class="stat-value" id="timer">0.00<small>s</small></div></div>
-      <div class="stat-card"><div class="stat-label">Live traffic</div><div class="spark"><i style="height:40%"></i><i style="height:70%"></i><i style="height:30%"></i><i style="height:90%"></i><i style="height:50%"></i><i style="height:80%"></i><i style="height:20%"></i><i style="height:60%"></i></div><div class="stat-sub"><b>~2.4 kB/s</b> · nominal</div></div>
-      <div class="stat-card"><div class="stat-label">Threats blocked</div><div class="stat-value">1,247</div><div class="stat-sub" style="color:#10b981">↑ live counter</div></div>
+      <div class="stat-card"><div class="stat-label">Threat Level</div><div class="stat-value" style="color:#10b981">SAFE</div><div class="stat-sub">WAF Active</div></div>
     </aside>
   </div></div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
   return layout('Xác minh', body, nonce, head);
