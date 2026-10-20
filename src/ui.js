@@ -10,7 +10,6 @@ function layout(title, body, nonce, head = '') {
 <div class="cursor-dot"></div><div class="cursor-ring"></div>
 <div class="cyber-grid"></div><div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
 <div class="snow-layer"></div>
-<div class="snow-layer-2"></div>
 <canvas id="particle-canvas"></canvas>
 ${body}
 <script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
@@ -25,11 +24,9 @@ export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
   const body = `${nav('')}<main class="wrap"><div class="checkpoint-layout" id="app" data-next="${esc(next)}">
   
-  <!-- LEFT PANEL: VERIFICATION -->
   <div class="panel">
     <h1 class="panel-title">Xác minh kết nối</h1>
     <p class="panel-sub">Hệ thống AI đang kiểm tra kết nối để chặn bot và spam tự động.</p>
-    
     <div class="ts-box" id="tsWrap">
       <div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError"></div>
       <div class="err" id="errorBox" style="display:none;color:#ef4444;margin-top:10px;font-size:12px"></div>
@@ -37,7 +34,6 @@ export function renderCheckpoint(env, nonce, next = '/') {
     <p class="ts-help" id="helpText">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</p>
   </div>
 
-  <!-- RIGHT PANEL: COMMAND HUD -->
   <div class="hud-container">
     <div class="hud-header">
       <div>
@@ -134,11 +130,12 @@ export function renderHome(env, error, notice, quota, nonce) {
       <h2>Thiết bị hiện tại</h2>
       <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Theo dõi nhanh lượt nhận key trong hôm nay</p>
       <div class="quota-grid">
-        <div class="quota-item"><p>Tên Key</p><b>Customs</b></div>
-        <div class="quota-item"><p>Còn lại</p><b style="color:var(--accent)">5</b></div>
+        <div class="quota-item"><p>Tên Key</p><b>ZwicApex</b></div>
+        <div class="quota-item"><p>Còn lại</p><b style="color:var(--accent)">12</b></div>
         <div class="quota-item"><p>Thành công</p><b>0</b></div>
         <div class="quota-item"><p>Lần gần nhất</p><b style="font-size:14px">Chưa có</b></div>
       </div>
+      <p style="font-size:11px; color:var(--muted); margin-top:12px; text-align:center;">Reset lúc 00:00 giờ VN</p>
     </div>
 
     <div class="bento-item">
@@ -232,7 +229,7 @@ export function renderFAQ(nonce) {
   const qa = [
     ['Key này dùng để làm gì?', 'Key dùng để kích hoạt ứng dụng Zwic Apex.'],
     ['Vì sao phải vượt liên kết?', 'Quảng cáo giúp duy trì hệ thống và giữ cho việc nhận key miễn phí.'],
-    ['Hết lượt hôm nay?', 'Mỗi IP được nhận tối đa 12 key mỗi ngày. Reset lúc 0h giờ VN.']
+    ['Hết lượt hôm nay?', 'Mỗi IP được nhận tối đa 12 key mỗi ngày. Reset lúc 00:00 giờ VN.']
   ];
   const inner = `<h1 class="center scramble" style="margin-bottom:40px;font-size:40px">FAQ</h1><div style="max-width:800px;margin:0 auto">${qa.map(([q, a]) => `<div class="bento-item" style="padding:32px;margin-bottom:16px"><h3 style="margin-bottom:12px;color:#fff;font-size:18px;font-weight:700">${esc(q)}</h3><p style="color:var(--muted);font-size:15px;margin:0">${esc(a)}</p></div>`).join('')}</div>`;
   return layout('FAQ', shell('faq', inner));
