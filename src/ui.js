@@ -2,67 +2,125 @@ import { CSS, COMMON_JS, CHECKPOINT_JS, JS_FX } from './assets.js';
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function layout(title, body, nonce, head = '') {
-  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} · GetKey DPIConfig</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body>
+  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} · Zwic Apex</title><link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,800;0,900;1,900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body>
 <div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
 <canvas id="particle-canvas"></canvas>
-<canvas id="snow-canvas"></canvas>
+<div class="snow-layer"></div>
+<div class="snow-layer-2"></div>
 ${body}
 <script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
 }
-const nav = (active = '') => `<header class="nav"><a class="logo" href="/"><i></i>GETKEY DPICONFIG</a><nav class="nav-links"><a href="/" class="${active==='home'?'on':''}">Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}">FAQ</a></nav></header>`;
-const foot = () => `<footer class="foot">© GETKEYDPICONFIG.SITE · Bản quyền thuộc về GetKey DPIConfig.</footer>`;
+
+const logoHtml = `<a class="logo-container" href="/"><div class="logo-text">Zwic <svg viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg></div></a>`;
+const nav = (active = '') => `<header class="nav">${logoHtml}<nav class="nav-links"><a href="/" class="${active==='home'?'on':''}">Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}">FAQ</a></nav></header>`;
+const foot = () => `<footer class="foot">© 2024 Zwic Apex · Bảo mật bởi Cloudflare.</footer>`;
 const shell = (active, inner, width = '') => `${nav(active)}<main class="wrap ${width}">${inner}</main>${foot()}`;
 const stepper = (n) => `<ol class="stepper">${['Chọn key','Vượt link','Xác thực','Nhận key'].map((t,i)=>`<li class="${i+1<n?'done':i+1===n?'on':''}"><b>${i+1<n?'✓':i+1}</b><span>${t}</span></li>`).join('')}</ol>`;
 
 export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
-  const body = `${nav('')}<main class="wrap"><div class="card" id="app" data-next="${esc(next)}" style="padding:32px">
-  ${stepper(3)}
-  <div class="ckpt-grid">
-    <section class="ckpt-left">
-      <h1>Xác minh kết nối</h1>
-      <p class="lead" style="margin-bottom:24px">Hệ thống kiểm tra kết nối để chặn bot và spam tự động.</p>
-      <div class="term-shell">
-        <div class="term-bar"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span><code>~/security-check</code></div>
-        <div class="term" id="terminal"></div>
+  const body = `${nav('')}<main class="wrap"><div class="checkpoint-layout" id="app" data-next="${esc(next)}">
+  
+  <div class="ckpt-left">
+    <div class="eyebrow">Trạm kiểm tra bảo mật</div>
+    <h1>Xác minh nhanh trước khi vào cửa hàng</h1>
+    <p class="lead">Hệ thống đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
+    
+    <div class="ts-box" id="tsWrap">
+      <div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError"></div>
+      <div class="err" id="errorBox"></div>
+    </div>
+    <p class="ts-help" id="helpText">Nếu thấy ô <strong>Verify you are human</strong>, bấm vào đó. Không cần tải lại trang, cửa hàng sẽ tự mở khi xác minh xong.</p>
+
+    <div class="stepper-4">
+      <div class="step-item done"><i><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></i><span>Kết nối TLS</span></div>
+      <div class="step-item done"><i><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></i><span>Lọc tại edge</span></div>
+      <div class="step-item active"><i><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></i><span>Xác minh<br>trình duyệt</span></div>
+      <div class="step-item"><i><svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg></i><span>Vào cửa hàng</span></div>
+    </div>
+  </div>
+
+  <div class="ckpt-right">
+    <div class="status-header"><i></i> Kết nối đang được bảo vệ</div>
+    
+    <div class="telemetry-card">
+      <div class="telemetry-card-header">
+        <span class="telemetry-label">Thời gian xác minh</span>
+        <span class="telemetry-value" id="timer">0.00<small>s</small></span>
       </div>
-      <div class="ts-wrap" id="tsWrap">
-        <div class="ts"><div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError"></div></div>
-        <div class="ts-status" id="helpText">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</div>
-        <div class="err" id="errorBox"></div>
+      <div class="wave-graph">
+        ${Array(40).fill('<div class="wave-bar"></div>').join('')}
       </div>
-    </section>
-    <aside class="ckpt-right">
-      <div class="timer-box">
-        <div class="timer-label">Thời gian xác minh</div>
-        <div class="timer-val" id="timer">0.00<small>s</small></div>
+      <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:11px; color:var(--muted)">
+        <span>Nhịp xử lý của trình duyệt</span>
+        <span><span style="color:var(--ok)">●</span> trực tiếp</span>
       </div>
-      <div class="radar-box">
-        <svg class="radar-svg" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-          <circle cx="50" cy="50" r="30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-          <circle cx="50" cy="50" r="15" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-          <g class="radar-sweep">
-             <path d="M50 50 L50 5 A45 45 0 0 1 95 50 Z" fill="rgba(255,255,255,0.15)"/>
-             <line x1="50" y1="50" x2="50" y2="5" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
-          </g>
-          <circle cx="50" cy="50" r="3" fill="#ffffff" />
-          <circle cx="70" cy="30" r="2" fill="#fff" class="blink-dot"/>
-          <circle cx="30" cy="60" r="2" fill="#fff" class="blink-dot" style="animation-delay: 0.5s"/>
-        </svg>
+    </div>
+
+    <div class="split-cards">
+      <div class="mini-card">
+        <div class="radar-mini-container">
+          <svg class="radar-svg-mini" viewBox="0 0 50 50">
+            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <circle cx="25" cy="25" r="10" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <g class="sweep">
+               <path d="M25 25 L25 5 A20 20 0 0 1 45 25 Z" fill="rgba(59,130,246,0.2)"/>
+               <line x1="25" y1="25" x2="25" y2="5" stroke="rgba(59,130,246,.8)" stroke-width="1"/>
+            </g>
+            <circle cx="35" cy="15" r="1.5" fill="var(--ok)"/>
+          </svg>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Quét lưu lượng</div>
+            <div style="font-size:14px;color:#fff;font-weight:800">Đang bảo vệ</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:600">WAF · Bot · DDoS</div>
+          </div>
+        </div>
       </div>
-    </aside>
-  </div></div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
-  return layout('Xác minh', body, nonce, head);
+      
+      <div class="mini-card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:11px;color:var(--muted)">Độ trễ tới edge</span>
+          <span style="font-size:13px;color:#fff;font-weight:800">316 ms</span>
+        </div>
+        <div class="line-chart-container">
+          <svg class="line-chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
+            <path class="line-path" d="M0,20 Q10,25 20,15 T40,20 T60,10 T80,18 T100,5" />
+            <circle class="line-dot" cx="100" cy="5" r="2" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="telemetry-card">
+      <div class="protocol-grid">
+        <div class="proto-item"><p>Giao thức</p><b>HTTP/2</b></div>
+        <div class="proto-item"><p>Mạng edge</p><b>Anycast</b></div>
+        <div class="proto-item"><p>Lớp bảo vệ</p><b>Cloudflare</b></div>
+      </div>
+    </div>
+
+    <div class="telemetry-card faq-block">
+      <h3>Bị kẹt ở bước này?</h3>
+      <div class="faq-item">
+        <p><strong>1</strong> Đợi khoảng 10 giây, bấm tải lại liên tục chỉ khiến bị kiểm tra lại từ đầu.</p>
+      </div>
+      <div class="faq-item">
+        <p><strong>2</strong> Bật JavaScript và cookie, tạm tắt VPN hoặc trình chặn quảng cáo nếu có.</p>
+      </div>
+    </div>
+
+  </div>
+</div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
+  return layout('Trạm kiểm tra', body, nonce, head);
 }
 
 export function renderHome(env, error, notice, quota, nonce) {
   const inner = `${error ? `<div class="card" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:700;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
 ${stepper(1)}
 <div class="split-layout">
-  <div class="hero-text">
-    <h1>Nhận Key<br><span style="color:var(--silver)">Tốc Độ Ánh Sáng</span></h1>
-    <p class="lead">Hệ thống cấp phát key tự động, bảo mật đa tầng. Nhận key miễn phí chỉ trong vài bước.</p>
+  <div>
+    <h1 class="hero-title">Nhận Key<br><span style="color:var(--silver)">Tốc Độ Ánh Sáng</span></h1>
+    <p style="color:var(--muted);margin:16px 0 0;font-size:16px;font-weight:500;max-width:500px">Hệ thống cấp phát key tự động, bảo mật đa tầng. Nhận key miễn phí chỉ trong vài bước.</p>
     <div style="margin-top:20px;display:flex;gap:12px">
       <span style="background:rgba(255,255,255,.1);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;border:1px solid rgba(255,255,255,.2)">24/7 Uptime</span>
       <span style="background:rgba(16,185,129,.1);color:var(--ok);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;border:1px solid rgba(16,185,129,.2)">Anti-Bot</span>
@@ -93,7 +151,7 @@ ${stepper(1)}
 <div class="card" style="margin-top:24px">
   <h2 style="color:#fff;display:flex;align-items:center;gap:10px;font-size:20px;margin-bottom:20px;font-weight:900">ℹ️ Thông tin & Bảng giá</h2>
   <div style="background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:20px;margin-bottom:20px">
-    <p style="color:var(--muted)">© Bản quyền thuộc về <b style="color:#fff">GetKey DPIConfig</b>.</p>
+    <p style="color:var(--muted)">© Bản quyền thuộc về <b style="color:#fff">Zwic Apex</b>.</p>
     <p style="color:#ef4444;font-weight:700;margin-top:8px">‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.</p>
     <div style="margin-top:16px;border-top:1px solid rgba(255,255,255,.1);padding-top:16px">
       <div style="display:flex;justify-content:space-between;padding:10px 0;color:var(--muted);font-weight:700;border-bottom:1px dashed rgba(255,255,255,.05)"><span>Key 1 ngày</span><span style="color:#fff;font-family:'JetBrains Mono'">10k</span></div>
@@ -136,25 +194,25 @@ export function renderSuccess(key, duration, tier, nonce) {
   const t = tier || 'Normal';
   const inner = `${stepper(4)}
 <div class="card center" style="padding:40px 24px">
-  <div class="badge-ok">✓</div>
+  <div class="badge-ok" style="margin:0 auto 24px;width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:grid;place-items:center;color:#fff;font-size:36px;font-weight:900;box-shadow:0 0 50px rgba(16,185,129,.6),inset 0 2px 0 rgba(255,255,255,.5)">✓</div>
   <h2 style="justify-content:center;font-size:24px">Nhận key thành công</h2>
   <div style="margin:16px 0">
     <span style="background:rgba(255,255,255,.1);padding:6px 16px;border-radius:99px;font-size:13px;font-weight:800;border:1px solid rgba(255,255,255,.4);color:#fff">Tier: ${esc(t)}</span>
   </div>
-  <div class="keybox" id="keyText">${esc(key)}</div>
-  <div class="btn-row">
+  <div class="keybox" id="keyText" style="margin:24px 0;padding:24px;border-radius:16px;border:1px dashed rgba(255,255,255,.4);background:rgba(255,255,255,.05);text-align:center;font-family:'JetBrains Mono',monospace;font-weight:900;font-size:22px;word-break:break-all;color:#fff;cursor:pointer;text-shadow:0 0 20px rgba(255,255,255,.4);box-shadow:inset 0 0 30px rgba(0,0,0,.6)">${esc(key)}</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
     <button class="btn btn-primary" type="button" data-copy="keyText">Sao chép</button>
     <button class="btn btn-secondary" type="button" id="dlBtn">Tải .txt</button>
   </div>
   <a href="/" style="display:block;margin-top:20px;font-size:14px;font-weight:800;color:var(--muted);text-decoration:underline">Nhận key mới</a>
 </div>
-<script nonce="${nonce}">(function(){var k=document.getElementById('keyText');if(!k)return;var key=k.textContent.trim();var dl=document.getElementById('dlBtn');if(dl)dl.onclick=function(){var txt='GetKey DPIConfig\n===========\n\n'+key+'\n\nTier: ${esc(t)}\nNhận lúc: '+new Date().toLocaleString('vi-VN')+'\n\n© GetKey DPIConfig';var b=new Blob([txt],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='getkeydpiconfig-${esc(t)}.txt';a.click();window.__toast('Đã tải file key','ok');};})();</script>`;
+<script nonce="${nonce}">(function(){var k=document.getElementById('keyText');if(!k)return;var key=k.textContent.trim();var dl=document.getElementById('dlBtn');if(dl)dl.onclick=function(){var txt='Zwic Apex\n===========\n\n'+key+'\n\nTier: ${esc(t)}\nNhận lúc: '+new Date().toLocaleString('vi-VN')+'\n\n© Zwic Apex';var b=new Blob([txt],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='zwicapex-${esc(t)}.txt';a.click();window.__toast('Đã tải file key','ok');};})();</script>`;
   return layout('Nhận key', shell('', inner, 'narrow'), nonce);
 }
 
 export function renderFAQ(nonce) {
   const qa = [
-    ['Key này dùng để làm gì?', 'Key dùng để kích hoạt ứng dụng GetKey DPIConfig.'],
+    ['Key này dùng để làm gì?', 'Key dùng để kích hoạt ứng dụng Zwic Apex.'],
     ['Vì sao phải vượt liên kết?', 'Quảng cáo giúp duy trì hệ thống và giữ cho việc nhận key miễn phí.'],
     ['Mất phiên thì làm sao?', 'Phiên gắn với IP. Nếu đổi Wi-Fi/4G hoặc bật VPN giữa chừng, bạn cần bắt đầu lại.'],
     ['Hết lượt hôm nay?', 'Mỗi IP được nhận tối đa 12 key mỗi ngày. Reset lúc 0h giờ VN.'],
