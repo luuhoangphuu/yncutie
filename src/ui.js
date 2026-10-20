@@ -24,7 +24,7 @@ export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
   const body = `${nav('')}<main class="wrap"><div class="checkpoint-layout" id="app" data-next="${esc(next)}">
   
-  <div class="panel reveal">
+  <div class="panel">
     <h1 class="panel-title">Xác minh kết nối</h1>
     <p class="panel-sub">Hệ thống AI đang kiểm tra kết nối để chặn bot và spam tự động.</p>
     <div class="ts-box" id="tsWrap">
@@ -34,7 +34,7 @@ export function renderCheckpoint(env, nonce, next = '/') {
     <p class="ts-help" id="helpText">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</p>
   </div>
 
-  <div class="hud-container reveal">
+  <div class="hud-container">
     <div class="hud-header">
       <div>
         <div class="hud-label">Thời gian xác minh</div>
@@ -48,28 +48,10 @@ export function renderCheckpoint(env, nonce, next = '/') {
       </div>
     </div>
 
-    <div class="hud-mid">
-      <div class="hud-mini">
-        <div class="hud-label" style="text-align:center;margin-bottom:12px;">Radar quét</div>
-        <svg class="radar-svg" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="38" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-          <circle cx="40" cy="40" r="25" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-          <circle cx="40" cy="40" r="12" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-          <line x1="40" y1="2" x2="40" y2="78" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-          <line x1="2" y1="40" x2="78" y2="40" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-          <g class="radar-sweep"><path d="M40 40 L40 2 A38 38 0 0 1 78 40 Z" fill="rgba(0,240,255,0.15)"/><line x1="40" y1="40" x2="40" y2="2" stroke="var(--accent)" stroke-width="2"/></g>
-          <circle cx="55" cy="25" r="2" fill="#fff" style="animation:pulse 2s infinite;"/>
-        </svg>
-      </div>
-      
-      <div class="hud-mini">
-        <div class="hud-label" style="display:flex;justify-content:space-between;">
-          <span>Độ trễ mạng</span><span style="color:#fff;">24ms</span>
-        </div>
-        <div class="line-chart-container">
-          <svg class="line-chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path class="line-path" d="M0,15 L10,15 L20,15 L30,15 L40,15 L50,15 L60,15 L70,15 L80,15 L90,15 L100,15" /><circle class="line-dot" cx="100" cy="15" r="2" /></svg>
-        </div>
-      </div>
+    <!-- HEARTBEAT WAVEFORM -->
+    <div style="margin-top:16px;">
+      <div class="hud-label" style="margin-bottom:8px;">Nhịp truyền tải dữ liệu (Heartbeat)</div>
+      <div class="heartbeat-container" id="heartbeat"></div>
     </div>
 
     <div class="hud-footer">
@@ -93,15 +75,15 @@ export function renderHome(env, error, notice, quota, nonce) {
 
   const inner = `
   ${noticeHtml}
-  ${error ? `<div class="bento-item reveal" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:600;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
+  ${error ? `<div class="bento-item" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:600;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
   
-  <div class="reveal">
+  <div>
     <h1 class="hero-title scramble">Zwic Apex</h1>
     <p class="hero-sub typewriter" data-text="Hệ thống cấp phát key tự động, bảo mật đa tầng. Trải nghiệm đỉnh cao của sự mượt mà."></p>
   </div>
 
   <div class="bento-grid">
-    <div class="bento-item col-span-2 reveal">
+    <div class="bento-item col-span-2">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <h2 style="margin:0">Lấy key miễn phí</h2>
       </div>
@@ -128,7 +110,7 @@ export function renderHome(env, error, notice, quota, nonce) {
       </div>
     </div>
     
-    <div class="bento-item reveal">
+    <div class="bento-item">
       <h2>Thiết bị hiện tại</h2>
       <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Theo dõi nhanh lượt nhận key trong hôm nay</p>
       <div class="quota-grid">
@@ -140,7 +122,7 @@ export function renderHome(env, error, notice, quota, nonce) {
       <p style="font-size:11px; color:var(--muted); margin-top:12px; text-align:center;">Reset lúc 00:00 giờ VN</p>
     </div>
 
-    <div class="bento-item reveal">
+    <div class="bento-item">
       <h2>Thông tin & Bảng giá</h2>
       <div style="background:rgba(0,0,0,.3);border-radius:16px;padding:16px;margin-bottom:16px;border:1px solid var(--border)">
         <div style="display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-size:13px;font-weight:600;border-bottom:1px dashed rgba(255,255,255,.1)"><span>Key 1 ngày</span><span style="color:#fff">10k</span></div>
@@ -153,7 +135,7 @@ export function renderHome(env, error, notice, quota, nonce) {
       </div>
     </div>
 
-    <div class="bento-item col-span-4 reveal">
+    <div class="bento-item col-span-4">
       <h2 style="margin-bottom:16px">📥 Tải ứng dụng</h2>
       <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Chọn đúng bản và đọc ghi chú trước khi tải.</p>
       
@@ -195,7 +177,7 @@ export function renderHome(env, error, notice, quota, nonce) {
 export function renderStep({ link, current, required, error }, nonce) {
   const isVip = required > 1;
   const inner = `${error ? `<div class="bento-item" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:600;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
-<div class="panel reveal" style="max-width:600px;margin:0 auto;text-align:center">
+<div class="panel" style="max-width:600px;margin:0 auto;text-align:center">
   <div class="stepper-wrap" style="max-width:400px;margin:0 auto 32px">
     <div class="step done"><div class="step-num">✓</div><span>Chọn key</span></div>
     <div class="step active"><div class="step-num">2</div><span>Vượt link</span></div>
@@ -211,7 +193,7 @@ export function renderStep({ link, current, required, error }, nonce) {
 
 export function renderSuccess(key, duration, tier, nonce) {
   const t = tier || 'Normal';
-  const inner = `<div class="panel reveal" style="max-width:600px;margin:0 auto;padding:60px 40px;text-align:center">
+  const inner = `<div class="panel" style="max-width:600px;margin:0 auto;padding:60px 40px;text-align:center">
   <div class="stepper-wrap" style="max-width:400px;margin:0 auto 32px">
     <div class="step done"><div class="step-num">✓</div><span>Chọn key</span></div>
     <div class="step done"><div class="step-num">✓</div><span>Vượt link</span></div>
@@ -233,12 +215,12 @@ export function renderFAQ(nonce) {
     ['Vì sao phải vượt liên kết?', 'Quảng cáo giúp duy trì hệ thống và giữ cho việc nhận key miễn phí.'],
     ['Hết lượt hôm nay?', 'Mỗi IP được nhận tối đa 12 key mỗi ngày. Reset lúc 00:00 giờ VN.']
   ];
-  const inner = `<h1 class="center scramble" style="margin-bottom:40px;font-size:40px">FAQ</h1><div style="max-width:800px;margin:0 auto">${qa.map(([q, a]) => `<div class="bento-item reveal" style="padding:32px;margin-bottom:16px"><h3 style="margin-bottom:12px;color:#fff;font-size:18px;font-weight:700">${esc(q)}</h3><p style="color:var(--muted);font-size:15px;margin:0">${esc(a)}</p></div>`).join('')}</div>`;
+  const inner = `<h1 class="center scramble" style="margin-bottom:40px;font-size:40px">FAQ</h1><div style="max-width:800px;margin:0 auto">${qa.map(([q, a]) => `<div class="bento-item" style="padding:32px;margin-bottom:16px"><h3 style="margin-bottom:12px;color:#fff;font-size:18px;font-weight:700">${esc(q)}</h3><p style="color:var(--muted);font-size:15px;margin:0">${esc(a)}</p></div>`).join('')}</div>`;
   return layout('FAQ', shell('faq', inner));
 }
 
 export function renderAdmin(nonce) {
-  const inner = `<div class="admin-card reveal">
+  const inner = `<div class="admin-card">
     <h2 class="scramble" style="text-align:center;margin-bottom:24px;">Quản Trị Thông Báo</h2>
     <p style="color:var(--muted);font-size:14px;text-align:center;margin-bottom:32px;">Nhập mật khẩu để tải và cập nhật thông báo cho trang web.</p>
     
@@ -299,6 +281,6 @@ export function renderAdmin(nonce) {
 }
 
 export function renderError(code, msg, nonce) {
-  const inner = `<div class="panel center reveal" style="padding:64px 40px"><h1 style="font-size:100px;font-weight:900;color:#ef4444;margin-bottom:16px">${esc(code)}</h1><h2 style="color:#fff;font-size:24px;margin-bottom:32px">${esc(msg)}</h2><a class="btn btn-primary" href="/" style="max-width:240px;margin:0 auto">Về trang chủ</a></div>`;
+  const inner = `<div class="panel center" style="padding:64px 40px"><h1 style="font-size:100px;font-weight:900;color:#ef4444;margin-bottom:16px">${esc(code)}</h1><h2 style="color:#fff;font-size:24px;margin-bottom:32px">${esc(msg)}</h2><a class="btn btn-primary" href="/" style="max-width:240px;margin:0 auto">Về trang chủ</a></div>`;
   return layout('Lỗi ' + code, shell('', inner, 'narrow'));
 }
