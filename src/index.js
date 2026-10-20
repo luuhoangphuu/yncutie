@@ -1,9 +1,9 @@
 import { renderCheckpoint, renderHome, renderStep1, renderStep2, renderSuccess, renderFAQ, renderAdmin, renderError } from './ui.js';
 import { signToken, verifyToken, getCookie, setCookie, verifyTurnstile, safeEqual, normalizeIP } from './auth.js';
 
-const SESSION_TTL = 900;      // giây
-const BOT_TTL = 600;          // giây
-const MIN_ADS_SECONDS = 15;   // thời gian tối thiểu giữa lúc mở link và lúc quay lại
+const SESSION_TTL = 900;
+const BOT_TTL = 600;
+const MIN_ADS_SECONDS = 15;
 const DAILY_LIMIT = 12;
 const TIERS = { Normal: 1, VIP: 2 };
 const MESSAGES = {
@@ -47,7 +47,6 @@ const redirect = (loc, cookie) => {
   return new Response(null, { status: 302, headers: h });
 };
 
-// ---------- SESSION (lưu trong KV, cookie chỉ giữ ID) ----------
 async function getSession(req, env) {
   const sid = getCookie(req, 'sid');
   if (!sid || !/^[0-9a-f-]{36}$/.test(sid)) return null;
@@ -66,7 +65,6 @@ async function saveSession(req, env, s) {
   return setCookie('sid', s.sid, SESSION_TTL);
 }
 
-// ---------- QUOTA ----------
 const quotaKey = (req) => 'quota:' + getIP(req) + ':' + new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
 async function getQuota(req, env) {
   const c = parseInt((await env.ANNOUNCEMENT_KV.get(quotaKey(req))) || '0', 10) || 0;
@@ -78,7 +76,6 @@ async function incQuota(req, env) {
   await env.ANNOUNCEMENT_KV.put(k, String(c + 1), { expirationTtl: 90000 });
 }
 
-// ---------- ADMIN ----------
 async function adminLocked(ip, env) { return (parseInt((await env.ANNOUNCEMENT_KV.get('admin_fail:' + ip)) || '0', 10) || 0) >= 5; }
 async function adminFail(ip, env) {
   const n = (parseInt((await env.ANNOUNCEMENT_KV.get('admin_fail:' + ip)) || '0', 10) || 0) + 1;
@@ -93,7 +90,6 @@ async function saveNotice(env, n) {
   try { await env.ANNOUNCEMENT_KV.put('notice_json', JSON.stringify(cleanNotice(n))); return true; } catch { return false; }
 }
 
-// ---------- ISSUER ----------
 async function issueKey(env, tier) {
   try {
     const res = await fetch(env.KEY_ISSUER_URL, {
@@ -129,7 +125,6 @@ export default {
       const SECRET = getSecret(env, 'SESSION_SECRET');
       const ip = getIP(request);
 
-      // --- Admin ---
       if (p === '/ynsociuu/lhp' && m === 'GET') return html(renderAdmin(nonce));
       if (p === '/api/admin/notice' && m === 'POST') {
         if (!sameOrigin()) return jsonRes({ success: false, error: 'Forbidden' }, 403);
@@ -145,7 +140,6 @@ export default {
         return jsonRes({ success: false, error: 'Hành động không hợp lệ.' }, 400);
       }
 
-      // --- Turnstile ---
       if (p === '/api/verify-bot' && m === 'POST') {
         if (!sameOrigin()) return jsonRes({ success: false, error: 'Forbidden' }, 403);
         let body; try { body = await request.json(); } catch { return jsonRes({ success: false, error: 'Dữ liệu không hợp lệ.' }, 400); }
@@ -224,10 +218,10 @@ export default {
         const q = await getQuota(request, env);
         if (!q.ok) return redirect('/?e=quota');
 
-        await saveSession(request, env, s);               // tiêu thụ token TRƯỚC khi gọi issuer
+        await saveSession(request, env, s);
         const issued = await issueKey(env, s.tier);
         if (!issued) {
-          s.ads = required - 1;                            // hoàn lại lượt khi issuer lỗi
+          s.ads = required - 1;
           return redirect('/step2?e=issuer', await saveSession(request, env, s));
         }
         await incQuota(request, env);

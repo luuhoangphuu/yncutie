@@ -12,7 +12,6 @@ const shell = (active, inner, narrow = false) => `${nav(active)}<main class="wra
 
 const stepper = (n) => '<ol class="stepper">' + ['Ủng hộ kênh', 'Vượt liên kết', 'Nhận key'].map((t, i) => `<li class="${i + 1 < n ? 'done' : i + 1 === n ? 'on' : ''}"><b>${i + 1 < n ? '✓' : i + 1}</b><span>${t}</span></li>`).join('') + '</ol>';
 
-// ---------- CHECKPOINT ----------
 export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
   const body = `<header class="nav"><a class="logo" href="/"><i></i>GETKEY&nbsp;DPICONFIG</a><span class="pill"><span class="dot"></span>Bảo vệ bởi Cloudflare</span></header>
@@ -36,7 +35,6 @@ export function renderCheckpoint(env, nonce, next = '/') {
   return layout('Xác minh', body, nonce, head);
 }
 
-// ---------- HOME ----------
 export function renderHome(env, error, notice, quota, nonce) {
   const used = quota ? quota.count : 0, limit = quota ? quota.limit : 12;
   const pct = Math.min(100, Math.round((used / limit) * 100));
@@ -61,7 +59,6 @@ export function renderHome(env, error, notice, quota, nonce) {
   return layout('Trang chủ', shell('home', inner), nonce);
 }
 
-// ---------- STEP 1 ----------
 export function renderStep1(env, nonce) {
   const inner = `${stepper(1)}<section class="card center"><h2>Ủng hộ kênh YouTube</h2><p class="muted mt">Mở kênh, xem qua nội dung rồi quay lại bấm xác nhận.</p>
 <a id="ytLink" class="btn btn-yt mt" href="${esc(env.YOUTUBE_CHANNEL_URL)}" target="_blank" rel="noopener noreferrer">▶ Mở kênh YouTube</a>
@@ -69,14 +66,12 @@ export function renderStep1(env, nonce) {
   return layout('Bước 1', shell('', inner, true) + `<script nonce="${nonce}">${STEP1_JS}</script>`, nonce);
 }
 
-// ---------- STEP 2 ----------
 export function renderStep2({ link, current, required, error }, nonce) {
   const inner = `${stepper(2)}${error ? `<div class="alert" role="alert">⚠ ${esc(error)}</div>` : ''}<section class="card center"><h2>Vượt liên kết (${current}/${required})</h2><p class="muted mt">Mở liên kết, hoàn thành các bước trên trang đó. Bạn sẽ được đưa về đây tự động, đừng đổi mạng hay trình duyệt giữa chừng.</p>
 <a class="btn btn-warn mt" href="${esc(link)}" target="_blank" rel="noopener noreferrer">Mở liên kết ↗</a></section>`;
   return layout('Bước 2', shell('', inner, true), nonce);
 }
 
-// ---------- SUCCESS ----------
 export function renderSuccess(key, duration, nonce) {
   const inner = `${stepper(4)}<section class="card center"><div class="badge-ok">✓</div><h2>Nhận key thành công</h2>
 <div class="keybox" id="keyText">${esc(key)}</div>
@@ -85,7 +80,6 @@ export function renderSuccess(key, duration, nonce) {
   return layout('Nhận key', shell('', inner, true), nonce);
 }
 
-// ---------- FAQ ----------
 export function renderFAQ(nonce) {
   const qa = [
     ['Key này dùng để làm gì?', 'Key dùng để kích hoạt ứng dụng DPIConfig. Hãy dán key vào ứng dụng theo hướng dẫn của kênh.'],
@@ -98,7 +92,6 @@ export function renderFAQ(nonce) {
   return layout('FAQ', shell('faq', inner), nonce);
 }
 
-// ---------- ADMIN ----------
 export function renderAdmin(nonce) {
   const inner = `<section class="card"><h2>Quản trị thông báo</h2><p class="muted mt">Nhập mật khẩu để tải và chỉnh sửa thông báo hiển thị ở trang chủ.</p>
 <label class="f" for="pw">Mật khẩu</label><div class="row"><input id="pw" type="password" autocomplete="current-password"><button id="loadBtn" class="btn btn-ghost" type="button" style="width:auto;white-space:nowrap">Tải</button></div>
@@ -110,7 +103,6 @@ export function renderAdmin(nonce) {
   return layout('Admin', shell('', inner, true) + `<script nonce="${nonce}">${ADMIN_JS}</script>`, nonce);
 }
 
-// ---------- ERROR ----------
 export function renderError(code, msg, nonce) {
   const inner = `<section class="card center" style="padding:44px 24px"><div class="errcode">${esc(code)}</div><h2 class="mt">${esc(msg)}</h2><a class="btn btn-primary mt" href="/" style="max-width:240px;margin-left:auto;margin-right:auto">Về trang chủ</a></section>`;
   return layout('Lỗi ' + code, shell('', inner, true), nonce);

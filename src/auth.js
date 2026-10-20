@@ -4,7 +4,6 @@ const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(
 const fromB64u = (s) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
 const hmacKey = (secret, usage) => crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [usage]);
 
-// Token có chữ ký HMAC: { ...data, exp }
 export async function signToken(data, secret) {
   const body = b64u(enc.encode(JSON.stringify(data)));
   const sig = await crypto.subtle.sign('HMAC', await hmacKey(secret, 'sign'), enc.encode(body));
@@ -24,7 +23,6 @@ export async function verifyToken(token, secret) {
   } catch { return null; }
 }
 
-// So sánh chuỗi theo kiểu constant-time (hash trước rồi so từng byte)
 export async function safeEqual(a, b) {
   const h = async (v) => new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(String(v ?? ''))));
   const [x, y] = await Promise.all([h(a), h(b)]);
@@ -43,7 +41,6 @@ export function setCookie(name, value, maxAge) {
   return name + '=' + value + '; Path=/; HttpOnly; SameSite=Lax; Max-Age=' + maxAge + '; Secure';
 }
 
-// IPv4 giữ nguyên, IPv6 gom về /64 (có xử lý dạng nén "::")
 export function normalizeIP(ip) {
   if (!ip) return 'local';
   if (!ip.includes(':')) return ip;
