@@ -14,22 +14,71 @@ const stepper = (n) => '<ol class="stepper">' + ['Vượt liên kết', 'Nhận 
 export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
   const body = `<header class="nav"><a class="logo" href="/"><i></i>GETKEY&nbsp;DPICONFIG</a><span class="pill"><span class="dot"></span>Bảo vệ bởi Cloudflare</span></header>
-<main class="wrap"><div class="cp" id="app" data-next="${esc(next)}">
-  <section>
-    <h1>Xác minh nhanh<br>trước khi vào <em>cửa hàng</em></h1>
-    <p class="lead" style="margin-left:0">Chúng tôi kiểm tra kết nối để chặn bot và spam. Thường chỉ mất vài giây.</p>
-    <div class="term" id="terminal"></div>
-    <div class="card">
-      <div class="ts"><div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"></div></div>
-      <p class="muted center" id="helpText">Nếu thấy ô <b>Verify you are human</b>, hãy bấm vào đó. Trang sẽ tự mở khi xác minh xong.</p>
-      <div class="err" id="errorBox" role="alert"></div>
-      <div class="trust-badges"><span><i></i>WAF Active</span><span><i></i>DDoS Shield</span><span><i></i>Bot Guard</span></div>
-    </div>
-  </section>
-  <aside>
-    <div class="card"><div class="dash-t">Thời gian xác minh</div><div class="dash-v" id="timer">0.00<small>s</small></div><div class="wave" id="wave" aria-hidden="true"></div></div>
-    <div class="card"><div class="radar"><div class="rd" aria-hidden="true"><i style="top:28%;left:68%"></i><i style="top:66%;left:30%"></i><i style="top:50%;left:20%"></i></div><div><b>Đang bảo vệ</b><p class="muted">WAF · Bot · DDoS</p></div></div></div>
-  </aside>
+<main class="wrap ckpt"><div class="ckpt-shell" id="app" data-next="${esc(next)}">
+  <div class="ckpt-brackets" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+  <div class="ckpt-grid">
+    <section class="ckpt-main">
+      <span class="eyebrow"><span class="dot"></span>Security Checkpoint · TLS 1.3</span>
+      <h1>Xác minh <em>kết nối</em><br>trước khi vào cửa hàng</h1>
+      <p class="lead">Chúng tôi kiểm tra kết nối để chặn bot và spam. Thường chỉ mất vài giây.</p>
+      <div class="verify-stages" aria-hidden="true">
+        <div class="stage active"><span>TLS</span></div>
+        <div class="stage"><span>Fingerprint</span></div>
+        <div class="stage"><span>Traffic</span></div>
+        <div class="stage"><span>Human</span></div>
+      </div>
+      <div class="term-shell">
+        <div class="term-bar"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span><code>~/checkpoint</code></div>
+        <div class="term" id="terminal"></div>
+      </div>
+      <div class="ts-wrap" id="tsWrap">
+        <div class="ts-inner">
+          <div class="ts"><div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired"></div></div>
+          <div class="ts-status" id="helpText">Nếu thấy ô <strong>Verify you are human</strong>, hãy bấm vào đó. Trang sẽ tự mở khi xác minh xong.</div>
+          <div class="err" id="errorBox" role="alert"></div>
+        </div>
+      </div>
+    </section>
+    <aside class="ckpt-side">
+      <div class="stat-card">
+        <div class="stat-label">Session</div>
+        <div class="stat-value" id="sessionId">#----·----</div>
+        <div class="stat-sub">IP masked · <b>VN</b></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Verification time</div>
+        <div class="stat-value" id="timer">0.00<small>s</small></div>
+        <div class="wave" id="wave" aria-hidden="true"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Live traffic</div>
+        <div class="spark" id="spark" aria-hidden="true"></div>
+        <div class="stat-sub"><b>~2.4 kB/s</b> · nominal</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Threats blocked · today</div>
+        <div class="stat-value" id="threats">1,247</div>
+        <div class="stat-sub"><span class="up">↑</span> live counter</div>
+      </div>
+      <div class="stat-card">
+        <div class="radar-mini">
+          <div class="rd-mini" aria-hidden="true"><i></i><i></i></div>
+          <div style="min-width:0">
+            <div class="stat-label" style="margin-bottom:2px">Status</div>
+            <div class="stat-value" style="font-size:15px;font-family:inherit">Protected</div>
+            <div class="stat-sub">WAF · Bot · DDoS</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <div class="ckpt-trust">
+    <span><i></i>WAF Active</span>
+    <span><i></i>DDoS Shield</span>
+    <span><i></i>Bot Guard</span>
+    <span><i></i>TLS 1.3</span>
+    <span><i></i>AES-256</span>
+  </div>
 </div></main>${foot()}
 <script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
   return layout('Xác minh', body, nonce, head);
