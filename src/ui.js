@@ -1,9 +1,16 @@
 import { CSS, COMMON_JS, CHECKPOINT_JS, JS_FX } from './assets.js';
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
+// TÍCH HỢP FAVICON (LOGO TRÊN TAB TRÌNH DUYỆT)
 function layout(title, body, nonce, head = '') {
-  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} · Zwic Apex</title><link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,800;0,900;1,900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body>
+  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>${esc(title)} · Zwic Apex</title>
+  <!-- Logo SVG thay thế cho icon quả địa cầu -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23e4e4e7' d='M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z'/%3E%3C/svg%3E">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,800;0,900;1,900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  <style>${CSS}</style>${head}</head><body>
 <div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
+<div class="shooting-star"></div><div class="shooting-star"></div><div class="shooting-star"></div>
 <canvas id="particle-canvas"></canvas>
 <div class="snow-layer"></div>
 <div class="snow-layer-2"></div>
@@ -58,7 +65,6 @@ export function renderCheckpoint(env, nonce, next = '/') {
     </div>
 
     <div class="split-cards">
-      <!-- DYNAMIC RADAR MINI -->
       <div class="mini-card">
         <div class="radar-mini-container">
           <svg class="radar-svg-mini" viewBox="0 0 60 60">
@@ -67,12 +73,10 @@ export function renderCheckpoint(env, nonce, next = '/') {
             <circle cx="30" cy="30" r="8" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
             <line x1="30" y1="2" x2="30" y2="58" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
             <line x1="2" y1="30" x2="58" y2="30" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-            
             <g class="radar-sweep-circle">
                <path d="M30 30 L30 2 A28 28 0 0 1 58 30 Z" fill="rgba(255,255,255,0.15)"/>
                <line x1="30" y1="30" x2="30" y2="2" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/>
             </g>
-            
             <circle cx="40" cy="20" r="2" fill="#fff" class="radar-ping" style="animation-delay: 0s"/>
             <circle cx="20" cy="45" r="2" fill="#fff" class="radar-ping" style="animation-delay: 0.7s"/>
           </svg>
@@ -84,7 +88,6 @@ export function renderCheckpoint(env, nonce, next = '/') {
         </div>
       </div>
       
-      <!-- DYNAMIC LINE CHART -->
       <div class="mini-card">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span style="font-size:11px;color:var(--muted)">Độ trễ tới edge</span>
@@ -116,7 +119,6 @@ export function renderCheckpoint(env, nonce, next = '/') {
         <p><strong>2</strong> Bật JavaScript và cookie, tạm tắt VPN hoặc trình chặn quảng cáo nếu có.</p>
       </div>
     </div>
-
   </div>
 </div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
   return layout('Trạm kiểm tra', body, nonce, head);

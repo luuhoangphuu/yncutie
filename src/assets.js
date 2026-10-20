@@ -1,10 +1,10 @@
 export const CSS = `
-:root{--bg:#050508;--card:rgba(20,20,25,.7);--border:rgba(255,255,255,.12);--text:#ffffff;--muted:#a1a1aa;--silver:#e4e4e7;--ok:#ffffff;color-scheme:dark}
+:root{--bg:#050508;--glass:rgba(20,20,25,.6);--border:rgba(255,255,255,.15);--text:#ffffff;--muted:#a1a1aa;--silver:#e4e4e7;--ok:#10b981;color-scheme:dark}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;position:relative}
 
 /* ═════════ BACKGROUND EFFECTS ═════════ */
-#particle-canvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.4}
+#particle-canvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.6}
 .aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .aurora-blob{position:absolute;width:800px;height:800px;border-radius:50%;filter:blur(120px);opacity:.1;background:radial-gradient(circle,var(--silver),transparent 60%);animation:aurora1 20s infinite ease-in-out alternate}
 .aurora-blob:nth-child(1){top:-20%;left:-10%}
@@ -17,19 +17,37 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .snow-layer-2 { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 3; background-image: radial-gradient(3px 3px at 10px 10px, #fff, rgba(0,0,0,0)), radial-gradient(3px 3px at 150px 150px, #fff, rgba(0,0,0,0)), radial-gradient(3px 3px at 250px 50px, #fff, rgba(0,0,0,0)); background-repeat: repeat; background-size: 300px 300px; animation: snowFall 15s linear infinite; opacity: 0.4; }
 @keyframes snowFall { 0% { background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px; } 100% { background-position: 200px 200px, 400px 400px, 600px 600px, 800px 800px, 1000px 1000px, 1200px 1200px; } }
 
+/* SHOOTING STARS */
+.shooting-star { position: fixed; top: -10%; left: -10%; width: 2px; height: 2px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px 2px rgba(255,255,255,0.8); z-index: 2; opacity: 0; animation: shoot 6s infinite linear; }
+.shooting-star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+.shooting-star:nth-child(2) { top: 30%; left: 80%; animation-delay: 2s; }
+.shooting-star:nth-child(3) { top: 50%; left: 50%; animation-delay: 4s; }
+@keyframes shoot { 0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 1; } 20% { transform: translateX(-300px) translateY(300px) rotate(-45deg); opacity: 0; } 100% { opacity: 0; } }
+
 /* ═════════ CORE UI ═════════ */
 a{color:inherit;text-decoration:none}
-.nav{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(16px,4vw,40px);background:rgba(5,5,8,.8);backdrop-filter:blur(30px);border-bottom:1px solid var(--border)}
+.nav{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(16px,4vw,40px);background:rgba(5,5,8,.6);backdrop-filter:blur(30px);border-bottom:1px solid var(--border)}
 .logo-container{display:flex;align-items:center;gap:12px;text-decoration:none}
 .logo-text{font-family:'Inter',sans-serif;font-weight:900;font-style:italic;font-size:24px;letter-spacing:-0.05em;background:linear-gradient(180deg,#ffffff 0%,#a1a1aa 100%);-webkit-background-clip:text;background-clip:text;color:transparent;position:relative;display:flex;align-items:center}
-.logo-text svg{width:20px;height:20px;fill:var(--silver);margin-left:4px;filter:drop-shadow(0 0 10px rgba(255,255,255,0.6))}
+.logo-text svg{width:22px;height:22px;fill:var(--silver);margin-left:4px;filter:drop-shadow(0 0 10px rgba(255,255,255,0.6))}
 .nav-links{display:flex;align-items:center;gap:6px}
 .nav-links a{color:var(--muted);font-size:14px;font-weight:700;padding:8px 16px;border-radius:10px;transition:.3s}
 .nav-links a:hover,.nav-links a.on{color:#fff;background:rgba(255,255,255,.1)}
 .wrap{position:relative;z-index:10;width:100%;max-width:1100px;margin:0 auto;padding:clamp(24px,5vw,48px) clamp(16px,4vw,24px);flex:1;perspective:1200px}
 .wrap.narrow{max-width:620px}
 
-/* ═════════ STEPPER ═════════ */
+/* ═════════ GLASS CARDS & MOBILE TOUCH RIPPLE ═════════ */
+.card{position:relative;background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:32px;backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);box-shadow:0 30px 60px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.15);transition:transform .2s cubic-bezier(.25,.46,.45,.94),border-color .3s;transform-style:preserve-3d;will-change:transform;overflow:hidden}
+.card:hover{border-color:rgba(255,255,255,.3)}
+.card::before{content:'';position:absolute;inset:0;border-radius:24px;background:radial-gradient(800px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.08),transparent 40%);opacity:0;transition:opacity .3s;pointer-events:none;z-index:0}
+.card:hover::before{opacity:1}
+.card>*{position:relative;z-index:1}
+
+/* Touch Ripple for Mobile */
+.touch-ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.4); transform: scale(0); animation: rippleEffect 0.6s linear; pointer-events: none; z-index: 99; }
+@keyframes rippleEffect { to { transform: scale(4); opacity: 0; } }
+
+/* ═════════ STEPPER (HOME) ═════════ */
 .stepper{display:flex;justify-content:space-between;align-items:flex-start;position:relative;margin-bottom:40px;max-width:700px;margin-left:auto;margin-right:auto;padding:0 20px;list-style:none;}
 .stepper::before{content:'';position:absolute;top:18px;left:40px;right:40px;height:2px;background:rgba(255,255,255,.1);z-index:0}
 .stepper li{flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:1;margin:0;padding:0;}
@@ -40,23 +58,25 @@ a{color:inherit;text-decoration:none}
 .stepper li.done b{background:var(--silver);border-color:var(--silver);color:#000;box-shadow:0 0 20px rgba(255,255,255,.4)}
 .stepper li.done span{color:#fff}
 
-/* ═════════ BUTTONS ═════════ */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:14px;font-size:15px;font-weight:900;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:inherit;}
+/* ═════════ BUTTONS (SHIMMER) ═════════ */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 24px;border-radius:16px;font-size:15px;font-weight:900;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:inherit;overflow:hidden}
 .btn-primary{width:100%;background:linear-gradient(135deg,#ffffff 0%,#e4e4e7 50%,#a1a1aa 100%);color:#050508;box-shadow:0 0 20px rgba(255,255,255,.2);min-height:54px;font-size:16px;}
+.btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);transform:skewX(-20deg);animation:shine 3s infinite}
+@keyframes shine{0%{left:-100%}20%{left:100%}100%{left:100%}}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(255,255,255,.4);}
 .btn-secondary{background:rgba(255,255,255,.05);color:#fff;border:1px solid var(--border);}
-.btn-secondary:hover{background:rgba(255,255,255,.1);border-color:var(--silver);}
+.btn-secondary:hover{background:rgba(255,255,255,.1);border-color:var(--silver);box-shadow:0 0 15px rgba(255,255,255,.2);}
 
-/* ═════════ SECURITY CHECKPOINT ═════════ */
+/* ═════════ SECURITY CHECKPOINT (SOC) ═════════ */
 .checkpoint-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:start}
 @media(max-width:900px){.checkpoint-layout{grid-template-columns:1fr}}
 
-.ckpt-left{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px;box-shadow:0 20px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.ckpt-left{background:var(--glass);border:1px solid var(--border);border-radius:24px;padding:40px;box-shadow:0 20px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px)}
 .eyebrow{display:flex;align-items:center;gap:10px;color:var(--silver);font-size:13px;font-weight:700;letter-spacing:.05em;margin-bottom:16px}
 .eyebrow::before{content:'';width:24px;height:2px;background:var(--silver);border-radius:2px;box-shadow:0 0 10px var(--silver)}
 .ckpt-left h1{font-size:clamp(32px,4vw,42px);font-weight:900;line-height:1.15;color:#fff;margin-bottom:16px;text-shadow:0 2px 10px rgba(0,0,0,.5)}
 .ckpt-left .lead{color:var(--muted);font-size:16px;margin-bottom:32px}
-.ts-box{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.4));border:1px solid var(--border);border-radius:16px;padding:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:32px;box-shadow:inset 0 2px 10px rgba(0,0,0,.8)}
+.ts-box{background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.4));border:1px solid var(--border);border-radius:16px;padding:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:32px;box-shadow:inset 0 2px 10px rgba(0,0,0,.8);transition:.4s}
 .ts-box.active{border-color:rgba(255,255,255,.6);box-shadow:inset 0 2px 10px rgba(0,0,0,.8), 0 0 20px rgba(255,255,255,.1)}
 .ts-box.success{border-color:rgba(255,255,255,.8);box-shadow:inset 0 2px 10px rgba(0,0,0,.8), 0 0 20px rgba(255,255,255,.2)}
 .ts-help{font-size:13px;color:var(--muted);text-align:center;margin-top:20px;line-height:1.6}
@@ -80,7 +100,7 @@ a{color:inherit;text-decoration:none}
 .status-header i{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 10px #fff;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
-.telemetry-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05)}
+.telemetry-card{background:var(--glass);border:1px solid var(--border);border-radius:20px;padding:24px;backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05)}
 .telemetry-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .telemetry-label{font-size:13px;color:var(--muted);font-weight:600}
 .telemetry-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:900;color:#fff;text-shadow:0 0 20px rgba(255,255,255,.3)}
@@ -92,7 +112,7 @@ a{color:inherit;text-decoration:none}
 
 /* DYNAMIC MINI CARDS */
 .split-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.mini-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05);overflow:hidden;position:relative}
+.mini-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05);overflow:hidden;position:relative;backdrop-filter:blur(20px)}
 .radar-mini-container{display:flex;align-items:center;gap:12px;position:relative;z-index:2}
 .radar-svg-mini{width:60px;height:60px;filter:drop-shadow(0 0 10px rgba(255,255,255,.2))}
 .radar-sweep-circle{transform-origin: 30px 30px;animation:spin 3s linear infinite}
@@ -118,15 +138,12 @@ a{color:inherit;text-decoration:none}
 .split-layout{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
 @media(max-width:850px){.split-layout{grid-template-columns:1fr;gap:24px}}
 h1.hero-title{font-size:clamp(32px,6vw,56px);font-weight:900;line-height:1.1;letter-spacing:-.04em;background:linear-gradient(180deg,#ffffff 0%,#a1a1aa 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 10px rgba(0,0,0,0.5))}
-.card{position:relative;background:var(--card);border:1px solid var(--border);border-radius:24px;padding:32px;backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);box-shadow:0 30px 60px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.1);transition:transform .2s, border-color .3s}
-.card:hover{border-color:rgba(255,255,255,.3)}
 .radio-group{display:flex;flex-direction:column;gap:12px;margin:20px 0}
 .radio-label{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:.3s;background:rgba(255,255,255,.02)}
 .radio-label:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.4);transform:translateX(4px)}
 .radio-label input{width:20px;height:20px;accent-color:var(--silver);cursor:pointer}
 .radio-label span{font-weight:800;font-size:15px;color:#fff}
 
-/* Link Grid Fix */
 .link-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
 .link-grid a{width:100%;}
 
@@ -145,11 +162,31 @@ window.__toast=function(msg,type){var t=document.createElement('div');t.style.cs
     function done(){if(navigator.vibrate)navigator.vibrate(30);window.__toast('Đã sao chép key');}
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){window.__toast('Lỗi')});}
   });
+
+  // Mobile Touch Ripple Effect
+  document.addEventListener('touchstart', function(e) {
+    if (e.target.closest('.btn, .card, .radio-label')) {
+      var el = e.target.closest('.btn, .card, .radio-label');
+      var rect = el.getBoundingClientRect();
+      var x = e.touches[0].clientX - rect.left;
+      var y = e.touches[0].clientY - rect.top;
+      var ripple = document.createElement('div');
+      ripple.className = 'touch-ripple';
+      ripple.style.left = x + 'px';
+      ripple.style.top = y + 'px';
+      ripple.style.width = ripple.style.height = Math.max(rect.width, rect.height) * 2 + 'px';
+      el.appendChild(ripple);
+      setTimeout(function(){ ripple.remove(); }, 600);
+    }
+  }, {passive: true});
+
+  // 3D Tilt cho PC
   if(matchMedia('(pointer:fine)').matches){
-    document.querySelectorAll('.card').forEach(function(card){
+    document.querySelectorAll('.card, .ckpt-left, .telemetry-card, .mini-card').forEach(function(card){
       card.addEventListener('mousemove',function(e){
         var r=card.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,cx=r.width/2,cy=r.height/2;
         card.style.transform='perspective(1000px) rotateX('+((y-cy)/cy)*-2+'deg) rotateY('+((x-cx)/cx)*2+'deg) translateZ(0)';
+        card.style.setProperty('--mx',x+'px'); card.style.setProperty('--my',y+'px');
       });
       card.addEventListener('mouseleave',function(){card.style.transform='';});
     });
@@ -163,10 +200,8 @@ export const CHECKPOINT_JS = `(function(){
   
   if(!timerEl)return;
   
-  // REAL TIMER (Chạy đến khi xác minh xong)
   var t0=performance.now(), tick=setInterval(function(){timerEl.innerHTML=((performance.now()-t0)/1000).toFixed(2)+'<small>s</small>';}, 50);
 
-  // DYNAMIC WAVE GRAPH
   var waves=document.querySelectorAll('.wave-bar');
   setInterval(function(){
     for(var i=0;i<waves.length;i++){
@@ -178,25 +213,19 @@ export const CHECKPOINT_JS = `(function(){
     }
   },150);
 
-  // DYNAMIC LINE CHART (Jitter)
   var linePath = document.querySelector('.line-path');
   var lineDot = document.querySelector('.line-dot');
   var points = [];
-  for(var k=0; k<=10; k++) points.push({x: k*10, y: 15}); // 10 points across 100px width
+  for(var k=0; k<=10; k++) points.push({x: k*10, y: 15});
 
   setInterval(function(){
     if(!linePath || !lineDot) return;
     var d = 'M ';
     for(var i=0; i<points.length; i++){
-      if(i>0) {
-        // Add random jitter to y-axis (between 5 and 25)
-        points[i].y = 15 + (Math.random() - 0.5) * 20;
-      }
+      if(i>0) points[i].y = 15 + (Math.random() - 0.5) * 20;
       d += points[i].x + ',' + points[i].y + ' ';
     }
     linePath.setAttribute('d', d);
-    
-    // Update dot position to the last point
     var last = points[points.length-1];
     lineDot.setAttribute('cx', last.x);
     lineDot.setAttribute('cy', last.y);
@@ -208,14 +237,9 @@ export const CHECKPOINT_JS = `(function(){
   window.onTurnstileSuccess=function(token){
     if(busy)return;busy=true;err.style.display='none';
     if(tsWrap)tsWrap.classList.add('active');
-    
-    // DỪNG ĐỒNG HỒ TẠI ĐÂY
     clearInterval(tick);
-    var finalTime = ((performance.now()-t0)/1000).toFixed(2);
-    timerEl.innerHTML = finalTime + '<small>s</small>';
-    
+    timerEl.innerHTML = ((performance.now()-t0)/1000).toFixed(2) + '<small>s</small>';
     help.innerHTML='<strong>Đang xác minh...</strong>';
-    
     if(steps[2]) steps[2].classList.add('active');
 
     fetch('/api/verify-bot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token})})
@@ -223,9 +247,7 @@ export const CHECKPOINT_JS = `(function(){
         if(d&&d.success){
           if(tsWrap){tsWrap.className='ts-box success'}
           help.innerHTML='<strong style="color:#fff">✓ Xác minh thành công! Đang chuyển hướng...</strong>';
-          
           for(var i=0;i<steps.length;i++){ steps[i].classList.remove('active'); steps[i].classList.add('done'); }
-          
           setTimeout(()=>location.href=next,600);
         }
         else fail((d&&d.error)||'Xác minh thất bại.');
@@ -245,7 +267,7 @@ export const JS_FX = `(function(){
         pw = pc.width = window.innerWidth;
         ph = pc.height = window.innerHeight;
         particles = [];
-        var count = window.innerWidth < 768 ? 30 : 70;
+        var count = window.innerWidth < 768 ? 30 : 80;
         for (var i = 0; i < count; i++) {
             particles.push({
                 x: Math.random() * pw,
@@ -266,7 +288,7 @@ export const JS_FX = `(function(){
             if (p.y < 0 || p.y > ph) p.vy *= -1;
             
             pctx.beginPath();
-            pctx.fillStyle = 'rgba(255,255,255,0.4)';
+            pctx.fillStyle = 'rgba(255,255,255,0.5)';
             pctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
             pctx.fill();
             
@@ -274,9 +296,9 @@ export const JS_FX = `(function(){
                 var p2 = particles[j];
                 var dx = p.x - p2.x, dy = p.y - p2.y;
                 var dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 130) {
+                if (dist < 150) {
                     pctx.beginPath();
-                    pctx.strokeStyle = 'rgba(255,255,255,' + (1 - dist/130) * 0.15 + ')';
+                    pctx.strokeStyle = 'rgba(255,255,255,' + (1 - dist/150) * 0.15 + ')';
                     pctx.lineWidth = 1;
                     pctx.moveTo(p.x, p.y);
                     pctx.lineTo(p2.x, p2.y);
