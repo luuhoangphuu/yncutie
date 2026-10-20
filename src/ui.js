@@ -3,7 +3,7 @@ export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&a
 
 function layout(title, body, nonce, head = '') {
   return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} · GetKey DPIConfig</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body>
-<div class="snow-layer"></div>
+<div class="snow-layer-1"></div>
 <div class="snow-layer-2"></div>
 <div class="bg-grid"></div>
 <div class="bg-glow"></div>
@@ -38,8 +38,13 @@ export function renderCheckpoint(env, nonce, next = '/') {
         <div class="timer-label">Thời gian xác minh</div>
         <div class="timer-val" id="timer">0.00<small>s</small></div>
       </div>
-      <div class="radar-box">
-        <div class="radar-circle"><div class="radar-dot"></div></div>
+      <div class="sphere-box">
+        <div class="sphere-container">
+          <div class="ring"><div class="orbit-dot"></div></div>
+          <div class="ring"><div class="orbit-dot white"></div></div>
+          <div class="ring"></div>
+          <div class="sphere-core"></div>
+        </div>
       </div>
     </aside>
   </div></div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
