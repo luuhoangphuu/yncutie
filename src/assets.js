@@ -155,6 +155,19 @@ h2{font-size:20px;font-weight:800;margin-bottom:16px;color:#fff;letter-spacing:-
 .hud-footer span{font-weight:600;}
 .hud-footer b{color:#fff; font-weight:700;}
 
+
+/* UX BUTTON DYNAMIC EFFECTS */
+.btn { position: relative; overflow: hidden; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s; }
+.btn::after {
+    content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,240,255,0.4), transparent);
+    transform: skewX(-25deg); animation: shineLoop 4s infinite; pointer-events: none;
+}
+.btn:hover::after { animation: shineLoop 1.5s infinite; }
+@keyframes shineLoop { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
+
+.btn-primary::after { background: linear-gradient(90deg, transparent, rgba(0,0,0,0.15), transparent); }
+
 /* FOOTER */
 .foot{position:relative;z-index:10;margin-top:auto;padding:32px;text-align:center;font-size:13px;color:var(--muted);border-top:1px solid var(--border);background:rgba(3,3,5,.8);backdrop-filter:blur(20px);font-weight:500}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
