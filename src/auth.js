@@ -22,7 +22,7 @@ export async function verifyTurnstile(token, ip, env) {
   try {
     const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secret: env.TURNSTILE_SECRET_KEY, response: token, remoteip: ip }) });
     const d = await r.json();
-    if (!d.success) return { success: false, error: d['error-codes'].includes('missing-input-secret') ? "LỖI: Thiếu Secret Key trên Cloudflare." : "Captcha không hợp lệ." };
+    if (!d.success) return { success: false, error: "Captcha không hợp lệ." };
     return { success: true };
   } catch { return { success: false, error: "Lỗi mạng." }; }
 }
