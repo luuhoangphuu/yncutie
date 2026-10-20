@@ -1,4 +1,4 @@
-import { CSS, COMMON_JS, CHECKPOINT_JS } from './assets.js';
+import { CSS, COMMON_JS, CHECKPOINT_JS, JS_FX } from './assets.js';
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function layout(title, body, nonce, head = '') {
@@ -9,8 +9,9 @@ function layout(title, body, nonce, head = '') {
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <style>${CSS}</style>${head}</head><body>
 <div class="bg-glow"></div><div class="bg-grid"></div><div class="spot"></div>
+<canvas id="snow-canvas" aria-hidden="true"></canvas>
 ${body}
-<script nonce="${nonce}">${COMMON_JS}</script></body></html>`;
+<script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
 }
 
 const logoHtml = `<a class="logo-text" href="/" aria-label="Zwic Apex"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>Zwic Apex</a>`;

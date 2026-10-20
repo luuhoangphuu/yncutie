@@ -41,6 +41,7 @@ a{color:inherit;text-decoration:none}
   background-size:64px 64px;
   -webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 0%,#000 20%,transparent 75%);
   mask-image:radial-gradient(ellipse 70% 55% at 50% 0%,#000 20%,transparent 75%)}
+#snow-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:20;pointer-events:none}
 .spot{position:fixed;inset:0;z-index:1;pointer-events:none;
   background:radial-gradient(420px circle at var(--px,50%) var(--py,-20%),rgba(255,255,255,.055),transparent 70%)}
 
@@ -343,6 +344,73 @@ export const CHECKPOINT_JS = `(function(){
   };
 })();`;
 
-// Lightweight, non-animated placeholder kept so existing imports keep working.
-// The old particle canvas was removed: it cost CPU/battery and fought the clean titanium look.
-export const JS_FX = `(function(){})();`;
+// Tuyết trắng rơi ngẫu nhiên: mỗi bông có tốc độ, kích thước, hướng gió và độ lắc riêng.
+export const JS_FX = `(function(){
+  try {
+    var c = document.getElementById('snow-canvas');
+    if (!c) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var ctx = c.getContext('2d');
+    var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var flakes = [], wind = 0, windTarget = 0, tick = 0, running = true;
+
+    function resize() {
+      W = window.innerWidth; H = window.innerHeight;
+      c.width = W * dpr; c.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.round(Math.min(160, Math.max(60, W / 9)));
+      while (flakes.length < n) flakes.push(make(true));
+      flakes.length = n;
+    }
+
+    function make(anywhere) {
+      var r = Math.random() * 2.6 + 0.8;
+      return {
+        x: Math.random() * W,
+        y: anywhere ? Math.random() * H : -10,
+        r: r,
+        vy: 0.35 + r * 0.38 + Math.random() * 0.5,      // bông to rơi nhanh hơn
+        vx: (Math.random() - 0.5) * 0.9,                 // trôi trái/phải ngẫu nhiên
+        sway: Math.random() * 1.2 + 0.2,                 // biên độ lắc
+        phase: Math.random() * Math.PI * 2,
+        spin: 0.004 + Math.random() * 0.016,
+        a: 0.45 + Math.random() * 0.5
+      };
+    }
+
+    function frame() {
+      if (!running) return;
+      tick++;
+      // gió đổi hướng từ từ, không theo quy luật
+      if (tick % 140 === 0) windTarget = (Math.random() - 0.5) * 2.4;
+      wind += (windTarget - wind) * 0.01;
+
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < flakes.length; i++) {
+        var f = flakes[i];
+        f.phase += f.spin;
+        f.x += f.vx + Math.sin(f.phase) * f.sway + wind * (f.r / 3);
+        f.y += f.vy;
+        if (f.y > H + 10 || f.x < -20 || f.x > W + 20) {
+          var n = make(false);
+          if (f.x < -20) n.x = W + 10; else if (f.x > W + 20) n.x = -10;
+          flakes[i] = n; continue;
+        }
+        var g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 2);
+        g.addColorStop(0, 'rgba(255,255,255,' + f.a + ')');
+        g.addColorStop(0.45, 'rgba(255,255,255,' + (f.a * 0.8) + ')');
+        g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(f.x, f.y, f.r * 2, 0, 6.2832); ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+
+    document.addEventListener('visibilitychange', function() {
+      running = !document.hidden;
+      if (running) requestAnimationFrame(frame);
+    });
+    window.addEventListener('resize', resize);
+    resize(); requestAnimationFrame(frame);
+  } catch (e) { console.warn('snow failed', e); }
+})();`;
