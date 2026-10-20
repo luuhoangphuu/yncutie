@@ -1,18 +1,25 @@
 export const CSS = `
 :root{--bg:#08080a;--card:rgba(20,20,24,.85);--border:rgba(255,255,255,.15);--text:#ffffff;--muted:#a1a1aa;--silver:#e4e4e7;--cyan:#22d3ee;--ok:#10b981;color-scheme:dark}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;position:relative}
 
-/* ═════════ BACKGROUND & SNOWFALL (Z-INDEX CHUẨN) ═════════ */
-#snow-canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;pointer-events:none}
+/* ═════════ PURE CSS SNOWFALL (CHẮC CHẮN BAY) ═════════ */
+.snow-layer{position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:1;background-image:radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),radial-gradient(2px 2px at 50px 160px, #fff, rgba(0,0,0,0)),radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),radial-gradient(2px 2px at 160px 120px, #fff, rgba(0,0,0,0));background-repeat:repeat;background-size:200px 200px;animation:snow1 10s linear infinite}
+.snow-layer-2{position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:2;background-image:radial-gradient(3px 3px at 10px 10px, rgba(255,255,255,0.8), rgba(0,0,0,0)),radial-gradient(3px 3px at 150px 150px, rgba(255,255,255,0.8), rgba(0,0,0,0)),radial-gradient(3px 3px at 250px 50px, rgba(255,255,255,0.8), rgba(0,0,0,0));background-repeat:repeat;background-size:300px 300px;animation:snow2 15s linear infinite}
+@keyframes snow1{0%{background-position:0 0,0 0,0 0,0 0,0 0,0 0}100%{background-position:200px 200px,400px 400px,600px 600px,800px 800px,1000px 1000px,1200px 1200px}}
+@keyframes snow2{0%{background-position:0 0,0 0,0 0}100%{background-position:300px 300px,600px 600px,900px 900px}}
+
+/* ═════════ BACKGROUND ═════════ */
 .bg-grid{position:fixed;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(circle at 50% 50%,#000 20%,transparent 80%);mask-image:radial-gradient(circle at 50% 50%,#000 20%,transparent 80%)}
-.bg-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:100vw;height:60vh;background:radial-gradient(ellipse at top,rgba(255,255,255,.08),transparent 70%);z-index:-1;pointer-events:none}
+.bg-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:100vw;height:60vh;background:radial-gradient(ellipse at top,rgba(255,255,255,.08),transparent 70%);z-index:-1;pointer-events:none;animation:pulseGlow 4s infinite alternate}
+@keyframes pulseGlow{0%{opacity:.6}100%{opacity:1}}
 
 /* ═════════ CORE UI ═════════ */
 a{color:inherit;text-decoration:none}
 .nav{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(16px,4vw,40px);background:rgba(8,8,10,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
 .logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.1em;font-size:15px;color:#fff}
-.logo i{width:14px;height:14px;border-radius:4px;background:linear-gradient(135deg,#fff,#71717a);box-shadow:0 0 20px rgba(255,255,255,.6)}
+.logo i{width:14px;height:14px;border-radius:4px;background:linear-gradient(135deg,#fff,#71717a);box-shadow:0 0 20px rgba(255,255,255,.6);animation:pulseIcon 2s infinite}
+@keyframes pulseIcon{0%,100%{box-shadow:0 0 10px rgba(255,255,255,.4)}50%{box-shadow:0 0 25px rgba(255,255,255,1)}}
 .nav-links{display:flex;align-items:center;gap:6px}
 .nav-links a{color:var(--muted);font-size:14px;font-weight:700;padding:8px 16px;border-radius:10px;transition:.3s}
 .nav-links a:hover,.nav-links a.on{color:#fff;background:rgba(255,255,255,.1)}
@@ -23,16 +30,18 @@ h1{font-size:clamp(28px,5vw,40px);font-weight:900;line-height:1.2;letter-spacing
 .lead{color:var(--muted);margin:12px 0 0;font-size:15px}
 .center{text-align:center}
 
-/* ═════════ TITANIUM CARDS ═════════ */
-.titan-card{background:linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(20,20,24,.95) 100%);border:1px solid var(--border);border-radius:24px;padding:24px;margin-bottom:20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 20px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);position:relative;transition:border-color .3s}
-.titan-card:hover{border-color:rgba(255,255,255,.4)}
+/* ═════════ TITANIUM CARDS (ĐỘNG) ═════════ */
+.titan-card{background:linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(20,20,24,.95) 100%);border:1px solid var(--border);border-radius:24px;padding:24px;margin-bottom:20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 20px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);position:relative;transition:transform .3s cubic-bezier(.25,.46,.45,.94),border-color .3s;transform-style:preserve-3d}
+.titan-card:hover{border-color:rgba(255,255,255,.5);box-shadow:0 30px 60px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.4),0 0 30px rgba(255,255,255,.05)}
 .titan-card h2{color:#fff;display:flex;align-items:center;gap:10px;font-size:20px;margin-bottom:16px;font-weight:800}
 .titan-box{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px;font-size:14px;line-height:1.7;color:var(--muted);margin-bottom:16px}
 .titan-box b{color:#fff}
 
-/* ═════════ BUTTONS ═════════ */
-.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 24px;border:0;border-radius:16px;font:inherit;font-weight:900;font-size:15px;color:#000;cursor:pointer;transition:all .2s;text-decoration:none;min-height:54px}
+/* ═════════ BUTTONS (SHIMMER EFFECT) ═════════ */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 24px;border:0;border-radius:16px;font:inherit;font-weight:900;font-size:15px;color:#000;cursor:pointer;transition:all .2s;text-decoration:none;min-height:54px;overflow:hidden}
 .btn-primary{background:linear-gradient(135deg,#ffffff 0%,#e4e4e7 50%,#a1a1aa 100%);color:#09090b;box-shadow:0 10px 20px -5px rgba(255,255,255,.2),inset 0 1px 0 #fff}
+.btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.8),transparent);transform:skewX(-20deg);animation:shine 3s infinite}
+@keyframes shine{0%{left:-100%}20%{left:100%}100%{left:100%}}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 15px 30px -5px rgba(255,255,255,.3),inset 0 1px 0 #fff}
 .btn-secondary{background:rgba(255,255,255,.05);color:#fff;border:1px solid var(--border)}
 .btn-secondary:hover{background:rgba(255,255,255,.1)}
@@ -43,12 +52,13 @@ h1{font-size:clamp(28px,5vw,40px);font-weight:900;line-height:1.2;letter-spacing
 .stepper li{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:1;list-style:none}
 .stepper li b{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#08080a;border:2px solid rgba(255,255,255,.2);color:var(--muted);font-size:14px;font-weight:800;transition:.3s}
 .stepper li span{font-size:12px;font-weight:800;color:var(--muted);transition:.3s}
-.stepper li.on b{border-color:#fff;color:#fff;box-shadow:0 0 15px rgba(255,255,255,.5)}
+.stepper li.on b{border-color:#fff;color:#fff;box-shadow:0 0 15px rgba(255,255,255,.5);animation:pulseBorder 2s infinite}
+@keyframes pulseBorder{0%,100%{box-shadow:0 0 10px rgba(255,255,255,.3)}50%{box-shadow:0 0 25px rgba(255,255,255,.8)}}
 .stepper li.on span{color:#fff}
 .stepper li.done b{background:#fff;border-color:#fff;color:#000}
 .stepper li.done span{color:#fff}
 
-/* ═════════ CHECKBOT PRO (CHUẨN LƯỚI) ═════════ */
+/* ═════════ CHECKBOT PRO ═════════ */
 .ckpt-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:stretch}
 @media(max-width:768px){.ckpt-grid{grid-template-columns:1fr}}
 .ckpt-left{display:flex;flex-direction:column;gap:16px}
@@ -70,30 +80,30 @@ h1{font-size:clamp(28px,5vw,40px);font-weight:900;line-height:1.2;letter-spacing
 .ts-status strong{color:#fff}
 .err{display:none;color:#ef4444;font-size:12px;margin-top:8px;text-align:center}
 
-/* ĐỒNG HỒ ĐẾM GIÂY (NỔI BẬT) */
 .timer-box{background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:16px;padding:24px 20px;text-align:center;box-shadow:inset 0 0 20px rgba(0,0,0,.5)}
 .timer-label{font-size:11px;font-weight:900;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
 .timer-val{font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 20px rgba(255,255,255,.4)}
 .timer-val small{font-size:16px;color:var(--muted)}
 
-/* RADAR QUAY */
 .radar-box{background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;align-items:center;justify-content:center;position:relative;height:140px;overflow:hidden;box-shadow:inset 0 0 20px rgba(0,0,0,.5)}
 .radar-circle{width:80px;height:80px;border-radius:50%;border:1px solid rgba(34,211,238,.3);position:relative;display:flex;align-items:center;justify-content:center}
 .radar-circle::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 70%,rgba(34,211,238,.5) 100%);animation:spin 2s linear infinite}
-.radar-dot{width:8px;height:8px;background:#22d3ee;border-radius:50%;box-shadow:0 0 10px #22d3ee}
+.radar-dot{width:8px;height:8px;background:#22d3ee;border-radius:50%;box-shadow:0 0 10px #22d3ee;animation:pulseDot 1s infinite}
+@keyframes pulseDot{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ═════════ FORM RADIO ═════════ */
 .radio-group{display:flex;flex-direction:column;gap:10px;margin:16px 0}
 .radio-label{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:.3s;background:rgba(255,255,255,.02)}
 .radio-label:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.3)}
-.radio-label input{width:18px;height:18px;accent-color:#fff}
+.radio-label input{width:18px;height:18px;accent-color:#fff;cursor:pointer}
 .radio-label span{font-weight:700;font-size:15px;color:#fff}
 
 /* ═════════ SUCCESS ═════════ */
-.badge-ok{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:grid;place-items:center;color:#fff;font-size:32px;font-weight:900;margin:0 auto 20px;box-shadow:0 0 40px rgba(16,185,129,.5),inset 0 2px 0 rgba(255,255,255,.5)}
+.badge-ok{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:grid;place-items:center;color:#fff;font-size:32px;font-weight:900;margin:0 auto 20px;box-shadow:0 0 40px rgba(16,185,129,.5),inset 0 2px 0 rgba(255,255,255,.5);animation:popBadge .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popBadge{0%{transform:scale(0)}100%{transform:scale(1)}}
 .keybox{margin:20px 0;padding:24px;border-radius:16px;border:1px dashed rgba(34,211,238,.5);background:rgba(34,211,238,.05);text-align:center;font-family:'JetBrains Mono',monospace;font-weight:800;font-size:22px;word-break:break-all;color:#22d3ee;cursor:pointer;transition:.3s}
-.keybox:hover{background:rgba(34,211,238,.1);border-color:#22d3ee}
+.keybox:hover{background:rgba(34,211,238,.1);border-color:#22d3ee;box-shadow:0 0 20px rgba(34,211,238,.2)}
 .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
 /* ═════════ MISC ═════════ */
@@ -111,6 +121,15 @@ window.__toast=function(msg,type){var t=document.createElement('div');t.style.cs
     function done(){if(navigator.vibrate)navigator.vibrate(30);window.__toast('Đã sao chép key','ok');}
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){window.__toast('Lỗi','bad')});}
   });
+  
+  // 3D Tilt cho thẻ Card
+  document.querySelectorAll('.titan-card').forEach(function(card){
+    card.addEventListener('mousemove',function(e){
+      var r=card.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,cx=r.width/2,cy=r.height/2;
+      card.style.transform='perspective(1000px) rotateX('+((y-cy)/cy)*-2+'deg) rotateY('+((x-cx)/cx)*2+'deg) translateZ(0)';
+    });
+    card.addEventListener('mouseleave',function(){card.style.transform='';});
+  });
 })();`;
 
 export const CHECKPOINT_JS = `(function(){
@@ -118,11 +137,9 @@ export const CHECKPOINT_JS = `(function(){
   var term=document.getElementById('terminal'),timerEl=document.getElementById('timer'),help=document.getElementById('helpText'),err=document.getElementById('errorBox'),tsWrap=document.getElementById('tsWrap');
   if(!term||!timerEl)return;
   
-  // Chạy log chữ
   var logs=['Khởi tạo kết nối bảo mật TLS 1.3...','Phân tích dấu vết trình duyệt...','Kiểm tra mẫu lưu lượng bất thường...','Đang chờ xác minh Captcha...'],li=0;
   (function print(){if(li>=logs.length)return;var d=document.createElement('div');d.textContent='> '+logs[li];if(li===3)d.className='ok';term.appendChild(d);li++;setTimeout(print,700);})();
   
-  // ĐỒNG HỒ ĐẾM (FIX)
   var t0=performance.now(),tick=setInterval(function(){timerEl.innerHTML=((performance.now()-t0)/1000).toFixed(2)+'<small>s</small>';},50);
   
   var busy=false;
@@ -141,58 +158,6 @@ export const CHECKPOINT_JS = `(function(){
 })();`;
 
 export const JS_FX = `(function(){
-  // TUYẾT RƠI TRẮNG (Dùng setTimeout/SétInterval để đảm bảo chạy 100%)
-  var canvas = document.createElement('canvas');
-  canvas.id = 'snow-canvas';
-  document.body.appendChild(canvas);
-  var ctx = canvas.getContext('2d');
-  var w, h;
-  var flakes = [];
-  
-  function resize() {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resize);
-  resize();
-  
-  for (var i = 0; i < 120; i++) {
-      flakes.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
-          r: Math.random() * 2 + 0.5, // Kích thước bông tuyết
-          d: Math.random() * 1 + 0.5, // Tốc độ rơi
-          a: Math.random() * 0.6 + 0.4 // Độ mờ
-      });
-  }
-  
-  function draw() {
-      ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = 'rgba(255,255,255,0.9)'; // Màu trắng tinh khiết
-      ctx.beginPath();
-      for (var i = 0; i < flakes.length; i++) {
-          var f = flakes[i];
-          ctx.moveTo(f.x, f.y);
-          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
-      }
-      ctx.fill();
-      update();
-  }
-  
-  function update() {
-      for (var i = 0; i < flakes.length; i++) {
-          var f = flakes[i];
-          f.y += Math.cos(f.d) + 1 + f.r / 2;
-          f.x += Math.sin(f.d) * 1.2; // Gió thổi
-          
-          if (f.y > h + 5) { 
-              f.x = Math.random() * w; 
-              f.y = -5; 
-          }
-          if (f.x > w + 5) f.x = -5;
-          if (f.x < -5) f.x = w + 5;
-      }
-  }
-  
-  setInterval(draw, 33); // ~30 FPS
+  // Không cần JS tạo tuyết vì đã dùng Pure CSS
+  // Tự động thêm 3D tilt cho thẻ card (nếu chưa có)
 })();`;
