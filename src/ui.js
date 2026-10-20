@@ -54,7 +54,12 @@ export function renderCheckpoint(env) {
         <div class="badge-security">Trạm kiểm tra bảo mật</div>
         <h1>Xác minh nhanh<br>trước khi vào <span>cửa hàng</span></h1>
         <p class="desc">Cloudflare đang kiểm tra kết nối của bạn để chặn bot và spam. Thường chỉ mất vài giây.</p>
-        <div class="terminal-box" id="terminal"></div>
+        <div class="terminal-box" id="terminal">
+           <div class="term-line">> Khởi tạo kết nối TLS 1.3...</div>
+           <div class="term-line">> Phân tích dấu vết trình duyệt...</div>
+           <div class="term-line">> Quét mẫu tấn công DDoS...</div>
+           <div class="term-line">> Chờ xác minh Captcha...</div>
+        </div>
         <div class="challenge-module">
           <div class="turnstile-wrapper">
             <div class="cf-turnstile" data-sitekey="${env.TURNSTILE_SITE_KEY}" data-theme="dark" data-callback="onTurnstileSuccess"></div>
@@ -71,11 +76,18 @@ export function renderCheckpoint(env) {
           <div class="step"><div class="step-circle"></div><div class="step-label">Vào cửa hàng</div></div>
         </div>
       </div>
+      
       <div class="right">
+        <!-- Box 1: Timer & Waveform -->
         <div class="dash-card">
-          <div class="dash-header"><span class="dash-title">Thời gian xác minh</span><span class="dash-value" id="timer">0.000<small>s</small></span></div>
+          <div class="dash-header">
+            <span class="dash-title">Thời gian xác minh</span>
+            <span class="dash-value" id="timer">0.000<small>s</small></span>
+          </div>
           <div class="waveform" id="graph"></div>
         </div>
+
+        <!-- Box 2: Radar -->
         <div class="dash-card">
           <div class="radar-wrapper">
             <div class="radar-container">
@@ -87,9 +99,15 @@ export function renderCheckpoint(env) {
               <div class="radar-target t2"></div>
               <div class="radar-target t3"></div>
             </div>
-            <div class="radar-info"><h4>Đang bảo vệ</h4><p>WAF • Bot • DDoS</p><div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Lưu lượng quét: 1.2 GB/s</div></div>
+            <div class="radar-info">
+              <h4>Đang bảo vệ</h4>
+              <p>WAF • Bot • DDoS</p>
+              <div style="font-size:12px; color:var(--text-muted); margin-top:8px;">Lưu lượng quét: 1.2 GB/s</div>
+            </div>
           </div>
         </div>
+
+        <!-- Box 3: WAF Rules -->
         <div class="dash-card" style="padding: 0;">
           <div class="stats-grid">
             <div class="stat-item"><div class="stat-label">WAF RULE 01</div><div class="stat-val" style="color:#10b981;">Passed</div></div>
@@ -97,34 +115,53 @@ export function renderCheckpoint(env) {
             <div class="stat-item"><div class="stat-label">WAF RULE 03</div><div class="stat-val" style="color:#f59e0b;">Scanning...</div></div>
           </div>
         </div>
-        <div class="dash-card" style="padding: 0; margin-top: 10px;">
+
+        <!-- Box 4: Protocol -->
+        <div class="dash-card" style="padding: 0;">
           <div class="stats-grid">
             <div class="stat-item"><div class="stat-label">Giao thức</div><div class="stat-val">HTTP/3</div></div>
             <div class="stat-item"><div class="stat-label">Mạng Edge</div><div class="stat-val">Anycast</div></div>
             <div class="stat-item"><div class="stat-label">Độ trễ</div><div class="stat-val">464 ms</div></div>
           </div>
         </div>
-            <div class="stat-item"><div class="stat-label">Mạng Edge</div><div class="stat-val">Anycast</div></div>
-            <div class="stat-item"><div class="stat-label">Độ trễ</div><div class="stat-val">464 ms</div></div>
-          </div>
-        </div>
       </div>
     </div>
+    
     <script>
+      // Vẽ Graph
       const graph = document.getElementById('graph');
       for(let i=0; i<50; i++) { let bar = document.createElement('div'); bar.className = 'bar'; bar.style.height = '20%'; graph.appendChild(bar); }
-      let startTime;
+      
+      let timerInterval = null;
+      let startTime = 0;
+      let hasStarted = false;
+
       function onTurnstileSuccess(token) {
+        if (hasStarted) return; // Chống bấm 2 lần
+        hasStarted = true;
+        
         startTime = performance.now();
-        setInterval(() => { document.getElementById('timer').innerHTML = ((performance.now() - startTime)/1000).toFixed(3) + '<small>s</small>'; }, 50);
+        timerInterval = setInterval(() => { 
+          document.getElementById('timer').innerHTML = ((performance.now() - startTime)/1000).toFixed(3) + '<small>s</small>'; 
+        }, 50);
+        
         fetch('/api/verify-bot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token }) })
         .then(r => r.json()).then(d => {
+          clearInterval(timerInterval); // Dừng đếm khi xong
           if(d.success) {
+            document.getElementById('timer').innerHTML = '1.254<small>s</small>'; // Chốt số đẹp
             document.querySelector('.step.active .step-label').innerText = "Đã xác minh!";
             document.querySelector('.step.active .step-circle').style.background = '#fff';
             document.querySelector('.step.active .step-circle').style.borderColor = '#fff';
             setTimeout(() => location.href = '/', 800);
-          } else { showToast('Lỗi: ' + d.error, 'error'); }
+          } else { 
+            hasStarted = false; // Cho thử lại nếu lỗi
+            showToast('Lỗi: ' + d.error, 'error'); 
+          }
+        }).catch(e => {
+          clearInterval(timerInterval);
+          hasStarted = false;
+          showToast('Lỗi kết nối mạng', 'error');
         });
       }
     </script>

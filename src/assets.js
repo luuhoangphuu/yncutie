@@ -22,7 +22,7 @@ h1 { font-size: 54px; font-weight: 800; line-height: 1.05; margin-bottom: 24px; 
 h1 span { background: var(--metal); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .desc { font-size: 16px; line-height: 1.7; color: var(--text-muted); margin-bottom: 40px; font-weight: 500; max-width: 90%; }
 .terminal-box { background: #000; border-radius: 16px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #fff; height: 160px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.02); position: relative; border: 1px solid var(--border); }
-.terminal-box::before { content: 'root@titanium:~#'; color: #fff; display: block; margin-bottom: 10px; font-weight: bold; opacity: 0.8; }
+.terminal-box::before { content: '> Hệ thống bảo mật Cloudflare'; color: #fff; display: block; margin-bottom: 10px; font-weight: bold; opacity: 0.8; }
 .term-line { margin-bottom: 6px; opacity: 0; animation: typeIn 0.3s forwards; color: #a1a1aa; }
 @keyframes typeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 .challenge-module { background: rgba(24, 24, 27, 0.6); backdrop-filter: blur(20px); border-radius: 24px; padding: 40px; box-shadow: 0 24px 60px -12px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.1); position: relative; overflow: hidden; }
@@ -69,8 +69,9 @@ h1 span { background: var(--metal); -webkit-background-clip: text; background-cl
 .radar-info h4 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
 .radar-info p { font-size: 13px; font-weight: 600; color: #a1a1aa; }
 
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; }
-.stat-item { background: #111; padding: 20px; text-align: center; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
+.stat-item { background: #111; padding: 20px 10px; text-align: center; transition: 0.3s; }
+.stat-item:hover { background: #1a1a1f; }
 .stat-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
 .stat-val { font-size: 15px; font-weight: 800; color: #fff; }
 `;
