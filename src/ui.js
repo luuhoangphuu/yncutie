@@ -10,6 +10,7 @@ function layout(title, body, nonce, head = '') {
 <div class="cursor-dot"></div><div class="cursor-ring"></div>
 <div class="cyber-grid"></div><div class="aurora"><div class="aurora-blob"></div><div class="aurora-blob"></div></div>
 <div class="snow-layer"></div>
+<div class="snow-layer-2"></div>
 <canvas id="particle-canvas"></canvas>
 ${body}
 <script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
@@ -24,6 +25,7 @@ export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
   const body = `${nav('')}<main class="wrap"><div class="checkpoint-layout" id="app" data-next="${esc(next)}">
   
+  <!-- LEFT PANEL: VERIFICATION -->
   <div class="panel">
     <h1 class="panel-title">Xác minh kết nối</h1>
     <p class="panel-sub">Hệ thống AI đang kiểm tra kết nối để chặn bot và spam tự động.</p>
@@ -35,29 +37,38 @@ export function renderCheckpoint(env, nonce, next = '/') {
     <p class="ts-help" id="helpText">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</p>
   </div>
 
-  <div class="telemetry-grid">
-    <div class="telemetry-card">
-      <span class="telemetry-label">Thời gian xác minh</span>
-      <span class="telemetry-value" id="timer">0.00<small>s</small></span>
-      <div class="wave-graph">${Array(30).fill('<div class="wave-bar"></div>').join('')}</div>
-    </div>
-
-    <div class="split-cards">
-      <div class="mini-card">
-        <div style="display:flex;align-items:center;gap:12px">
-          <svg class="radar-svg-mini" viewBox="0 0 60 60">
-            <circle cx="30" cy="30" r="28" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-            <circle cx="30" cy="30" r="18" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-            <circle cx="30" cy="30" r="8" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-            <g class="radar-sweep-circle"><path d="M30 30 L30 2 A28 28 0 0 1 58 30 Z" fill="rgba(0,240,255,0.15)"/><line x1="30" y1="30" x2="30" y2="2" stroke="var(--accent)" stroke-width="1.5"/></g>
-          </svg>
-          <div><div style="font-size:10px;color:var(--muted);font-weight:700">LƯU LƯỢNG</div><div style="font-size:13px;color:#fff;font-weight:700">Bảo vệ</div></div>
+  <!-- RIGHT PANEL: COMMAND HUD -->
+  <div class="hud-container">
+    <div class="hud-header">
+      <div>
+        <div class="hud-label">Thời gian xác minh</div>
+        <div class="hud-value" id="timer">0.00<small style="font-size:16px;color:var(--muted)">s</small></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="hud-label">Trạng thái</div>
+        <div style="font-size:14px; font-weight:700; color:var(--accent); display:flex; align-items:center; gap:8px; justify-content:flex-end;">
+          <span style="width:8px;height:8px;background:var(--accent);border-radius:50%;box-shadow:0 0 10px var(--accent);"></span> LIVE
         </div>
       </div>
+    </div>
+
+    <div class="hud-mid">
+      <div class="hud-mini">
+        <div class="hud-label" style="text-align:center;margin-bottom:12px;">Radar quét</div>
+        <svg class="radar-svg" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="38" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+          <circle cx="40" cy="40" r="25" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+          <circle cx="40" cy="40" r="12" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+          <line x1="40" y1="2" x2="40" y2="78" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+          <line x1="2" y1="40" x2="78" y2="40" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+          <g class="radar-sweep"><path d="M40 40 L40 2 A38 38 0 0 1 78 40 Z" fill="rgba(0,240,255,0.15)"/><line x1="40" y1="40" x2="40" y2="2" stroke="var(--accent)" stroke-width="2"/></g>
+          <circle cx="55" cy="25" r="2" fill="#fff" style="animation:pulse 2s infinite;"/>
+        </svg>
+      </div>
       
-      <div class="mini-card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <span style="font-size:10px;color:var(--muted);font-weight:700">ĐỘ TRỄ</span><span style="font-size:13px;color:#fff;font-weight:700">316 ms</span>
+      <div class="hud-mini">
+        <div class="hud-label" style="display:flex;justify-content:space-between;">
+          <span>Độ trễ mạng</span><span style="color:#fff;">24ms</span>
         </div>
         <div class="line-chart-container">
           <svg class="line-chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none"><path class="line-path" d="M0,15 L10,15 L20,15 L30,15 L40,15 L50,15 L60,15 L70,15 L80,15 L90,15 L100,15" /><circle class="line-dot" cx="100" cy="15" r="2" /></svg>
@@ -65,20 +76,9 @@ export function renderCheckpoint(env, nonce, next = '/') {
       </div>
     </div>
 
-    <div class="telemetry-card">
-      <span class="telemetry-label">Trạng thái kết nối</span>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-         <div style="font-size: 13px; color: var(--muted);">Giao thức</div>
-         <div style="font-size: 14px; font-weight: 700; color: #fff;">HTTP/2</div>
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-         <div style="font-size: 13px; color: var(--muted);">Mạng Edge</div>
-         <div style="font-size: 14px; font-weight: 700; color: #fff;">Anycast</div>
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-         <div style="font-size: 13px; color: var(--muted);">Bảo vệ</div>
-         <div style="font-size: 14px; font-weight: 700; color: var(--accent);">Cloudflare WAF</div>
-      </div>
+    <div class="hud-footer">
+      <div>Giao thức: <b>HTTP/2</b></div>
+      <div>Bảo vệ: <b>Cloudflare WAF</b></div>
     </div>
   </div>
 </div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
@@ -86,44 +86,110 @@ export function renderCheckpoint(env, nonce, next = '/') {
 }
 
 export function renderHome(env, error, notice, quota, nonce) {
-  const inner = `${error ? `<div class="bento-item" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:600;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
-<div>
-  <h1 class="hero-title scramble">Zwic Apex</h1>
-  <p class="hero-sub">Hệ thống cấp phát key tự động, bảo mật đa tầng. Trải nghiệm đỉnh cao của sự mượt mà.</p>
-</div>
-
-<div class="bento-grid">
-  <div class="bento-item col-span-2">
-    <h2>Chọn loại Key</h2>
-    <form method="POST" action="/start">
-      <div class="radio-group">
-        <label class="radio-label"><input type="radio" name="tier" value="Normal" checked><span>Key Normal (Cơ bản)</span></label>
-        <label class="radio-label"><input type="radio" name="tier" value="VIP"><span>Key VIP (Ưu tiên)</span></label>
-      </div>
-      <button type="submit" class="btn btn-primary">Get Key Now</button>
-    </form>
+  const inner = `
+  <div class="modal-overlay" id="noticeModal">
+    <div class="modal-content">
+      <div class="modal-header"><span>THÔNG BÁO QUAN TRỌNG</span><button class="modal-close">×</button></div>
+      <div class="modal-body">© Bản quyền thuộc về Zwic Apex.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n\n🔥 Liên hệ Zalo: 0996492296\n📺 Hoặc qua kênh YouTube chính thức.</div>
+      <button class="modal-btn">Đã hiểu</button>
+    </div>
   </div>
+
+  ${error ? `<div class="bento-item" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:600;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
   
-  <div class="bento-item">
-    <h2>Bảng giá</h2>
-    <div style="background:rgba(0,0,0,.4);border-radius:16px;padding:20px;margin-bottom:12px;border:1px solid var(--border)">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:4px">Gói 1 Ngày</p>
-      <p style="font-size:24px;font-weight:800;color:#fff">10k</p>
-    </div>
-    <div style="background:rgba(0,0,0,.4);border-radius:16px;padding:20px;border:1px solid var(--border)">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:4px">Gói 7 Ngày</p>
-      <p style="font-size:24px;font-weight:800;color:#fff">50k</p>
-    </div>
+  <div>
+    <h1 class="hero-title scramble">Zwic Apex</h1>
+    <p class="hero-sub">Hệ thống cấp phát key tự động, bảo mật đa tầng. Trải nghiệm đỉnh cao của sự mượt mà.</p>
   </div>
 
-  <div class="bento-item">
-    <h2>Hỗ trợ</h2>
-    <div style="display:flex;flex-direction:column;gap:12px">
-      <a href="https://zalo.me/0996492296" class="btn btn-secondary">Zalo Support</a>
-      <a href="${esc(env.YOUTUBE_CHANNEL_URL || 'https://youtube.com/@zwicxsharereg')}" class="btn btn-secondary">YouTube</a>
+  <div class="bento-grid">
+    <div class="bento-item col-span-2">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="margin:0">Lấy key miễn phí</h2>
+      </div>
+      <a href="https://t.me/" class="btn btn-tele" target="_blank" style="margin-bottom:24px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.8-.27-1.44-.41-1.39-.87.03-.24.36-.49 1.01-.75 3.96-1.73 6.6-2.87 7.92-3.42 3.77-1.57 4.55-1.84 5.06-1.85.11 0 .36.03.49.13.13.1.17.24.16.37z"/></svg>
+        Tham gia Telegram
+      </a>
+
+      <div class="stepper-wrap">
+        <div class="step active"><div class="step-num">1</div><span>Chọn key</span></div>
+        <div class="step"><div class="step-num">2</div><span>Vượt link</span></div>
+        <div class="step"><div class="step-num">3</div><span>Xác thực</span></div>
+        <div class="step"><div class="step-num">4</div><span>Nhận key</span></div>
+      </div>
+
+      <div style="background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:16px; padding:20px;">
+        <form method="POST" action="/start">
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="tier" value="Normal" checked><span>Key Normal (Cơ bản)</span></label>
+            <label class="radio-label"><input type="radio" name="tier" value="VIP"><span>Key VIP (Ưu tiên)</span></label>
+          </div>
+          <button type="submit" class="btn btn-primary">Get Key</button>
+        </form>
+      </div>
     </div>
-  </div>
-</div>`;
+    
+    <div class="bento-item">
+      <h2>Thiết bị hiện tại</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Theo dõi nhanh lượt nhận key trong hôm nay</p>
+      <div class="quota-grid">
+        <div class="quota-item"><p>Tên Key</p><b>Customs</b></div>
+        <div class="quota-item"><p>Còn lại</p><b style="color:var(--accent)">5</b></div>
+        <div class="quota-item"><p>Thành công</p><b>0</b></div>
+        <div class="quota-item"><p>Lần gần nhất</p><b style="font-size:14px">Chưa có</b></div>
+      </div>
+    </div>
+
+    <div class="bento-item">
+      <h2>Thông tin & Bảng giá</h2>
+      <div style="background:rgba(0,0,0,.3);border-radius:16px;padding:16px;margin-bottom:16px;border:1px solid var(--border)">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-size:13px;font-weight:600;border-bottom:1px dashed rgba(255,255,255,.1)"><span>Key 1 ngày</span><span style="color:#fff">10k</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-size:13px;font-weight:600;border-bottom:1px dashed rgba(255,255,255,.1)"><span>Key 7 ngày</span><span style="color:#fff">50k</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-size:13px;font-weight:600;"><span>Key 30 ngày</span><span style="color:#fff">150k</span></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="https://zalo.me/0996492296" class="btn btn-secondary" style="min-height:44px;font-size:13px;">Zalo Support</a>
+        <a href="${esc(env.YOUTUBE_CHANNEL_URL || 'https://youtube.com/@zwicxsharereg')}" class="btn btn-secondary" style="min-height:44px;font-size:13px;">YouTube Channel</a>
+      </div>
+    </div>
+
+    <div class="bento-item col-span-4">
+      <h2 style="margin-bottom:16px">📥 Tải ứng dụng</h2>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Chọn đúng bản và đọc ghi chú trước khi tải.</p>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div class="app-card">
+          <div style="display:flex;gap:16px;margin-bottom:16px">
+            <div class="app-icon">PR</div>
+            <div><h3 style="color:#fff;font-size:16px;margin-bottom:2px">App Proxy V1.3 🍎</h3><p class="app-warning">⚠ Lưu ý!</p></div>
+          </div>
+          <ul class="app-list">
+            <li>- Sử dụng Free Fire Max / Normal CHPlay</li>
+            <li>- Sử dụng một cách thông minh</li>
+            <li>- Không lạm dụng chức năng quá đà</li>
+            <li>- Sử dụng duy nhất ESP sẽ anti hơn</li>
+            <li>- Tự thêm domain block nếu cảm thấy nó sẽ anti hơn</li>
+          </ul>
+          <a href="#" class="btn btn-download" style="margin-top:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Tải Xuống</a>
+        </div>
+
+        <div class="app-card">
+          <div style="display:flex;gap:16px;margin-bottom:16px">
+            <div class="app-icon">EX</div>
+            <div><h3 style="color:#fff;font-size:16px;margin-bottom:2px">App External - Root - Fix</h3><p class="app-warning">‼ Đã fix "Lỗi ứng dụng chưa cài đặt"</p></div>
+          </div>
+          <p style="color:#f59e0b;font-size:12px;font-weight:700;margin-bottom:12px">⚠ Lưu ý!</p>
+          <ul class="app-list">
+            <li>- Sử dụng Free Fire Max CHPlay ver 2.132.x</li>
+            <li>- Menu root</li>
+            <li>- Sài chức năng cẩn thận đặc biệt là Aim</li>
+          </ul>
+          <a href="#" class="btn btn-download" style="margin-top:auto"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg> Tải Xuống</a>
+        </div>
+      </div>
+    </div>
+  </div>`;
   return layout('Trang chủ', shell('home', inner));
 }
 
@@ -131,7 +197,13 @@ export function renderStep({ link, current, required, error }, nonce) {
   const isVip = required > 1;
   const inner = `${error ? `<div class="bento-item" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:600;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
 <div class="panel" style="max-width:600px;margin:0 auto;text-align:center">
-  <h2 style="font-size:32px;font-weight:800;margin-bottom:20px" class="scramble">${isVip ? 'Vượt link VIP' : 'Vượt link'} (${current}/${required})</h2>
+  <div class="stepper-wrap" style="max-width:400px;margin:0 auto 32px">
+    <div class="step done"><div class="step-num">✓</div><span>Chọn key</span></div>
+    <div class="step active"><div class="step-num">2</div><span>Vượt link</span></div>
+    <div class="step"><div class="step-num">3</div><span>Xác thực</span></div>
+    <div class="step"><div class="step-num">4</div><span>Nhận key</span></div>
+  </div>
+  <h2 style="font-size:28px;font-weight:800;margin-bottom:16px" class="scramble">${isVip ? 'Vượt link VIP' : 'Vượt link'} (${current}/${required})</h2>
   <p style="color:var(--muted);font-size:15px;margin-bottom:40px">Hoàn thành bước xác minh để nhận key.</p>
   <a class="btn btn-primary" href="${esc(link)}" target="_blank" rel="noopener noreferrer" id="openBtn">Mở liên kết ngay ↗</a>
 </div>`;
@@ -141,6 +213,12 @@ export function renderStep({ link, current, required, error }, nonce) {
 export function renderSuccess(key, duration, tier, nonce) {
   const t = tier || 'Normal';
   const inner = `<div class="panel" style="max-width:600px;margin:0 auto;padding:60px 40px;text-align:center">
+  <div class="stepper-wrap" style="max-width:400px;margin:0 auto 32px">
+    <div class="step done"><div class="step-num">✓</div><span>Chọn key</span></div>
+    <div class="step done"><div class="step-num">✓</div><span>Vượt link</span></div>
+    <div class="step done"><div class="step-num">✓</div><span>Xác thực</span></div>
+    <div class="step done"><div class="step-num">✓</div><span>Nhận key</span></div>
+  </div>
   <h2 style="font-size:32px;font-weight:800;margin-bottom:16px" class="scramble">Giao dịch hoàn tất</h2>
   <p style="color:var(--muted);margin-bottom:32px">Key của bạn đã sẵn sàng.</p>
   <div class="keybox" id="keyText" style="margin-bottom:32px;padding:32px;border-radius:24px;border:1px solid var(--border);background:rgba(255,255,255,.05);text-align:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:24px;word-break:break-all;color:#fff;cursor:pointer;box-shadow:inset 0 0 40px rgba(0,0,0,.8)">${esc(key)}</div>
