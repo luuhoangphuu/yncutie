@@ -24,7 +24,7 @@ export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
   const body = `${nav('')}<main class="wrap"><div class="checkpoint-layout" id="app" data-next="${esc(next)}">
   
-  <div class="panel">
+  <div class="panel reveal">
     <h1 class="panel-title">Xác minh kết nối</h1>
     <p class="panel-sub">Hệ thống AI đang kiểm tra kết nối để chặn bot và spam tự động.</p>
     <div class="ts-box" id="tsWrap">
@@ -34,7 +34,7 @@ export function renderCheckpoint(env, nonce, next = '/') {
     <p class="ts-help" id="helpText">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</p>
   </div>
 
-  <div class="hud-container">
+  <div class="hud-container reveal">
     <div class="hud-header">
       <div>
         <div class="hud-label">Thời gian xác minh</div>
@@ -82,24 +82,26 @@ export function renderCheckpoint(env, nonce, next = '/') {
 }
 
 export function renderHome(env, error, notice, quota, nonce) {
-  const inner = `
+  const noticeHtml = (notice && notice.enabled) ? `
   <div class="modal-overlay" id="noticeModal">
     <div class="modal-content">
-      <div class="modal-header"><span>THÔNG BÁO QUAN TRỌNG</span><button class="modal-close">×</button></div>
-      <div class="modal-body">© Bản quyền thuộc về Zwic Apex.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n\n🔥 Liên hệ Zalo: 0996492296\n📺 Hoặc qua kênh YouTube chính thức.</div>
+      <div class="modal-header"><span>${esc(notice.title || 'THÔNG BÁO')}</span><button class="modal-close">×</button></div>
+      <div class="modal-body">${esc(notice.content || '')}</div>
       <button class="modal-btn">Đã hiểu</button>
     </div>
-  </div>
+  </div>` : '';
 
-  ${error ? `<div class="bento-item" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:600;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
+  const inner = `
+  ${noticeHtml}
+  ${error ? `<div class="bento-item reveal" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:600;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
   
-  <div>
+  <div class="reveal">
     <h1 class="hero-title scramble">Zwic Apex</h1>
-    <p class="hero-sub">Hệ thống cấp phát key tự động, bảo mật đa tầng. Trải nghiệm đỉnh cao của sự mượt mà.</p>
+    <p class="hero-sub typewriter" data-text="Hệ thống cấp phát key tự động, bảo mật đa tầng. Trải nghiệm đỉnh cao của sự mượt mà."></p>
   </div>
 
   <div class="bento-grid">
-    <div class="bento-item col-span-2">
+    <div class="bento-item col-span-2 reveal">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <h2 style="margin:0">Lấy key miễn phí</h2>
       </div>
@@ -126,7 +128,7 @@ export function renderHome(env, error, notice, quota, nonce) {
       </div>
     </div>
     
-    <div class="bento-item">
+    <div class="bento-item reveal">
       <h2>Thiết bị hiện tại</h2>
       <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Theo dõi nhanh lượt nhận key trong hôm nay</p>
       <div class="quota-grid">
@@ -138,7 +140,7 @@ export function renderHome(env, error, notice, quota, nonce) {
       <p style="font-size:11px; color:var(--muted); margin-top:12px; text-align:center;">Reset lúc 00:00 giờ VN</p>
     </div>
 
-    <div class="bento-item">
+    <div class="bento-item reveal">
       <h2>Thông tin & Bảng giá</h2>
       <div style="background:rgba(0,0,0,.3);border-radius:16px;padding:16px;margin-bottom:16px;border:1px solid var(--border)">
         <div style="display:flex;justify-content:space-between;padding:8px 0;color:var(--muted);font-size:13px;font-weight:600;border-bottom:1px dashed rgba(255,255,255,.1)"><span>Key 1 ngày</span><span style="color:#fff">10k</span></div>
@@ -151,7 +153,7 @@ export function renderHome(env, error, notice, quota, nonce) {
       </div>
     </div>
 
-    <div class="bento-item col-span-4">
+    <div class="bento-item col-span-4 reveal">
       <h2 style="margin-bottom:16px">📥 Tải ứng dụng</h2>
       <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Chọn đúng bản và đọc ghi chú trước khi tải.</p>
       
@@ -193,7 +195,7 @@ export function renderHome(env, error, notice, quota, nonce) {
 export function renderStep({ link, current, required, error }, nonce) {
   const isVip = required > 1;
   const inner = `${error ? `<div class="bento-item" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:600;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
-<div class="panel" style="max-width:600px;margin:0 auto;text-align:center">
+<div class="panel reveal" style="max-width:600px;margin:0 auto;text-align:center">
   <div class="stepper-wrap" style="max-width:400px;margin:0 auto 32px">
     <div class="step done"><div class="step-num">✓</div><span>Chọn key</span></div>
     <div class="step active"><div class="step-num">2</div><span>Vượt link</span></div>
@@ -209,7 +211,7 @@ export function renderStep({ link, current, required, error }, nonce) {
 
 export function renderSuccess(key, duration, tier, nonce) {
   const t = tier || 'Normal';
-  const inner = `<div class="panel" style="max-width:600px;margin:0 auto;padding:60px 40px;text-align:center">
+  const inner = `<div class="panel reveal" style="max-width:600px;margin:0 auto;padding:60px 40px;text-align:center">
   <div class="stepper-wrap" style="max-width:400px;margin:0 auto 32px">
     <div class="step done"><div class="step-num">✓</div><span>Chọn key</span></div>
     <div class="step done"><div class="step-num">✓</div><span>Vượt link</span></div>
@@ -231,17 +233,72 @@ export function renderFAQ(nonce) {
     ['Vì sao phải vượt liên kết?', 'Quảng cáo giúp duy trì hệ thống và giữ cho việc nhận key miễn phí.'],
     ['Hết lượt hôm nay?', 'Mỗi IP được nhận tối đa 12 key mỗi ngày. Reset lúc 00:00 giờ VN.']
   ];
-  const inner = `<h1 class="center scramble" style="margin-bottom:40px;font-size:40px">FAQ</h1><div style="max-width:800px;margin:0 auto">${qa.map(([q, a]) => `<div class="bento-item" style="padding:32px;margin-bottom:16px"><h3 style="margin-bottom:12px;color:#fff;font-size:18px;font-weight:700">${esc(q)}</h3><p style="color:var(--muted);font-size:15px;margin:0">${esc(a)}</p></div>`).join('')}</div>`;
+  const inner = `<h1 class="center scramble" style="margin-bottom:40px;font-size:40px">FAQ</h1><div style="max-width:800px;margin:0 auto">${qa.map(([q, a]) => `<div class="bento-item reveal" style="padding:32px;margin-bottom:16px"><h3 style="margin-bottom:12px;color:#fff;font-size:18px;font-weight:700">${esc(q)}</h3><p style="color:var(--muted);font-size:15px;margin:0">${esc(a)}</p></div>`).join('')}</div>`;
   return layout('FAQ', shell('faq', inner));
 }
 
 export function renderAdmin(nonce) {
-  const inner = `<div class="panel"><h2 class="scramble">Admin</h2><label style="font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.1em;display:block;margin:20px 0 8px">Mật khẩu</label><div style="display:flex;gap:10px;margin-bottom:20px"><input id="pw" type="password" style="flex:1;padding:16px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:#fff;outline:none"><button id="loadBtn" class="btn btn-primary" style="width:auto;padding:0 24px">Tải</button></div><div id="editor" style="display:none"><label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-weight:600;cursor:pointer"><input id="en" type="checkbox" style="width:18px;height:18px;accent-color:#fff"> Hiển thị</label><label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:8px">Tiêu đề</label><input id="tt" type="text" style="width:100%;padding:16px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:#fff;margin-bottom:16px;outline:none"><label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:8px">Nội dung</label><textarea id="ct" style="width:100%;padding:16px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:#fff;margin-bottom:24px;min-height:140px;outline:none"></textarea><button id="saveBtn" class="btn btn-primary" type="button">Lưu</button></div><div id="status" style="margin-top:16px;font-weight:600;text-align:center"></div></div>
-<script nonce="${nonce}">(function(){var $=id=>document.getElementById(id),st=$('status');function say(m,ok){st.textContent=m;st.style.color=ok?'#fff':'#ef4444';}function call(b){return fetch('/api/admin/notice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(r=>r.json())}$('loadBtn').onclick=function(){say('Đang tải...',1);call({password:$('pw').value,action:'get'}).then(d=>{if(!d.success){say(d.error||'Lỗi',0);return}$('en').checked=!!d.notice.enabled;$('tt').value=d.notice.title||'';$('ct').value=d.notice.content||'';$('editor').style.display='block';say('Đã tải',1)}).catch(()=>say('Lỗi mạng',0))};$('saveBtn').onclick=function(){say('Đang lưu...',1);call({password:$('pw').value,action:'save',notice:{enabled:$('en').checked,title:$('tt').value,content:$('ct').value}}).then(d=>say(d.success?'Đã lưu':'Lỗi',!!d.success)).catch(()=>say('Lỗi mạng',0))};})();</script>`;
+  const inner = `<div class="admin-card reveal">
+    <h2 class="scramble" style="text-align:center;margin-bottom:24px;">Quản Trị Thông Báo</h2>
+    <p style="color:var(--muted);font-size:14px;text-align:center;margin-bottom:32px;">Nhập mật khẩu để tải và cập nhật thông báo cho trang web.</p>
+    
+    <div class="input-group">
+      <label>Mật khẩu Admin</label>
+      <input id="pw" type="password" placeholder="Nhập mật khẩu...">
+    </div>
+    
+    <button id="loadBtn" class="btn btn-primary" style="margin-bottom:24px;">Tải Dữ Liệu</button>
+    
+    <div id="editor" style="display:none;">
+      <label style="display:flex;align-items:center;gap:10px;margin-bottom:20px;font-weight:600;cursor:pointer;color:#fff;">
+        <input id="en" type="checkbox" style="width:18px;height:18px;accent-color:var(--accent);"> Bật thông báo
+      </label>
+      
+      <div class="input-group">
+        <label>Tiêu đề</label>
+        <input id="tt" type="text" placeholder="VD: THÔNG BÁO QUAN TRỌNG">
+      </div>
+      
+      <div class="input-group">
+        <label>Nội dung</label>
+        <textarea id="ct" placeholder="Nhập nội dung thông báo..."></textarea>
+      </div>
+      
+      <button id="saveBtn" class="btn btn-primary">Lưu Thay Đổi</button>
+    </div>
+    
+    <div id="status" style="margin-top:20px;font-weight:600;text-align:center;"></div>
+  </div>
+<script nonce="${nonce}">
+(function(){
+  var $=id=>document.getElementById(id),st=$('status');
+  function say(m,ok){st.textContent=m;st.style.color=ok?'#10b981':'#ef4444';}
+  function call(b){return fetch('/api/admin/notice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(r=>r.json())}
+  
+  $('loadBtn').onclick=function(){
+    say('Đang tải...',1);
+    call({password:$('pw').value,action:'get'}).then(d=>{
+      if(!d.success){say(d.error||'Mật khẩu sai!',0);return;}
+      $('en').checked=!!d.notice.enabled;
+      $('tt').value=d.notice.title||'';
+      $('ct').value=d.notice.content||'';
+      $('editor').style.display='block';
+      say('Đã tải dữ liệu thành công.',1);
+    }).catch(()=>say('Lỗi mạng.',0));
+  };
+  
+  $('saveBtn').onclick=function(){
+    say('Đang lưu...',1);
+    call({password:$('pw').value,action:'save',notice:{enabled:$('en').checked,title:$('tt').value,content:$('ct').value}})
+      .then(d=>say(d.success?'Đã lưu thay đổi!':(d.error||'Lỗi.'),!!d.success))
+      .catch(()=>say('Lỗi mạng.',0));
+  };
+})();
+</script>`;
   return layout('Admin', shell('', inner, 'narrow'));
 }
 
 export function renderError(code, msg, nonce) {
-  const inner = `<div class="panel center" style="padding:64px 40px"><h1 style="font-size:100px;font-weight:900;color:#ef4444;margin-bottom:16px">${esc(code)}</h1><h2 style="color:#fff;font-size:24px;margin-bottom:32px">${esc(msg)}</h2><a class="btn btn-primary" href="/" style="max-width:240px;margin:0 auto">Về trang chủ</a></div>`;
+  const inner = `<div class="panel center reveal" style="padding:64px 40px"><h1 style="font-size:100px;font-weight:900;color:#ef4444;margin-bottom:16px">${esc(code)}</h1><h2 style="color:#fff;font-size:24px;margin-bottom:32px">${esc(msg)}</h2><a class="btn btn-primary" href="/" style="max-width:240px;margin:0 auto">Về trang chủ</a></div>`;
   return layout('Lỗi ' + code, shell('', inner, 'narrow'));
 }
