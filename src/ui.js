@@ -75,8 +75,20 @@ export function renderCheckpoint(env, nonce, next = '/') {
       </div>
     </div>
 
-    <div class="telemetry-card" style="padding:16px">
-      <div class="hacker-term" id="hex-dump"></div>
+    <div class="telemetry-card">
+      <span class="telemetry-label">Trạng thái kết nối</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+         <div style="font-size: 13px; color: var(--muted);">Giao thức</div>
+         <div style="font-size: 14px; font-weight: 800; color: #fff;">HTTP/2</div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+         <div style="font-size: 13px; color: var(--muted);">Mạng Edge</div>
+         <div style="font-size: 14px; font-weight: 800; color: #fff;">Anycast</div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+         <div style="font-size: 13px; color: var(--muted);">Bảo vệ</div>
+         <div style="font-size: 14px; font-weight: 800; color: var(--accent);">Cloudflare WAF</div>
+      </div>
     </div>
   </div>
 </div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;

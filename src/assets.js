@@ -194,8 +194,6 @@ export const CHECKPOINT_JS = `(function(){
     linePath.setAttribute('d', d); lineDot.setAttribute('cx', points[10].x); lineDot.setAttribute('cy', points[10].y);
   }, 800); }
 
-  var hexEl = document.getElementById('hex-dump');
-  if(hexEl){ setInterval(function(){ var hex = ''; for(var i=0; i<20; i++) hex += Math.floor(Math.random()*16).toString(16).toUpperCase() + ' '; var div = document.createElement('div'); div.textContent = '> 0x' + hex; hexEl.appendChild(div); if(hexEl.children.length > 8) hexEl.removeChild(hexEl.firstChild); hexEl.scrollTop = hexEl.scrollHeight; }, 150); }
 
   var busy=false;
   window.onTurnstileError=function(){ document.getElementById('errorBox').style.display='block'; document.getElementById('errorBox').textContent='Lỗi Captcha'; };
