@@ -13,7 +13,7 @@ ${body}
 
 const logoHtml = `<a class="logo-container" href="/"><div class="logo-text">Zwic <svg viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg></div></a>`;
 const nav = (active = '') => `<header class="nav">${logoHtml}<nav class="nav-links"><a href="/" class="${active==='home'?'on':''}">Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}">FAQ</a></nav></header>`;
-const foot = () => `<footer class="foot">© 2024 Zwic Apex · Bảo mật bởi Cloudflare.</footer>`;
+const foot = () => `<footer class="foot">2026 Bảo Mật bởi HoangPhu</footer>`;
 const shell = (active, inner, width = '') => `${nav(active)}<main class="wrap ${width}">${inner}</main>${foot()}`;
 const stepper = (n) => `<ol class="stepper">${['Chọn key','Vượt link','Xác thực','Nhận key'].map((t,i)=>`<li class="${i+1<n?'done':i+1===n?'on':''}"><b>${i+1<n?'✓':i+1}</b><span>${t}</span></li>`).join('')}</ol>`;
 
@@ -53,21 +53,28 @@ export function renderCheckpoint(env, nonce, next = '/') {
       </div>
       <div style="display:flex; justify-content:space-between; margin-top:12px; font-size:11px; color:var(--muted)">
         <span>Nhịp xử lý của trình duyệt</span>
-        <span><span style="color:var(--ok)">●</span> trực tiếp</span>
+        <span><span style="color:#fff">●</span> trực tiếp</span>
       </div>
     </div>
 
     <div class="split-cards">
+      <!-- DYNAMIC RADAR MINI -->
       <div class="mini-card">
         <div class="radar-mini-container">
-          <svg class="radar-svg-mini" viewBox="0 0 50 50">
-            <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-            <circle cx="25" cy="25" r="10" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
-            <g class="sweep">
-               <path d="M25 25 L25 5 A20 20 0 0 1 45 25 Z" fill="rgba(59,130,246,0.2)"/>
-               <line x1="25" y1="25" x2="25" y2="5" stroke="rgba(59,130,246,.8)" stroke-width="1"/>
+          <svg class="radar-svg-mini" viewBox="0 0 60 60">
+            <circle cx="30" cy="30" r="28" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <circle cx="30" cy="30" r="18" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <circle cx="30" cy="30" r="8" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <line x1="30" y1="2" x2="30" y2="58" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            <line x1="2" y1="30" x2="58" y2="30" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+            
+            <g class="radar-sweep-circle">
+               <path d="M30 30 L30 2 A28 28 0 0 1 58 30 Z" fill="rgba(255,255,255,0.15)"/>
+               <line x1="30" y1="30" x2="30" y2="2" stroke="rgba(255,255,255,0.8)" stroke-width="1.5"/>
             </g>
-            <circle cx="35" cy="15" r="1.5" fill="var(--ok)"/>
+            
+            <circle cx="40" cy="20" r="2" fill="#fff" class="radar-ping" style="animation-delay: 0s"/>
+            <circle cx="20" cy="45" r="2" fill="#fff" class="radar-ping" style="animation-delay: 0.7s"/>
           </svg>
           <div>
             <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Quét lưu lượng</div>
@@ -77,6 +84,7 @@ export function renderCheckpoint(env, nonce, next = '/') {
         </div>
       </div>
       
+      <!-- DYNAMIC LINE CHART -->
       <div class="mini-card">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span style="font-size:11px;color:var(--muted)">Độ trễ tới edge</span>
@@ -84,8 +92,8 @@ export function renderCheckpoint(env, nonce, next = '/') {
         </div>
         <div class="line-chart-container">
           <svg class="line-chart-svg" viewBox="0 0 100 30" preserveAspectRatio="none">
-            <path class="line-path" d="M0,20 Q10,25 20,15 T40,20 T60,10 T80,18 T100,5" />
-            <circle class="line-dot" cx="100" cy="5" r="2" />
+            <path class="line-path" d="M0,15 L10,15 L20,15 L30,15 L40,15 L50,15 L60,15 L70,15 L80,15 L90,15 L100,15" />
+            <circle class="line-dot" cx="100" cy="15" r="2" />
           </svg>
         </div>
       </div>
@@ -123,7 +131,7 @@ ${stepper(1)}
     <p style="color:var(--muted);margin:16px 0 0;font-size:16px;font-weight:500;max-width:500px">Hệ thống cấp phát key tự động, bảo mật đa tầng. Nhận key miễn phí chỉ trong vài bước.</p>
     <div style="margin-top:20px;display:flex;gap:12px">
       <span style="background:rgba(255,255,255,.1);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;border:1px solid rgba(255,255,255,.2)">24/7 Uptime</span>
-      <span style="background:rgba(16,185,129,.1);color:var(--ok);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;border:1px solid rgba(16,185,129,.2)">Anti-Bot</span>
+      <span style="background:rgba(255,255,255,.05);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:800;border:1px solid rgba(255,255,255,.1)">Anti-Bot</span>
     </div>
   </div>
   
@@ -187,7 +195,7 @@ ${stepper(2)}
   
   <a class="btn btn-primary" href="${esc(link)}" target="_blank" rel="noopener noreferrer" id="openBtn">Mở liên kết ↗</a>
 </div>
-<script nonce="${nonce}">(function(){var fg=document.getElementById('cdRing'),txt=document.getElementById('cdText'),lbl=document.getElementById('cdLabel');if(!fg)return;var t=3,total=3,circ=283;var iv=setInterval(function(){t--;if(t<0)t=0;txt.textContent=t>0?t:'▶';fg.style.strokeDashoffset=circ*(1-t/total);if(t<=0){clearInterval(iv);lbl.innerHTML='<span style="color:#10b981;text-shadow:0 0 10px rgba(16,185,129,.5)">Đã sẵn sàng</span>';}},1000);})();</script>`;
+<script nonce="${nonce}">(function(){var fg=document.getElementById('cdRing'),txt=document.getElementById('cdText'),lbl=document.getElementById('cdLabel');if(!fg)return;var t=3,total=3,circ=283;var iv=setInterval(function(){t--;if(t<0)t=0;txt.textContent=t>0?t:'▶';fg.style.strokeDashoffset=circ*(1-t/total);if(t<=0){clearInterval(iv);lbl.innerHTML='<span style="color:#fff;text-shadow:0 0 10px rgba(255,255,255,.5)">Đã sẵn sàng</span>';}},1000);})();</script>`;
   return layout('Vượt liên kết', shell('', inner, 'narrow'), nonce);
 }
 
@@ -195,7 +203,7 @@ export function renderSuccess(key, duration, tier, nonce) {
   const t = tier || 'Normal';
   const inner = `${stepper(4)}
 <div class="card center" style="padding:40px 24px">
-  <div class="badge-ok" style="margin:0 auto 24px;width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:grid;place-items:center;color:#fff;font-size:36px;font-weight:900;box-shadow:0 0 50px rgba(16,185,129,.6),inset 0 2px 0 rgba(255,255,255,.5)">✓</div>
+  <div class="badge-ok" style="margin:0 auto 24px;width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#ffffff,#a1a1aa);display:grid;place-items:center;color:#000;font-size:36px;font-weight:900;box-shadow:0 0 50px rgba(255,255,255,.4),inset 0 2px 0 rgba(255,255,255,.8)">✓</div>
   <h2 style="justify-content:center;font-size:24px">Nhận key thành công</h2>
   <div style="margin:16px 0">
     <span style="background:rgba(255,255,255,.1);padding:6px 16px;border-radius:99px;font-size:13px;font-weight:800;border:1px solid rgba(255,255,255,.4);color:#fff">Tier: ${esc(t)}</span>
@@ -207,7 +215,7 @@ export function renderSuccess(key, duration, tier, nonce) {
   </div>
   <a href="/" style="display:block;margin-top:20px;font-size:14px;font-weight:800;color:var(--muted);text-decoration:underline">Nhận key mới</a>
 </div>
-<script nonce="${nonce}">(function(){var k=document.getElementById('keyText');if(!k)return;var key=k.textContent.trim();var dl=document.getElementById('dlBtn');if(dl)dl.onclick=function(){var txt='Zwic Apex\n===========\n\n'+key+'\n\nTier: ${esc(t)}\nNhận lúc: '+new Date().toLocaleString('vi-VN')+'\n\n© Zwic Apex';var b=new Blob([txt],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='zwicapex-${esc(t)}.txt';a.click();window.__toast('Đã tải file key','ok');};})();</script>`;
+<script nonce="${nonce}">(function(){var k=document.getElementById('keyText');if(!k)return;var key=k.textContent.trim();var dl=document.getElementById('dlBtn');if(dl)dl.onclick=function(){var txt='Zwic Apex\n===========\n\n'+key+'\n\nTier: ${esc(t)}\nNhận lúc: '+new Date().toLocaleString('vi-VN')+'\n\n© Zwic Apex';var b=new Blob([txt],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='zwicapex-${esc(t)}.txt';a.click();window.__toast('Đã tải file key');};})();</script>`;
   return layout('Nhận key', shell('', inner, 'narrow'), nonce);
 }
 
@@ -225,7 +233,7 @@ export function renderFAQ(nonce) {
 
 export function renderAdmin(nonce) {
   const inner = `<div class="card"><h2>Quản trị thông báo</h2><p style="color:var(--muted);font-size:14px;margin:10px 0 20px">Nhập mật khẩu để tải và chỉnh sửa.</p><label style="font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.1em">Mật khẩu</label><div style="display:flex;gap:10px;margin:8px 0 20px"><input id="pw" type="password" style="flex:1;padding:14px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:#fff;font-family:inherit;outline:none"><button id="loadBtn" class="btn btn-primary" style="width:auto;padding:0 24px">Tải</button></div><div id="editor" style="display:none"><label style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-weight:700;cursor:pointer"><input id="en" type="checkbox" style="width:18px;height:18px;accent-color:var(--silver)"> Hiển thị thông báo</label><label style="font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.1em">Tiêu đề</label><input id="tt" type="text" style="width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:#fff;margin:8px 0 16px;font-family:inherit;outline:none"><label style="font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.1em">Nội dung</label><textarea id="ct" style="width:100%;padding:14px;border-radius:12px;border:1px solid var(--border);background:rgba(0,0,0,.4);color:#fff;margin:8px 0 20px;font-family:'JetBrains Mono',monospace;min-height:140px;outline:none"></textarea><button id="saveBtn" class="btn btn-primary" type="button">Lưu</button></div><div id="status" style="margin-top:16px;font-weight:800;text-align:center"></div></div>
-<script nonce="${nonce}">(function(){var $=id=>document.getElementById(id),st=$('status');function say(m,ok){st.textContent=m;st.style.color=ok?'#10b981':'#ef4444';}function call(b){return fetch('/api/admin/notice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(r=>r.json())}$('loadBtn').onclick=function(){say('Đang tải...',1);call({password:$('pw').value,action:'get'}).then(d=>{if(!d.success){say(d.error||'Lỗi',0);return}$('en').checked=!!d.notice.enabled;$('tt').value=d.notice.title||'';$('ct').value=d.notice.content||'';$('editor').style.display='block';say('Đã tải',1)}).catch(()=>say('Lỗi mạng',0))};$('saveBtn').onclick=function(){say('Đang lưu...',1);call({password:$('pw').value,action:'save',notice:{enabled:$('en').checked,title:$('tt').value,content:$('ct').value}}).then(d=>say(d.success?'Đã lưu':'Lỗi',!!d.success)).catch(()=>say('Lỗi mạng',0))};})();</script>`;
+<script nonce="${nonce}">(function(){var $=id=>document.getElementById(id),st=$('status');function say(m,ok){st.textContent=m;st.style.color=ok?'#fff':'#ef4444';}function call(b){return fetch('/api/admin/notice',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(r=>r.json())}$('loadBtn').onclick=function(){say('Đang tải...',1);call({password:$('pw').value,action:'get'}).then(d=>{if(!d.success){say(d.error||'Lỗi',0);return}$('en').checked=!!d.notice.enabled;$('tt').value=d.notice.title||'';$('ct').value=d.notice.content||'';$('editor').style.display='block';say('Đã tải',1)}).catch(()=>say('Lỗi mạng',0))};$('saveBtn').onclick=function(){say('Đang lưu...',1);call({password:$('pw').value,action:'save',notice:{enabled:$('en').checked,title:$('tt').value,content:$('ct').value}}).then(d=>say(d.success?'Đã lưu':'Lỗi',!!d.success)).catch(()=>say('Lỗi mạng',0))};})();</script>`;
   return layout('Admin', shell('', inner, 'narrow'));
 }
 
