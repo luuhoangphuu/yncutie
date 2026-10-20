@@ -1,60 +1,56 @@
 export const CSS = `
-:root{--bg:#0f1115;--card:linear-gradient(180deg,rgba(35,40,50,.8) 0%,rgba(20,22,28,.9) 100%);--border:rgba(255,255,255,.15);--text:#f8fafc;--muted:#94a3b8;--silver:#cbd5e1;--ok:#10b981;--blue:#3b82f6;color-scheme:dark}
+:root{--bg:#050508;--card:rgba(20,20,25,.7);--border:rgba(255,255,255,.15);--text:#ffffff;--muted:#a1a1aa;--silver:#e4e4e7;--ok:#10b981;--blue:#3b82f6;color-scheme:dark}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;position:relative}
 
 /* ═════════ BACKGROUND EFFECTS ═════════ */
-#particle-canvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.4}
+#particle-canvas{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0.5}
 .aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
-.aurora-blob{position:absolute;width:800px;height:800px;border-radius:50%;filter:blur(120px);opacity:.15;background:radial-gradient(circle,var(--silver),transparent 60%);animation:aurora1 20s infinite ease-in-out alternate}
+.aurora-blob{position:absolute;width:800px;height:800px;border-radius:50%;filter:blur(120px);opacity:.1;background:radial-gradient(circle,var(--silver),transparent 60%);animation:aurora1 20s infinite ease-in-out alternate}
 .aurora-blob:nth-child(1){top:-20%;left:-10%}
-.aurora-blob:nth-child(2){bottom:-20%;right:-10%;background:radial-gradient(circle,var(--blue),transparent 60%);opacity:0.08;animation:aurora2 25s infinite ease-in-out alternate}
+.aurora-blob:nth-child(2){bottom:-20%;right:-10%;background:radial-gradient(circle,var(--blue),transparent 60%);opacity:0.05;animation:aurora2 25s infinite ease-in-out alternate}
 @keyframes aurora1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(200px,100px) scale(1.2)}}
 @keyframes aurora2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-200px,-100px) scale(1.1)}}
 
 /* PURE CSS SNOW */
-.snow-layer {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 2;
-  background-image: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 50px 160px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(2px 2px at 160px 120px, #fff, rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  animation: snowFall 10s linear infinite;
-  opacity: 0.6;
-}
-.snow-layer-2 {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 3;
-  background-image: radial-gradient(3px 3px at 10px 10px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(3px 3px at 150px 150px, #fff, rgba(0,0,0,0)),
-                    radial-gradient(3px 3px at 250px 50px, #fff, rgba(0,0,0,0));
-  background-repeat: repeat;
-  background-size: 300px 300px;
-  animation: snowFall 15s linear infinite;
-  opacity: 0.4;
-}
+.snow-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 2; background-image: radial-gradient(2px 2px at 20px 30px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 50px 160px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)), radial-gradient(2px 2px at 160px 120px, #fff, rgba(0,0,0,0)); background-repeat: repeat; background-size: 200px 200px; animation: snowFall 10s linear infinite; opacity: 0.6; }
+.snow-layer-2 { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 3; background-image: radial-gradient(3px 3px at 10px 10px, #fff, rgba(0,0,0,0)), radial-gradient(3px 3px at 150px 150px, #fff, rgba(0,0,0,0)), radial-gradient(3px 3px at 250px 50px, #fff, rgba(0,0,0,0)); background-repeat: repeat; background-size: 300px 300px; animation: snowFall 15s linear infinite; opacity: 0.4; }
 @keyframes snowFall { 0% { background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px, 0px 0px; } 100% { background-position: 200px 200px, 400px 400px, 600px 600px, 800px 800px, 1000px 1000px, 1200px 1200px; } }
 
 /* ═════════ CORE UI ═════════ */
 a{color:inherit;text-decoration:none}
-.nav{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(16px,4vw,40px);background:rgba(15,17,21,.8);backdrop-filter:blur(30px);border-bottom:1px solid var(--border)}
+.nav{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(16px,4vw,40px);background:rgba(5,5,8,.8);backdrop-filter:blur(30px);border-bottom:1px solid var(--border)}
 .logo-container{display:flex;align-items:center;gap:12px;text-decoration:none}
-.logo-text{font-family:'Inter',sans-serif;font-weight:900;font-style:italic;font-size:22px;letter-spacing:-0.05em;background:linear-gradient(180deg,#ffffff 0%,#a1a1aa 100%);-webkit-background-clip:text;background-clip:text;color:transparent;position:relative;display:flex;align-items:center}
-.logo-text svg{width:18px;height:18px;fill:var(--blue);margin-left:2px;filter:drop-shadow(0 0 8px rgba(59,130,246,0.6))}
+.logo-text{font-family:'Inter',sans-serif;font-weight:900;font-style:italic;font-size:24px;letter-spacing:-0.05em;background:linear-gradient(180deg,#ffffff 0%,#a1a1aa 100%);-webkit-background-clip:text;background-clip:text;color:transparent;position:relative;display:flex;align-items:center}
+.logo-text svg{width:20px;height:20px;fill:var(--blue);margin-left:4px;filter:drop-shadow(0 0 10px rgba(59,130,246,0.8))}
 .nav-links{display:flex;align-items:center;gap:6px}
 .nav-links a{color:var(--muted);font-size:14px;font-weight:700;padding:8px 16px;border-radius:10px;transition:.3s}
 .nav-links a:hover,.nav-links a.on{color:#fff;background:rgba(255,255,255,.1)}
 .wrap{position:relative;z-index:10;width:100%;max-width:1100px;margin:0 auto;padding:clamp(24px,5vw,48px) clamp(16px,4vw,24px);flex:1;perspective:1200px}
 .wrap.narrow{max-width:620px}
 
-/* ═════════ SECURITY CHECKPOINT (TITANIUM GUNMETAL) ═════════ */
+/* ═════════ FIXED STEPPER ═════════ */
+.stepper{display:flex;justify-content:space-between;align-items:flex-start;position:relative;margin-bottom:40px;max-width:700px;margin-left:auto;margin-right:auto;padding:0 20px;list-style:none;}
+.stepper::before{content:'';position:absolute;top:18px;left:40px;right:40px;height:2px;background:rgba(255,255,255,.1);z-index:0}
+.stepper li{flex:1;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:1;margin:0;padding:0;}
+.stepper li b{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#050508;border:2px solid rgba(255,255,255,.2);color:var(--muted);font-size:14px;font-weight:900;transition:.3s}
+.stepper li span{font-size:12px;font-weight:800;color:var(--muted);transition:.3s;text-transform:uppercase;letter-spacing:.05em;text-align:center}
+.stepper li.on b{border-color:#fff;color:#fff;box-shadow:0 0 20px rgba(255,255,255,.4);background:rgba(255,255,255,.1)}
+.stepper li.on span{color:#fff;text-shadow:0 0 10px rgba(255,255,255,.5)}
+.stepper li.done b{background:var(--silver);border-color:var(--silver);color:#000;box-shadow:0 0 20px rgba(255,255,255,.4)}
+.stepper li.done span{color:#fff}
+
+/* ═════════ FIXED BUTTONS ═════════ */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:14px;font-size:15px;font-weight:900;cursor:pointer;transition:all .2s;text-decoration:none;border:none;font-family:inherit;}
+.btn-primary{width:100%;background:linear-gradient(135deg,#ffffff 0%,#e4e4e7 50%,#a1a1aa 100%);color:#050508;box-shadow:0 0 20px rgba(255,255,255,.2);min-height:54px;font-size:16px;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(255,255,255,.4);}
+.btn-secondary{background:rgba(255,255,255,.05);color:#fff;border:1px solid var(--border);}
+.btn-secondary:hover{background:rgba(255,255,255,.1);border-color:var(--silver);}
+
+/* ═════════ SECURITY CHECKPOINT ═════════ */
 .checkpoint-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:start}
 @media(max-width:900px){.checkpoint-layout{grid-template-columns:1fr}}
 
-/* Left Panel */
 .ckpt-left{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px;box-shadow:0 20px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .eyebrow{display:flex;align-items:center;gap:10px;color:var(--blue);font-size:13px;font-weight:700;letter-spacing:.05em;margin-bottom:16px}
 .eyebrow::before{content:'';width:24px;height:2px;background:var(--blue);border-radius:2px;box-shadow:0 0 10px var(--blue)}
@@ -66,7 +62,7 @@ a{color:inherit;text-decoration:none}
 .ts-help{font-size:13px;color:var(--muted);text-align:center;margin-top:20px;line-height:1.6}
 .ts-help strong{color:#fff}
 
-/* Stepper 4 Bước */
+/* Stepper 4 Bước (Checkpoint) */
 .stepper-4{display:flex;align-items:center;justify-content:space-between;position:relative;padding-top:20px}
 .stepper-4::before{content:'';position:absolute;top:32px;left:20px;right:20px;height:2px;background:rgba(255,255,255,.1);z-index:0}
 .step-item{display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;z-index:1}
@@ -89,13 +85,11 @@ a{color:inherit;text-decoration:none}
 .telemetry-label{font-size:13px;color:var(--muted);font-weight:600}
 .telemetry-value{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:900;color:#fff;text-shadow:0 0 20px rgba(255,255,255,.3)}
 
-/* Wave Graph */
 .wave-graph{display:flex;align-items:flex-end;gap:3px;height:40px;margin-top:12px}
 .wave-bar{flex:1;background:var(--ok);border-radius:2px;height:20%;transition:height 0.2s;opacity:0.8}
 .wave-bar.blue{background:var(--blue);opacity:1;box-shadow:0 0 8px var(--blue)}
 .wave-bar.orange{background:#f59e0b;opacity:1;box-shadow:0 0 8px #f59e0b}
 
-/* Split Card (Radar & Line Graph) */
 .split-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .mini-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05)}
 .radar-mini-container{display:flex;align-items:center;gap:12px}
@@ -106,12 +100,10 @@ a{color:inherit;text-decoration:none}
 .line-path{fill:none;stroke:var(--blue);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px rgba(59,130,246,.5))}
 .line-dot{fill:#fff;stroke:var(--blue);stroke-width:2}
 
-/* Protocol Table */
 .protocol-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;text-align:left}
 .proto-item p{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
 .proto-item b{font-size:15px;color:#fff;font-weight:800}
 
-/* FAQ Accordion */
 .faq-block h3{font-size:15px;color:#fff;font-weight:800;margin-bottom:16px}
 .faq-item{margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,.05);padding-bottom:12px}
 .faq-item p{font-size:13px;color:var(--muted);line-height:1.6}
@@ -129,16 +121,12 @@ h1.hero-title{font-size:clamp(32px,6vw,56px);font-weight:900;line-height:1.1;let
 .radio-label input{width:20px;height:20px;accent-color:var(--silver);cursor:pointer}
 .radio-label span{font-weight:800;font-size:15px;color:#fff}
 
-.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:18px 24px;border:0;border-radius:16px;font:inherit;font-weight:900;font-size:16px;color:#000;cursor:pointer;transition:all .2s;text-decoration:none;min-height:56px;overflow:hidden;letter-spacing:.02em;box-shadow:0 0 20px rgba(255,255,255,.15)}
-.btn-primary{background:linear-gradient(135deg,#ffffff 0%,#e4e4e7 50%,#a1a1aa 100%);color:#0f1115;border:1px solid rgba(255,255,255,.8)}
-.btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);transform:skewX(-20deg);animation:shine 3s infinite}
-@keyframes shine{0%{left:-100%}20%{left:100%}100%{left:100%}}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(255,255,255,.3),inset 0 2px 0 #fff}
-.btn-secondary{background:rgba(255,255,255,.05);color:#fff;border:1px solid var(--border);box-shadow:none}
-.btn-secondary:hover{background:rgba(255,255,255,.1);border-color:var(--silver);box-shadow:0 0 15px rgba(255,255,255,.2)}
+/* Link Grid Fix */
+.link-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.link-grid a{width:100%;}
 
 /* ═════════ MISC ═════════ */
-.foot{position:relative;z-index:10;margin-top:auto;padding:24px;text-align:center;font-size:12px;color:var(--muted);border-top:1px solid var(--border);background:rgba(15,17,21,.8);backdrop-filter:blur(20px);font-weight:600}
+.foot{position:relative;z-index:10;margin-top:auto;padding:24px;text-align:center;font-size:12px;color:var(--muted);border-top:1px solid var(--border);background:rgba(5,5,8,.8);backdrop-filter:blur(20px);font-weight:600}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 `;
 

@@ -159,9 +159,10 @@ ${stepper(1)}
       <div style="display:flex;justify-content:space-between;padding:10px 0;color:var(--muted);font-weight:700;"><span>Key 30 ngày</span><span style="color:#fff;font-family:'JetBrains Mono'">150k</span></div>
     </div>
   </div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-    <a href="https://zalo.me/0996492296" class="btn btn-secondary" style="min-height:48px;padding:12px">Zalo</a>
-    <a href="${esc(env.YOUTUBE_CHANNEL_URL)}" class="btn btn-secondary" style="min-height:48px;padding:12px">YouTube</a>
+  
+  <div class="link-grid">
+    <a href="https://zalo.me/0996492296" class="btn btn-secondary">Zalo</a>
+    <a href="${esc(env.YOUTUBE_CHANNEL_URL || 'https://youtube.com/@zwicxsharereg')}" class="btn btn-secondary">YouTube</a>
   </div>
 </div>`;
   return layout('Trang chủ', shell('home', inner));
@@ -200,7 +201,7 @@ export function renderSuccess(key, duration, tier, nonce) {
     <span style="background:rgba(255,255,255,.1);padding:6px 16px;border-radius:99px;font-size:13px;font-weight:800;border:1px solid rgba(255,255,255,.4);color:#fff">Tier: ${esc(t)}</span>
   </div>
   <div class="keybox" id="keyText" style="margin:24px 0;padding:24px;border-radius:16px;border:1px dashed rgba(255,255,255,.4);background:rgba(255,255,255,.05);text-align:center;font-family:'JetBrains Mono',monospace;font-weight:900;font-size:22px;word-break:break-all;color:#fff;cursor:pointer;text-shadow:0 0 20px rgba(255,255,255,.4);box-shadow:inset 0 0 30px rgba(0,0,0,.6)">${esc(key)}</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+  <div class="link-grid">
     <button class="btn btn-primary" type="button" data-copy="keyText">Sao chép</button>
     <button class="btn btn-secondary" type="button" id="dlBtn">Tải .txt</button>
   </div>
