@@ -22,43 +22,51 @@ const errorBox = (error) => error ? `<div class="alert" role="alert">${esc(error
 
 export function renderCheckpoint(env, nonce, next = '/') {
   const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
-  const body = `${nav('')}<main class="wrap"><div class="checkpoint-layout reveal" id="app" data-next="${esc(next)}">
+  const body = `${nav('')}<main class="wrap"><section class="cp reveal" id="app" data-next="${esc(next)}">
 
-  <div class="panel">
-    <h1 class="panel-title">Xác minh kết nối</h1>
-    <p class="panel-sub">Hệ thống đang kiểm tra kết nối để chặn bot và spam tự động.</p>
+  <div class="cp-card">
+    <div class="cp-orb" id="orb">
+      <div class="cp-ring"></div><div class="cp-ring r2"></div>
+      <div class="cp-core"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="shield" d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3z"/><path class="tick" d="M8.5 12.2l2.5 2.5 4.5-5"/></svg></div>
+    </div>
+    <h1 class="cp-title">Xác minh kết nối</h1>
+    <p class="cp-sub">Chỉ mất vài giây để xác nhận bạn là người thật và chặn bot, spam tự động.</p>
+
+    <ol class="cp-steps" aria-label="Tiến trình xác minh">
+      <li data-s="1" class="active">Kết nối an toàn</li>
+      <li data-s="2">Kiểm tra trình duyệt</li>
+      <li data-s="3">Xác nhận máy chủ</li>
+    </ol>
+
     <div class="ts-box" id="tsWrap">
       <div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError"></div>
       <div class="err" id="errorBox" role="alert" style="display:none;margin-top:12px;font-size:13px"></div>
     </div>
     <p class="ts-help" id="helpText">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</p>
+
+    <div class="cp-meta"><span>Bảo vệ bởi <b>Cloudflare Turnstile</b></span><span>Kết nối <b>HTTPS</b></span></div>
   </div>
 
-  <div class="hud-container">
-    <div class="hud-header">
+  <aside class="cp-side" aria-label="Nhật ký xác minh">
+    <div class="cp-side-head">
       <div>
         <div class="hud-label">Thời gian xác minh</div>
-        <div class="hud-value" id="timer">0.00<small style="font-size:16px;color:var(--muted)">s</small></div>
+        <div class="hud-value" id="timer">0.00<small>s</small></div>
       </div>
       <div style="text-align:right">
         <div class="hud-label">Trạng thái</div>
-        <div style="font-size:14px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px;justify-content:flex-end">
-          <span class="live-dot"></span>Đang kết nối
-        </div>
+        <div class="cp-state"><span class="live-dot"></span>Đang kiểm tra</div>
       </div>
     </div>
 
+    <div class="cp-logbox"><ul class="cp-log" id="cpLog" aria-live="polite"></ul></div>
+
     <div>
-      <div class="hud-label" style="margin-bottom:10px">Nhịp truyền tải dữ liệu</div>
+      <div class="hud-label" style="margin-bottom:10px">Nhịp kết nối</div>
       <div class="heartbeat-container" id="heartbeat"></div>
     </div>
-
-    <div class="hud-footer">
-      <div>Giao thức: <b>HTTP/2</b></div>
-      <div>Bảo vệ: <b>Cloudflare WAF</b></div>
-    </div>
-  </div>
-</div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
+  </aside>
+</section></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
   return layout('Xác minh', body, nonce, head);
 }
 
@@ -84,7 +92,7 @@ export function renderHome(env, error, notice, quota, nonce) {
   </section>
 
   <div class="bento-grid">
-    <div class="bento-item col-span-2">
+    <div class="bento-item col-span-2 reveal" style="--d:.15s">
       <h2>Lấy key miễn phí</h2>
 
       <a href="https://t.me/" class="btn btn-tele" target="_blank" rel="noopener noreferrer" style="margin-bottom:24px">
@@ -108,21 +116,21 @@ export function renderHome(env, error, notice, quota, nonce) {
       </form>
     </div>
 
-    <div class="bento-item">
+    <div class="bento-item reveal" style="--d:.27s">
       <div>
         <h2>Thiết bị hiện tại</h2>
         <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Lượt nhận key của bạn trong hôm nay</p>
         <div class="quota-grid">
           <div class="quota-item"><p>Tên key</p><b>ZwicApex</b></div>
-          <div class="quota-item"><p>Còn lại</p><b>12</b></div>
-          <div class="quota-item"><p>Thành công</p><b>0</b></div>
+          <div class="quota-item"><p>Còn lại</p><b data-count="12">12</b></div>
+          <div class="quota-item"><p>Thành công</p><b data-count="0">0</b></div>
           <div class="quota-item"><p>Lần gần nhất</p><b style="font-size:14px">Chưa có</b></div>
         </div>
       </div>
       <p style="font-size:12px;color:var(--dim);margin-top:14px;text-align:center">Làm mới lúc 00:00 giờ VN</p>
     </div>
 
-    <div class="bento-item">
+    <div class="bento-item reveal" style="--d:.39s">
       <div>
         <h2>Thông tin &amp; bảng giá</h2>
         <div class="price-box">
@@ -137,7 +145,7 @@ export function renderHome(env, error, notice, quota, nonce) {
       </div>
     </div>
 
-    <div class="bento-item col-span-4">
+    <div class="bento-item col-span-4 reveal" style="--d:.5s">
       <h2>Tải ứng dụng</h2>
       <p style="font-size:13.5px;color:var(--muted);margin-bottom:20px">Chọn đúng bản và đọc ghi chú trước khi tải.</p>
 

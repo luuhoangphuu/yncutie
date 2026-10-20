@@ -41,7 +41,7 @@ a{color:inherit;text-decoration:none}
   background-size:64px 64px;
   -webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 0%,#000 20%,transparent 75%);
   mask-image:radial-gradient(ellipse 70% 55% at 50% 0%,#000 20%,transparent 75%)}
-#snow-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:20;pointer-events:none}
+#snow-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
 .spot{position:fixed;inset:0;z-index:1;pointer-events:none;
   background:radial-gradient(420px circle at var(--px,50%) var(--py,-20%),rgba(255,255,255,.055),transparent 70%)}
 
@@ -193,9 +193,76 @@ h3{font-weight:700;letter-spacing:-.01em}
 .foot{position:relative;z-index:10;margin-top:auto;padding:28px;text-align:center;font-size:13px;color:var(--dim);border-top:1px solid var(--border);background:rgba(10,11,13,.7);backdrop-filter:blur(16px);font-weight:500}
 
 /* ============ ENTRANCE (single orchestrated moment) ============ */
-.reveal{animation:fadeIn .7s cubic-bezier(.2,.7,.2,1) both}
+.reveal{animation:fadeIn .8s cubic-bezier(.2,.7,.2,1) var(--d,0s) both}
 @keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}h1.hero-title{background-position:0 0}}
+
+/* ============ DEPTH & POLISH ============ */
+.bg-glow{animation:drift 22s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(0,-18px,0) scale(1.08)}}
+/* viền sáng chạy theo con trỏ */
+.bento-item::after,.panel::after,.hud-container::after,.cp-card::after,.cp-side::after{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(240px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.6),transparent 62%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.bento-item:hover::after,.panel:hover::after,.hud-container:hover::after,.cp-card:hover::after,.cp-side:hover::after{opacity:1}
+/* ánh kim quét qua nút chính */
+.btn-primary::before{content:'';position:absolute;top:0;left:-120%;width:55%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-20deg);transition:left .75s cubic-bezier(.2,.7,.2,1);pointer-events:none}
+.btn-primary:hover::before{left:150%}
+.step.active .step-num{animation:stepPulse 2.4s ease-in-out infinite}
+@keyframes stepPulse{50%{box-shadow:0 0 0 9px rgba(255,255,255,0)}}
+.hud-value small{font-size:16px;color:var(--muted);margin-left:2px}
+
+/* ============ CHECKPOINT PRO ============ */
+.cp{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;max-width:980px;margin:0 auto;align-items:stretch}
+@media(max-width:850px){.cp{grid-template-columns:1fr}}
+.cp-card,.cp-side{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:var(--shadow),var(--hairline);position:relative;overflow:hidden}
+.cp-card>*,.cp-side>*{position:relative;z-index:1}
+.cp-card{padding:42px 36px 34px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.cp-side{padding:28px;display:flex;flex-direction:column;gap:20px}
+
+.cp-orb{position:relative;width:112px;height:112px;margin-bottom:28px;display:grid;place-items:center}
+.cp-orb::before{content:'';position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,255,255,.28);animation:ping 2.8s ease-out infinite}
+@keyframes ping{from{transform:scale(1);opacity:.7}to{transform:scale(1.9);opacity:0}}
+.cp-ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.95) 28%,rgba(255,255,255,0) 52%);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));animation:spin 2.4s linear infinite}
+.cp-ring.r2{inset:-12px;opacity:.35;animation-duration:4.2s;animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cp-core{width:76px;height:76px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#30343c,#121418);border:1px solid var(--border-strong);box-shadow:var(--hairline),0 0 44px rgba(255,255,255,.08);transition:box-shadow .4s}
+.cp-core svg{width:34px;height:34px;stroke:var(--silver);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+.cp-core .tick{opacity:0;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .5s .1s,opacity .2s}
+.cp-orb.verifying .cp-ring{animation-duration:.8s}
+.cp-orb.ok::before{animation:none;opacity:0}
+.cp-orb.ok .cp-ring{animation:none;background:conic-gradient(var(--ok),var(--ok))}
+.cp-orb.ok .cp-ring.r2{opacity:0}
+.cp-orb.ok .cp-core{box-shadow:var(--hairline),0 0 56px rgba(134,216,170,.28)}
+.cp-orb.ok .cp-core svg{stroke:var(--ok)}
+.cp-orb.ok .cp-core .tick{opacity:1;stroke-dashoffset:0}
+.cp-orb.ok .cp-core .shield{opacity:.35}
+.cp-orb.fail::before{animation:none;opacity:0}
+.cp-orb.fail .cp-ring{animation:none;background:conic-gradient(var(--danger),var(--danger))}
+.cp-orb.fail .cp-core svg{stroke:var(--danger)}
+
+.cp-title{font-size:clamp(28px,4vw,38px);font-weight:800;line-height:1.1;letter-spacing:-.035em;margin-bottom:10px}
+.cp-sub{color:var(--muted);font-size:15px;max-width:380px;margin-bottom:26px}
+.cp-steps{list-style:none;display:flex;gap:8px;margin:0 0 22px;padding:0;width:100%}
+.cp-steps li{flex:1;font-size:12px;font-weight:600;color:var(--dim);text-align:left;transition:color .3s}
+.cp-steps li::before{content:'';display:block;height:3px;border-radius:3px;background:rgba(255,255,255,.1);margin-bottom:8px;transition:background .4s}
+.cp-steps li.done{color:var(--silver)}
+.cp-steps li.done::before{background:var(--metal)}
+.cp-steps li.active{color:var(--text)}
+.cp-steps li.active::before{background:linear-gradient(90deg,rgba(255,255,255,.12),#fff,rgba(255,255,255,.12));background-size:200% 100%;animation:barflow 1.3s linear infinite}
+@keyframes barflow{from{background-position:200% 0}to{background-position:-200% 0}}
+.cp-card .ts-box{width:100%;margin-bottom:18px;min-height:96px}
+.cp-meta{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);width:100%;font-size:12.5px;color:var(--dim)}
+.cp-meta b{color:var(--silver);font-weight:700}
+
+.cp-side-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.cp-state{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.cp-logbox{background:var(--field);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;flex:1;min-height:200px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden}
+.cp-log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;line-height:1.5}
+.cp-log li{display:flex;gap:12px;animation:fadeIn .4s both}
+.cp-log time{color:var(--dim);flex:none;min-width:42px}
+.cp-log span{color:var(--muted)}
+.cp-log li.ok span{color:var(--ok)}
+.cp-log li.warn span{color:var(--warn)}
+.cp-log li.err span{color:var(--danger)}
 `;
 
 export const COMMON_JS = `
@@ -232,6 +299,18 @@ document.addEventListener('DOMContentLoaded', function() {
       ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
       btn.appendChild(ripple);
       setTimeout(function() { ripple.remove(); }, 600);
+    });
+
+    // Count-up cho các con số
+    document.querySelectorAll('[data-count]').forEach(function(el) {
+      var end = parseInt(el.getAttribute('data-count'), 10) || 0;
+      if (end === 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = end; return; }
+      var s0 = performance.now();
+      (function step(now) {
+        var p = Math.min(1, (now - s0) / 1000);
+        el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(step);
+      })(s0);
     });
 
     // Notice modal
@@ -284,67 +363,85 @@ document.addEventListener('click', function(e) {
 `;
 
 export const CHECKPOINT_JS = `(function(){
-  var timer = document.getElementById('timer');
-  if (timer) {
-    var t0 = performance.now();
-    setInterval(function() {
-      timer.innerHTML = ((performance.now() - t0) / 1000).toFixed(2) + '<small style="font-size:16px;color:var(--muted)">s</small>';
-    }, 50);
-  }
+  var t0 = performance.now();
+  var $ = function(id) { return document.getElementById(id); };
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var timer = $('timer'), logEl = $('cpLog'), orb = $('orb'), errBox = $('errorBox'), tsWrap = $('tsWrap'), help = $('helpText');
 
-  var hb = document.getElementById('heartbeat');
-  if (hb) {
-    for (var i = 0; i < 30; i++) {
-      var bar = document.createElement('div');
-      bar.className = 'heartbeat-bar';
-      bar.style.height = '10%';
-      hb.appendChild(bar);
-    }
-    var bars = hb.querySelectorAll('.heartbeat-bar');
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setInterval(function() {
-        for (var j = 0; j < bars.length; j++) {
-          bars[j].style.height = (Math.random() > 0.8 ? (40 + Math.random() * 60) : (10 + Math.random() * 20)) + '%';
-        }
-      }, 140);
-    }
-  }
+  var tick = setInterval(function() {
+    timer.innerHTML = ((performance.now() - t0) / 1000).toFixed(2) + '<small>s</small>';
+  }, 50);
 
-  var busy = false;
-  var errBox = document.getElementById('errorBox');
+  function log(msg, kind) {
+    var li = document.createElement('li');
+    if (kind) li.className = kind;
+    var t = document.createElement('time'); t.textContent = ((performance.now() - t0) / 1000).toFixed(2) + 's';
+    var s = document.createElement('span'); s.textContent = msg;
+    li.appendChild(t); li.appendChild(s); logEl.appendChild(li);
+    while (logEl.children.length > 7) logEl.removeChild(logEl.firstChild);
+  }
+  function step(n, state) {
+    var li = document.querySelector('.cp-steps li[data-s="' + n + '"]');
+    if (li) li.className = state;
+  }
+  function setOrb(state) { orb.className = 'cp-orb' + (state ? ' ' + state : ''); }
   function showErr(m) { errBox.style.display = 'block'; errBox.textContent = m; }
 
-  window.onTurnstileError = function() { showErr('Lỗi Captcha. Hãy tải lại trang và thử lại.'); };
+  // Nhịp kết nối (trang trí)
+  var hb = $('heartbeat');
+  if (hb) {
+    for (var i = 0; i < 32; i++) { var b = document.createElement('div'); b.className = 'heartbeat-bar'; b.style.height = '12%'; hb.appendChild(b); }
+    var bars = hb.querySelectorAll('.heartbeat-bar');
+    if (!reduce) setInterval(function() {
+      for (var j = 0; j < bars.length; j++) bars[j].style.height = (Math.random() > 0.82 ? (40 + Math.random() * 60) : (10 + Math.random() * 22)) + '%';
+    }, 140);
+  }
+
+  // Nhật ký phản ánh đúng các sự kiện thật của trang
+  log('Khởi tạo phiên xác minh');
+  setTimeout(function() { log('Kết nối HTTPS an toàn', 'ok'); step(1, 'done'); step(2, 'active'); }, 350);
+  var poll = setInterval(function() {
+    if (window.turnstile) { clearInterval(poll); log('Đã tải Cloudflare Turnstile', 'ok'); log('Đang chờ bạn xác nhận'); }
+    else if (performance.now() - t0 > 10000) { clearInterval(poll); log('Tải captcha chậm, hãy kiểm tra mạng', 'warn'); }
+  }, 250);
+
+  var busy = false;
+  window.onTurnstileError = function() {
+    setOrb('fail'); showErr('Lỗi Captcha. Hãy tải lại trang và thử lại.'); log('Captcha gặp lỗi', 'err');
+  };
   window.onTurnstileSuccess = function(token) {
     if (busy) return; busy = true;
     errBox.style.display = 'none';
-    document.getElementById('tsWrap').classList.add('active');
-    document.getElementById('helpText').innerHTML = '<strong>Đang xác minh...</strong>';
+    tsWrap.classList.add('active'); setOrb('verifying');
+    step(2, 'done'); step(3, 'active');
+    help.innerHTML = '<strong>Đang xác minh...</strong>';
+    log('Đã nhận token từ Turnstile', 'ok'); log('Gửi token tới máy chủ');
     fetch('/api/verify-bot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: token }) })
       .then(function(r) { return r.json(); })
       .then(function(d) {
         if (d && d.success) {
-          document.getElementById('tsWrap').className = 'ts-box success';
-          document.getElementById('helpText').innerHTML = '<strong style="color:var(--ok)">✓ Thành công! Đang chuyển...</strong>';
-          setTimeout(function() { location.href = document.getElementById('app').getAttribute('data-next'); }, 600);
+          clearInterval(tick);
+          tsWrap.className = 'ts-box success'; setOrb('ok'); step(3, 'done');
+          log('Máy chủ xác nhận hợp lệ', 'ok');
+          help.innerHTML = '<strong style="color:var(--ok)">✓ Thành công! Đang chuyển...</strong>';
+          setTimeout(function() { location.href = $('app').getAttribute('data-next'); }, 900);
         } else {
-          document.getElementById('tsWrap').classList.remove('active');
-          showErr((d && d.error) || 'Xác minh thất bại. Vui lòng thử lại.');
-          document.getElementById('helpText').innerHTML = 'Bấm vào ô <strong>Verify you are human</strong> để thử lại.';
-          busy = false;
-          if (window.turnstile) turnstile.reset();
+          fail((d && d.error) || 'Xác minh thất bại. Vui lòng thử lại.');
         }
       })
-      .catch(function() {
-        document.getElementById('tsWrap').classList.remove('active');
-        showErr('Lỗi mạng. Vui lòng thử lại.');
-        busy = false;
-        if (window.turnstile) turnstile.reset();
-      });
+      .catch(function() { fail('Lỗi mạng. Vui lòng thử lại.'); });
   };
+  function fail(msg) {
+    tsWrap.classList.remove('active'); setOrb('fail'); step(3, ''); step(2, 'active');
+    showErr(msg); log(msg, 'err');
+    help.innerHTML = 'Bấm vào ô <strong>Verify you are human</strong> để thử lại.';
+    busy = false;
+    setTimeout(function() { setOrb(''); }, 1600);
+    if (window.turnstile) turnstile.reset();
+  }
 })();`;
 
-// Tuyết trắng rơi ngẫu nhiên: mỗi bông có tốc độ, kích thước, hướng gió và độ lắc riêng.
+// Tuyết nền nhiều tầng: xa (nhỏ, mờ, chậm) -> gần (to, nhoè, nhanh), lệch nhẹ theo con trỏ để có chiều sâu.
 export const JS_FX = `(function(){
   try {
     var c = document.getElementById('snow-canvas');
@@ -352,64 +449,76 @@ export const JS_FX = `(function(){
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var ctx = c.getContext('2d');
     var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var flakes = [], wind = 0, windTarget = 0, tick = 0, running = true;
+    var wind = 0, windTarget = 0, tick = 0, running = true;
+    var px = 0, py = 0, tx = 0, ty = 0; // lệch theo con trỏ (-1..1)
 
+    function sprite(soft) {
+      var s = document.createElement('canvas'); s.width = s.height = 64;
+      var g = s.getContext('2d'), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      if (soft) { r.addColorStop(0, 'rgba(255,255,255,.85)'); r.addColorStop(.55, 'rgba(255,255,255,.35)'); r.addColorStop(1, 'rgba(255,255,255,0)'); }
+      else { r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(.4, 'rgba(255,255,255,.85)'); r.addColorStop(1, 'rgba(255,255,255,0)'); }
+      g.fillStyle = r; g.fillRect(0, 0, 64, 64); return s;
+    }
+    var SHARP = sprite(false), SOFT = sprite(true);
+
+    // k: tỉ lệ số lượng, r: bán kính, v: tốc độ rơi, a: độ đậm, par: độ lệch parallax (px)
+    var LAYERS = [
+      { k: 0.55, r: [0.7, 1.5],  v: [0.25, 0.6], a: [0.25, 0.5],  par: 8,  img: SHARP, wind: 0.4 },
+      { k: 0.35, r: [1.3, 2.6],  v: [0.6, 1.1],  a: [0.45, 0.8],  par: 20, img: SHARP, wind: 0.8 },
+      { k: 0.10, r: [3.5, 7],    v: [1.3, 2.4],  a: [0.18, 0.4],  par: 46, img: SOFT,  wind: 1.4 }
+    ];
+    var flakes = [];
+
+    function make(L, anywhere) {
+      var rr = L.r[0] + Math.random() * (L.r[1] - L.r[0]);
+      return { L: L, x: Math.random() * W, y: anywhere ? Math.random() * H : -rr * 4, r: rr,
+        vy: L.v[0] + Math.random() * (L.v[1] - L.v[0]), vx: (Math.random() - 0.5) * 0.7,
+        sway: Math.random() * 0.9 + 0.15, phase: Math.random() * 6.28, spin: 0.004 + Math.random() * 0.016,
+        a: L.a[0] + Math.random() * (L.a[1] - L.a[0]) };
+    }
     function resize() {
       W = window.innerWidth; H = window.innerHeight;
-      c.width = W * dpr; c.height = H * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var n = Math.round(Math.min(160, Math.max(60, W / 9)));
-      while (flakes.length < n) flakes.push(make(true));
-      flakes.length = n;
+      c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var total = Math.round(Math.min(190, Math.max(70, W / 7)));
+      flakes = [];
+      LAYERS.forEach(function(L) { for (var i = 0, n = Math.round(total * L.k); i < n; i++) flakes.push(make(L, true)); });
+      // vẽ tầng xa trước, tầng gần sau
+      flakes.sort(function(a, b) { return LAYERS.indexOf(a.L) - LAYERS.indexOf(b.L); });
     }
 
-    function make(anywhere) {
-      var r = Math.random() * 2.6 + 0.8;
-      return {
-        x: Math.random() * W,
-        y: anywhere ? Math.random() * H : -10,
-        r: r,
-        vy: 0.35 + r * 0.38 + Math.random() * 0.5,      // bông to rơi nhanh hơn
-        vx: (Math.random() - 0.5) * 0.9,                 // trôi trái/phải ngẫu nhiên
-        sway: Math.random() * 1.2 + 0.2,                 // biên độ lắc
-        phase: Math.random() * Math.PI * 2,
-        spin: 0.004 + Math.random() * 0.016,
-        a: 0.45 + Math.random() * 0.5
-      };
-    }
+    window.addEventListener('mousemove', function(e) { tx = e.clientX / W - 0.5; ty = e.clientY / H - 0.5; }, { passive: true });
+    window.addEventListener('deviceorientation', function(e) {
+      if (e.gamma == null) return; tx = Math.max(-0.5, Math.min(0.5, e.gamma / 60)); ty = Math.max(-0.5, Math.min(0.5, (e.beta - 45) / 90));
+    }, { passive: true });
 
     function frame() {
       if (!running) return;
       tick++;
-      // gió đổi hướng từ từ, không theo quy luật
-      if (tick % 140 === 0) windTarget = (Math.random() - 0.5) * 2.4;
-      wind += (windTarget - wind) * 0.01;
+      if (tick % 150 === 0) windTarget = (Math.random() - 0.5) * 2.6;
+      wind += (windTarget - wind) * 0.012;
+      px += (tx - px) * 0.05; py += (ty - py) * 0.05;
 
       ctx.clearRect(0, 0, W, H);
       for (var i = 0; i < flakes.length; i++) {
-        var f = flakes[i];
+        var f = flakes[i], L = f.L;
         f.phase += f.spin;
-        f.x += f.vx + Math.sin(f.phase) * f.sway + wind * (f.r / 3);
+        f.x += f.vx + Math.sin(f.phase) * f.sway + wind * L.wind * 0.5;
         f.y += f.vy;
-        if (f.y > H + 10 || f.x < -20 || f.x > W + 20) {
-          var n = make(false);
-          if (f.x < -20) n.x = W + 10; else if (f.x > W + 20) n.x = -10;
+        var size = f.r * 2.4;
+        if (f.y > H + size || f.x < -size * 3 || f.x > W + size * 3) {
+          var n = make(L, false);
+          if (f.x < -size * 3) n.x = W + size; else if (f.x > W + size * 3) n.x = -size;
           flakes[i] = n; continue;
         }
-        var g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, f.r * 2);
-        g.addColorStop(0, 'rgba(255,255,255,' + f.a + ')');
-        g.addColorStop(0.45, 'rgba(255,255,255,' + (f.a * 0.8) + ')');
-        g.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(f.x, f.y, f.r * 2, 0, 6.2832); ctx.fill();
+        var dx = -px * L.par, dy = -py * L.par * 0.6;
+        ctx.globalAlpha = f.a;
+        ctx.drawImage(L.img, f.x + dx - size, f.y + dy - size, size * 2, size * 2);
       }
+      ctx.globalAlpha = 1;
       requestAnimationFrame(frame);
     }
 
-    document.addEventListener('visibilitychange', function() {
-      running = !document.hidden;
-      if (running) requestAnimationFrame(frame);
-    });
+    document.addEventListener('visibilitychange', function() { running = !document.hidden; if (running) requestAnimationFrame(frame); });
     window.addEventListener('resize', resize);
     resize(); requestAnimationFrame(frame);
   } catch (e) { console.warn('snow failed', e); }
