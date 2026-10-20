@@ -89,7 +89,7 @@ export function renderHome(env, error, notice, quota, nonce) {
   const inner = `${error ? `<div class="card" style="padding:16px;border-color:#ef4444;color:#fca5a5;font-weight:700;margin-bottom:24px">⚠ ${esc(error)}</div>` : ''}
 <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center;min-height:60vh">
   <div>
-    <h1 class="hero-title scramble flow-text">Kiến tạo Đỉnh cao Công nghệ</h1>
+    <h1 class="hero-title scramble flow-text">Zwic Apex</h1>
     <p style="color:var(--muted);margin:24px 0 0;font-size:18px;max-width:500px">Hệ thống cấp phát key tự động, bảo mật đa tầng. Trải nghiệm đỉnh cao của sự mượt mà.</p>
     <div style="margin-top:32px;display:flex;gap:16px">
       <span style="border:1px solid var(--border);padding:8px 16px;border-radius:99px;font-size:13px;font-weight:800;background:rgba(255,255,255,.05)">24/7 Uptime</span>
