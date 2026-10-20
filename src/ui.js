@@ -2,14 +2,14 @@ import { CSS, COMMON_JS, CHECKPOINT_JS, JS_FX } from './assets.js';
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function layout(title, body, nonce, head = '') {
-  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} · ZwicApex</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body>
+  return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${esc(title)} · GetKey DPIConfig</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet"><style>${CSS}</style>${head}</head><body>
 <div class="bg-grid"></div>
 <div class="bg-glow"></div>
 ${body}
 <script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
 }
-const nav = (active = '') => `<header class="nav"><a class="logo" href="/"><i></i>ZWICAPEX</a><nav class="nav-links"><a href="/" class="${active==='home'?'on':''}">Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}">FAQ</a></nav></header>`;
-const foot = () => `<footer class="foot">© ZWICAPEX.SITE · Bản quyền thuộc về ZwicApex.</footer>`;
+const nav = (active = '') => `<header class="nav"><a class="logo" href="/"><i></i>GETKEY DPICONFIG</a><nav class="nav-links"><a href="/" class="${active==='home'?'on':''}">Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}">FAQ</a></nav></header>`;
+const foot = () => `<footer class="foot">© GETKEYDPICONFIG.SITE · Bản quyền thuộc về GetKey DPIConfig.</footer>`;
 const shell = (active, inner, width = '') => `${nav(active)}<main class="wrap ${width}">${inner}</main>${foot()}`;
 const stepper = (n) => `<ol class="stepper">${['Chọn key','Vượt link','Xác thực','Nhận key'].map((t,i)=>`<li class="${i+1<n?'done':i+1===n?'on':''}"><b>${i+1<n?'✓':i+1}</b><span>${t}</span></li>`).join('')}</ol>`;
 
@@ -49,7 +49,7 @@ export function renderHome(env, error, notice, quota, nonce) {
 ${stepper(1)}
 <div class="titan-card">
   <h2>🔑 Lấy key miễn phí</h2>
-  <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Chào mừng bạn đến với ZwicApex. Vui lòng chọn loại key bên dưới.</p>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Chào mừng bạn đến với GetKey DPIConfig. Vui lòng chọn loại key bên dưới.</p>
   
   <div class="titan-box">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
@@ -73,9 +73,9 @@ ${stepper(1)}
 </div>
 
 <div class="titan-card">
-  <h2>ℹ️ Thông tin từ ZwicApex</h2>
+  <h2>ℹ️ Thông tin từ GetKey DPIConfig</h2>
   <div class="titan-box">
-    <p>© Bản quyền thuộc về <b>ZwicApex</b>.</p>
+    <p>© Bản quyền thuộc về <b>GetKey DPIConfig</b>.</p>
     <p style="color:#ef4444;font-weight:700;margin-top:8px">‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.</p>
     <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
       <b style="color:#fff;font-size:15px">Bảng giá key</b>
@@ -131,13 +131,13 @@ export function renderSuccess(key, duration, tier, nonce) {
   </div>
   <a href="/" style="display:block;margin-top:16px;font-size:14px;font-weight:700;color:var(--muted);text-decoration:underline">Nhận key mới</a>
 </div>
-<script nonce="${nonce}">(function(){var k=document.getElementById('keyText');if(!k)return;var key=k.textContent.trim();var dl=document.getElementById('dlBtn');if(dl)dl.onclick=function(){var txt='ZwicApex Key\n===========\n\n'+key+'\n\nTier: ${esc(t)}\nNhận lúc: '+new Date().toLocaleString('vi-VN')+'\n\n© ZwicApex';var b=new Blob([txt],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='zwicapex-key-${esc(t)}.txt';a.click();window.__toast('Đã tải file key','ok');};})();</script>`;
+<script nonce="${nonce}">(function(){var k=document.getElementById('keyText');if(!k)return;var key=k.textContent.trim();var dl=document.getElementById('dlBtn');if(dl)dl.onclick=function(){var txt='GetKey DPIConfig\n===========\n\n'+key+'\n\nTier: ${esc(t)}\nNhận lúc: '+new Date().toLocaleString('vi-VN')+'\n\n© GetKey DPIConfig';var b=new Blob([txt],{type:'text/plain;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='getkeydpiconfig-${esc(t)}.txt';a.click();window.__toast('Đã tải file key','ok');};})();</script>`;
   return layout('Nhận key', shell('', inner, 'narrow'), nonce);
 }
 
 export function renderFAQ(nonce) {
   const qa = [
-    ['Key này dùng để làm gì?', 'Key dùng để kích hoạt ứng dụng ZwicApex.'],
+    ['Key này dùng để làm gì?', 'Key dùng để kích hoạt ứng dụng GetKey DPIConfig.'],
     ['Vì sao phải vượt liên kết?', 'Quảng cáo giúp duy trì hệ thống và giữ cho việc nhận key miễn phí.'],
     ['Mất phiên thì làm sao?', 'Phiên gắn với IP. Nếu đổi Wi-Fi/4G hoặc bật VPN giữa chừng, bạn cần bắt đầu lại.'],
     ['Hết lượt hôm nay?', 'Mỗi IP được nhận tối đa 12 key mỗi ngày. Reset lúc 0h giờ VN.'],

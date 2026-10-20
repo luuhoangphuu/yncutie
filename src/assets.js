@@ -1,17 +1,17 @@
 export const CSS = `
-:root{--bg:#08080a;--card:rgba(20,20,24,.8);--border:rgba(255,255,255,.15);--text:#ffffff;--muted:#a1a1aa;--silver:#e4e4e7;--cyan:#22d3ee;--ok:#10b981;color-scheme:dark}
+:root{--bg:#08080a;--card:rgba(20,20,24,.85);--border:rgba(255,255,255,.15);--text:#ffffff;--muted:#a1a1aa;--silver:#e4e4e7;--cyan:#22d3ee;--ok:#10b981;color-scheme:dark}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-/* ═════════ TITANIUM & SNOW BACKGROUND ═════════ */
+/* ═════════ BACKGROUND & SNOWFALL (Z-INDEX CHUẨN) ═════════ */
 #snow-canvas{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:1;pointer-events:none}
 .bg-grid{position:fixed;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(circle at 50% 50%,#000 20%,transparent 80%);mask-image:radial-gradient(circle at 50% 50%,#000 20%,transparent 80%)}
 .bg-glow{position:fixed;top:-20%;left:50%;transform:translateX(-50%);width:100vw;height:60vh;background:radial-gradient(ellipse at top,rgba(255,255,255,.08),transparent 70%);z-index:-1;pointer-events:none}
 
 /* ═════════ CORE UI ═════════ */
 a{color:inherit;text-decoration:none}
-.nav{position:relative;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(16px,4vw,40px);background:rgba(8,8,10,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.15em;font-size:16px;color:#fff}
+.nav{position:relative;z-index:10;display:flex;justify-content:space-between;align-items:center;padding:16px clamp(16px,4vw,40px);background:rgba(8,8,10,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.1em;font-size:15px;color:#fff}
 .logo i{width:14px;height:14px;border-radius:4px;background:linear-gradient(135deg,#fff,#71717a);box-shadow:0 0 20px rgba(255,255,255,.6)}
 .nav-links{display:flex;align-items:center;gap:6px}
 .nav-links a{color:var(--muted);font-size:14px;font-weight:700;padding:8px 16px;border-radius:10px;transition:.3s}
@@ -24,7 +24,7 @@ h1{font-size:clamp(28px,5vw,40px);font-weight:900;line-height:1.2;letter-spacing
 .center{text-align:center}
 
 /* ═════════ TITANIUM CARDS ═════════ */
-.titan-card{background:linear-gradient(180deg,rgba(255,255,255,.05) 0%,rgba(20,20,24,.9) 100%);border:1px solid var(--border);border-radius:24px;padding:24px;margin-bottom:20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 20px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);position:relative;transition:border-color .3s}
+.titan-card{background:linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(20,20,24,.95) 100%);border:1px solid var(--border);border-radius:24px;padding:24px;margin-bottom:20px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 20px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.2);position:relative;transition:border-color .3s}
 .titan-card:hover{border-color:rgba(255,255,255,.4)}
 .titan-card h2{color:#fff;display:flex;align-items:center;gap:10px;font-size:20px;margin-bottom:16px;font-weight:800}
 .titan-box{background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px;font-size:14px;line-height:1.7;color:var(--muted);margin-bottom:16px}
@@ -37,7 +37,7 @@ h1{font-size:clamp(28px,5vw,40px);font-weight:900;line-height:1.2;letter-spacing
 .btn-secondary{background:rgba(255,255,255,.05);color:#fff;border:1px solid var(--border)}
 .btn-secondary:hover{background:rgba(255,255,255,.1)}
 
-/* ═════════ STEPPER (4 BƯỚC) ═════════ */
+/* ═════════ STEPPER ═════════ */
 .stepper{display:flex;justify-content:space-between;align-items:flex-start;position:relative;margin-bottom:32px}
 .stepper::before{content:'';position:absolute;top:16px;left:10%;right:10%;height:2px;background:rgba(255,255,255,.1);z-index:0}
 .stepper li{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:1;list-style:none}
@@ -48,11 +48,11 @@ h1{font-size:clamp(28px,5vw,40px);font-weight:900;line-height:1.2;letter-spacing
 .stepper li.done b{background:#fff;border-color:#fff;color:#000}
 .stepper li.done span{color:#fff}
 
-/* ═════════ CHECKBOT PRO (KHÔNG BỊ ĐEN) ═════════ */
+/* ═════════ CHECKBOT PRO (CHUẨN LƯỚI) ═════════ */
 .ckpt-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:stretch}
 @media(max-width:768px){.ckpt-grid{grid-template-columns:1fr}}
 .ckpt-left{display:flex;flex-direction:column;gap:16px}
-.ckpt-right{display:flex;flex-direction:column;gap:16px;justify-content:center}
+.ckpt-right{display:flex;flex-direction:column;gap:16px;justify-content:flex-start}
 
 .term-shell{background:#000;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:inset 0 0 20px rgba(0,0,0,.9)}
 .term-bar{padding:10px 16px;background:#121215;display:flex;align-items:center;gap:6px;border-bottom:1px solid rgba(255,255,255,.05)}
@@ -63,7 +63,6 @@ h1{font-size:clamp(28px,5vw,40px);font-weight:900;line-height:1.2;letter-spacing
 .term div.ok{color:var(--ok)}
 @keyframes termIn{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:none}}
 
-/* Turnstile Box */
 .ts-wrap{background:linear-gradient(180deg,rgba(255,255,255,.05),transparent);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;transition:all .3s}
 .ts-wrap.active{border-color:rgba(34,211,238,.5);box-shadow:0 0 30px rgba(34,211,238,.1)}
 .ts-wrap.success{border-color:rgba(16,185,129,.5);box-shadow:0 0 30px rgba(16,185,129,.2)}
@@ -71,19 +70,20 @@ h1{font-size:clamp(28px,5vw,40px);font-weight:900;line-height:1.2;letter-spacing
 .ts-status strong{color:#fff}
 .err{display:none;color:#ef4444;font-size:12px;margin-top:8px;text-align:center}
 
-/* Đồng hồ & Radar */
-.timer-box{background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center}
-.timer-label{font-size:10px;font-weight:900;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
-.timer-val{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 20px rgba(255,255,255,.4)}
-.timer-val small{font-size:14px;color:var(--muted)}
+/* ĐỒNG HỒ ĐẾM GIÂY (NỔI BẬT) */
+.timer-box{background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:16px;padding:24px 20px;text-align:center;box-shadow:inset 0 0 20px rgba(0,0,0,.5)}
+.timer-label{font-size:11px;font-weight:900;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:12px}
+.timer-val{font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:900;color:#fff;line-height:1;text-shadow:0 0 20px rgba(255,255,255,.4)}
+.timer-val small{font-size:16px;color:var(--muted)}
 
-.radar-box{background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;align-items:center;justify-content:center;position:relative;height:140px;overflow:hidden}
+/* RADAR QUAY */
+.radar-box{background:rgba(0,0,0,.5);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;align-items:center;justify-content:center;position:relative;height:140px;overflow:hidden;box-shadow:inset 0 0 20px rgba(0,0,0,.5)}
 .radar-circle{width:80px;height:80px;border-radius:50%;border:1px solid rgba(34,211,238,.3);position:relative;display:flex;align-items:center;justify-content:center}
 .radar-circle::before{content:'';position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 70%,rgba(34,211,238,.5) 100%);animation:spin 2s linear infinite}
 .radar-dot{width:8px;height:8px;background:#22d3ee;border-radius:50%;box-shadow:0 0 10px #22d3ee}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ═════════ INPUT & FORM ═════════ */
+/* ═════════ FORM RADIO ═════════ */
 .radio-group{display:flex;flex-direction:column;gap:10px;margin:16px 0}
 .radio-label{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:.3s;background:rgba(255,255,255,.02)}
 .radio-label:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.3)}
@@ -118,11 +118,11 @@ export const CHECKPOINT_JS = `(function(){
   var term=document.getElementById('terminal'),timerEl=document.getElementById('timer'),help=document.getElementById('helpText'),err=document.getElementById('errorBox'),tsWrap=document.getElementById('tsWrap');
   if(!term||!timerEl)return;
   
-  // Log chạy chữ
+  // Chạy log chữ
   var logs=['Khởi tạo kết nối bảo mật TLS 1.3...','Phân tích dấu vết trình duyệt...','Kiểm tra mẫu lưu lượng bất thường...','Đang chờ xác minh Captcha...'],li=0;
   (function print(){if(li>=logs.length)return;var d=document.createElement('div');d.textContent='> '+logs[li];if(li===3)d.className='ok';term.appendChild(d);li++;setTimeout(print,700);})();
   
-  // ĐỒNG HỒ ĐẾM GIÂY (Fix)
+  // ĐỒNG HỒ ĐẾM (FIX)
   var t0=performance.now(),tick=setInterval(function(){timerEl.innerHTML=((performance.now()-t0)/1000).toFixed(2)+'<small>s</small>';},50);
   
   var busy=false;
@@ -141,25 +141,58 @@ export const CHECKPOINT_JS = `(function(){
 })();`;
 
 export const JS_FX = `(function(){
-  // TUYẾT RƠI TRẮNG (Fix z-index)
-  var c=document.createElement('canvas');c.id='snow-canvas';document.body.appendChild(c);var ctx=c.getContext('2d');
-  function size(){c.width=innerWidth;c.height=innerHeight}size();addEventListener('resize',size);
-  var flakes=[];
-  for(var i=0;i<100;i++)flakes.push({
-    x:Math.random()*innerWidth, y:Math.random()*innerHeight,
-    r:Math.random()*2+0.5, vy:Math.random()*1+0.5, vx:(Math.random()-0.5)*0.5, o:Math.random()*0.6+0.4
-  });
-  function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    for(var i=0;i<flakes.length;i++){
-      var p=flakes[i];
-      ctx.fillStyle='rgba(255,255,255,'+p.o+')'; // Tuyết trắng
-      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
-      p.y+=p.vy; p.x+=p.vx+Math.sin(p.y/60)*0.5;
-      if(p.y>innerHeight+10){p.y=-10;p.x=Math.random()*innerWidth;}
-      if(p.x>innerWidth+10)p.x=-10; if(p.x<-10)p.x=innerWidth+10;
-    }
-    requestAnimationFrame(draw);
+  // TUYẾT RƠI TRẮNG (Dùng setTimeout/SétInterval để đảm bảo chạy 100%)
+  var canvas = document.createElement('canvas');
+  canvas.id = 'snow-canvas';
+  document.body.appendChild(canvas);
+  var ctx = canvas.getContext('2d');
+  var w, h;
+  var flakes = [];
+  
+  function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
   }
-  draw();
+  window.addEventListener('resize', resize);
+  resize();
+  
+  for (var i = 0; i < 120; i++) {
+      flakes.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 2 + 0.5, // Kích thước bông tuyết
+          d: Math.random() * 1 + 0.5, // Tốc độ rơi
+          a: Math.random() * 0.6 + 0.4 // Độ mờ
+      });
+  }
+  
+  function draw() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = 'rgba(255,255,255,0.9)'; // Màu trắng tinh khiết
+      ctx.beginPath();
+      for (var i = 0; i < flakes.length; i++) {
+          var f = flakes[i];
+          ctx.moveTo(f.x, f.y);
+          ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+      }
+      ctx.fill();
+      update();
+  }
+  
+  function update() {
+      for (var i = 0; i < flakes.length; i++) {
+          var f = flakes[i];
+          f.y += Math.cos(f.d) + 1 + f.r / 2;
+          f.x += Math.sin(f.d) * 1.2; // Gió thổi
+          
+          if (f.y > h + 5) { 
+              f.x = Math.random() * w; 
+              f.y = -5; 
+          }
+          if (f.x > w + 5) f.x = -5;
+          if (f.x < -5) f.x = w + 5;
+      }
+  }
+  
+  setInterval(draw, 33); // ~30 FPS
 })();`;
