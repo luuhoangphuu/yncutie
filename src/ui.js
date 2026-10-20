@@ -32,7 +32,6 @@ const stepper = (states) => {
 };
 
 export function renderCheckpoint(env, nonce, next = '/') {
-  const head = '<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>';
   const body = `${nav('')}<main class="wrap"><div class="cp-grid reveal">
 
   <section class="ti cp" id="app" data-next="${esc(next)}">
@@ -47,7 +46,7 @@ export function renderCheckpoint(env, nonce, next = '/') {
     </ol>
 
     <div class="ts-box" id="tsWrap">
-      <div class="cf-turnstile" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}" data-theme="dark" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError"></div>
+      <div id="tsMount" data-sitekey="${esc(env.TURNSTILE_SITE_KEY)}"></div>
       <div class="err" id="errorBox" role="alert" style="display:none;margin-top:12px;font-size:13px"></div>
     </div>
     <p class="cp-status" id="helpText" aria-live="polite">Bấm vào ô <strong>Verify you are human</strong> để tiếp tục.</p>
@@ -74,7 +73,7 @@ export function renderCheckpoint(env, nonce, next = '/') {
     <div class="con-chips"><span>Cloudflare Turnstile</span><span>Chống bot</span><span>Giới hạn truy cập</span></div>
   </aside>
 </div></main>${foot()}<script nonce="${nonce}">${CHECKPOINT_JS}</script>`;
-  return layout('Xác minh', body, nonce, head);
+  return layout('Xác minh', body, nonce);
 }
 
 export function renderHome(env, error, notice, quota, nonce) {

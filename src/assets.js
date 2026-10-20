@@ -37,7 +37,7 @@ a{color:inherit;text-decoration:none}
 .nav-links a.on{color:#0b0c0e;background:var(--metal)}
 
 /* ============ LAYOUT ============ */
-.wrap{position:relative;z-index:10;width:100%;max-width:1040px;margin:0 auto;padding:132px clamp(16px,4vw,28px) 80px;flex:1}
+.wrap{position:relative;z-index:10;width:100%;max-width:1040px;margin:0 auto;padding:112px clamp(16px,4vw,28px) 64px;flex:1}
 .wrap.narrow{max-width:640px}
 .center{text-align:center}
 
@@ -45,8 +45,8 @@ a{color:inherit;text-decoration:none}
 .ti{position:relative;border-radius:var(--r-lg);overflow:hidden;isolation:isolate;
   background:
     linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,0) 38%),
-    repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,rgba(0,0,0,.04) 1px 3px),
-    linear-gradient(150deg,#41464e 0%,#272a30 48%,#343840 100%);
+    repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,rgba(0,0,0,.04) 1px 3px),
+    linear-gradient(150deg,#3a3e46 0%,#20232a 50%,#2c3037 100%);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.38),inset 0 -1px 0 rgba(0,0,0,.55),0 50px 90px -40px rgba(0,0,0,.95),0 12px 30px -16px rgba(0,0,0,.7)}
 .ti::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(60% 75% at var(--mx,28%) var(--my,0%),rgba(255,255,255,.2),transparent 65%)}
 .ti::after{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;background:linear-gradient(160deg,rgba(255,255,255,.65),rgba(255,255,255,.06) 38%,rgba(255,255,255,.04) 62%,rgba(255,255,255,.3));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
@@ -126,18 +126,18 @@ h3{font-weight:700;letter-spacing:-.01em}
 .app-list li{list-style:none}
 
 /* ============ CHECK BOT ============ */
-.cp{padding:46px clamp(22px,5vw,48px) 38px;text-align:center;display:flex;flex-direction:column;align-items:center}
-.cp-icon{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;margin-bottom:24px;background:rgba(0,0,0,.3);box-shadow:inset 0 2px 8px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.12);transition:box-shadow .4s}
-.cp-icon svg{width:30px;height:30px;stroke:var(--silver);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+.cp{padding:32px clamp(22px,4vw,40px) 28px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.cp-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;margin-bottom:16px;background:rgba(0,0,0,.3);box-shadow:inset 0 2px 8px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.12);transition:box-shadow .4s}
+.cp-icon svg{width:26px;height:26px;stroke:var(--silver);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
 .cp-icon .tick{opacity:0;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .5s .1s,opacity .2s}
 .cp.is-ok .cp-icon{box-shadow:inset 0 2px 8px rgba(0,0,0,.5),0 0 40px rgba(134,216,170,.3)}
 .cp.is-ok .cp-icon svg{stroke:var(--ok)}
 .cp.is-ok .cp-icon .tick{opacity:1;stroke-dashoffset:0}
 .cp.is-ok .cp-icon .shield{opacity:.3}
 .cp.is-fail .cp-icon svg{stroke:var(--danger)}
-.cp-title{font-size:clamp(26px,4.5vw,34px);font-weight:800;line-height:1.15;letter-spacing:-.035em;margin-bottom:10px}
-.cp-sub{color:var(--muted);font-size:15px;max-width:380px;margin-bottom:28px}
-.ts-box{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:110px;padding:22px 16px;margin-bottom:22px;background:var(--field);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-md);box-shadow:inset 0 2px 8px rgba(0,0,0,.45);transition:border-color .3s}
+.cp-title{font-size:clamp(24px,3.2vw,30px);font-weight:800;line-height:1.15;letter-spacing:-.035em;margin-bottom:10px}
+.cp-sub{color:var(--muted);font-size:14.5px;max-width:380px;margin-bottom:20px}
+.ts-box{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:96px;padding:16px;margin-bottom:16px;background:var(--field);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-md);box-shadow:inset 0 2px 8px rgba(0,0,0,.45);transition:border-color .3s}
 .cp.is-verifying .ts-box{border-color:rgba(255,255,255,.35)}
 .cp.is-ok .ts-box{border-color:rgba(134,216,170,.5)}
 .cp-bar{width:100%;height:3px;border-radius:3px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:14px}
@@ -230,7 +230,7 @@ h3{font-weight:700;letter-spacing:-.01em}
 /* ============ CHECK BOT: BẢNG GIÁM SÁT ============ */
 .cp-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:22px;max-width:980px;margin:0 auto;align-items:stretch}
 @media(max-width:860px){.cp-grid{grid-template-columns:1fr}}
-.cp-steps{list-style:none;display:flex;gap:8px;margin:0 0 22px;padding:0;width:100%}
+.cp-steps{list-style:none;display:flex;gap:8px;margin:0 0 18px;padding:0;width:100%}
 .cp-steps li{flex:1;font-size:13px;font-weight:600;color:var(--dim);text-align:left;transition:color .3s}
 .cp-steps li::before{content:'';display:block;height:3px;border-radius:3px;background:rgba(255,255,255,.14);margin-bottom:8px;transition:background .4s}
 .cp-steps li.done{color:var(--silver)}
@@ -240,20 +240,20 @@ h3{font-weight:700;letter-spacing:-.01em}
 @keyframes barflow{from{background-position:200% 0}to{background-position:-200% 0}}
 .cp.is-ok .cp-steps li::before{background:var(--ok)}
 
-.console{border-radius:var(--r-lg);border:1px solid var(--border-strong);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),rgba(10,11,13,.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 70px -40px rgba(0,0,0,.95);padding:26px;display:flex;flex-direction:column;gap:20px}
-.con-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.console{border-radius:var(--r-lg);border:1px solid var(--border-strong);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),rgba(10,11,13,.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 40px 70px -40px rgba(0,0,0,.95);padding:22px;display:flex;flex-direction:column;gap:16px}
+.con-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
 .con-title{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;letter-spacing:-.01em}
 .con-pill{font-size:12.5px;font-weight:700;color:var(--ok);padding:5px 12px;border-radius:99px;background:rgba(134,216,170,.1);border:1px solid rgba(134,216,170,.35)}
 .live-dot{width:8px;height:8px;background:var(--ok);border-radius:50%;box-shadow:0 0 0 0 rgba(134,216,170,.5);animation:pulse 2s infinite;flex:none}
 @keyframes pulse{70%{box-shadow:0 0 0 8px rgba(134,216,170,0)}100%{box-shadow:0 0 0 0 rgba(134,216,170,0)}}
 .con-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.metric{padding:14px 16px;border-radius:14px;background:var(--field);border:1px solid var(--border);box-shadow:inset 0 2px 6px rgba(0,0,0,.35)}
+.metric{padding:12px 14px;border-radius:14px;background:var(--field);border:1px solid var(--border);box-shadow:inset 0 2px 6px rgba(0,0,0,.35)}
 .metric p{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:4px}
-.metric b{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:20px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.metric b{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:18px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .metric b small{font-size:13px;color:var(--muted);margin-left:2px}
 .con-label{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:10px}
 .con-log{flex:1;display:flex;flex-direction:column}
-.con-logbox{flex:1;min-height:170px;background:var(--field);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;box-shadow:inset 0 2px 6px rgba(0,0,0,.35)}
+.con-logbox{flex:1;min-height:118px;background:var(--field);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;box-shadow:inset 0 2px 6px rgba(0,0,0,.35)}
 .cp-log{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12.5px;line-height:1.5}
 .cp-log li{display:flex;gap:12px;animation:fadeIn .4s both}
 .cp-log time{color:var(--dim);flex:none;min-width:44px}
@@ -361,10 +361,31 @@ export const CHECKPOINT_JS = `(function(){
     log(location.protocol === 'https:' ? 'Kết nối HTTPS an toàn' : 'Kết nối chưa mã hoá', location.protocol === 'https:' ? 'ok' : 'warn');
     step(1, 'done'); step(2, 'active');
   }, 350);
-  var poll = setInterval(function() {
-    if (window.turnstile) { clearInterval(poll); log('Đã tải Cloudflare Turnstile', 'ok'); log('Đang chờ bạn xác nhận'); }
-    else if (performance.now() - t0 > 10000) { clearInterval(poll); log('Tải captcha chậm, hãy kiểm tra mạng', 'warn'); help.textContent = 'Captcha tải chậm. Hãy kiểm tra mạng hoặc tải lại trang.'; }
-  }, 250);
+  // Tải Turnstile bằng script có nonce (vượt CSP) và báo lỗi rõ ràng nếu bị chặn
+  var mount = $('tsMount');
+  function loadFail(msg) {
+    log(msg, 'err'); showErr(msg);
+    help.textContent = 'Hãy tải lại trang. Nếu vẫn lỗi, tắt trình chặn quảng cáo hoặc báo admin.';
+  }
+  function renderWidget() {
+    try {
+      turnstile.render(mount, {
+        sitekey: mount.getAttribute('data-sitekey'), theme: 'dark',
+        callback: function(t) { window.onTurnstileSuccess(t); },
+        'error-callback': function() { window.onTurnstileError(); },
+        'expired-callback': function() { log('Token hết hạn, hãy xác nhận lại', 'warn'); }
+      });
+      log('Đã tải Cloudflare Turnstile', 'ok'); log('Đang chờ bạn xác nhận');
+    } catch (err) { loadFail('Không hiển thị được captcha: ' + ((err && err.message) || err)); }
+  }
+  var ts = document.createElement('script');
+  ts.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+  ts.async = true; ts.defer = true;
+  var cs = document.currentScript; if (cs && cs.nonce) ts.nonce = cs.nonce;
+  ts.onload = renderWidget;
+  ts.onerror = function() { loadFail('Không tải được Turnstile (có thể do CSP hoặc trình chặn quảng cáo)'); };
+  document.head.appendChild(ts);
+  setTimeout(function() { if (!window.turnstile && !busy) loadFail('Captcha tải quá chậm'); }, 10000);
 
   function fail(msg) {
     state('fail'); showErr(msg); log(msg, 'err');
