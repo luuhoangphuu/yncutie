@@ -1,28 +1,74 @@
-export function safeBtoa(str) { return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-export function safeAtob(str) { return decodeURIComponent(escape(atob(str.replace(/-/g, '+').replace(/_/g, '/')))); }
-export async function hmac(data, secret, action) {
-  const enc = new TextEncoder(); const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [action]);
-  if (action === 'sign') { const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data)); return btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
-  return key;
+const enc = new TextEncoder();
+const dec = new TextDecoder();
+const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const fromB64u = (s) => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0));
+const hmacKey = (secret, usage) => crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, [usage]);
+
+// Token có chữ ký HMAC: { ...data, exp }
+export async function signToken(data, secret) {
+  const body = b64u(enc.encode(JSON.stringify(data)));
+  const sig = await crypto.subtle.sign('HMAC', await hmacKey(secret, 'sign'), enc.encode(body));
+  return body + '.' + b64u(sig);
 }
-export async function encodeSession(data, secret) { return safeBtoa(JSON.stringify(data)) + '.' + await hmac(safeBtoa(JSON.stringify(data)), secret, 'sign'); }
-export async function decodeSession(token, secret) {
-  if (!token || token.length > 4096) return null; const parts = token.split('.'); if (parts.length !== 2) return null;
+
+export async function verifyToken(token, secret) {
+  if (!token || token.length > 2048) return null;
+  const parts = token.split('.');
+  if (parts.length !== 2) return null;
   try {
-    const enc = new TextEncoder(); const key = await hmac('', secret, 'import');
-    const sigBytes = Uint8Array.from(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
-    const ok = await crypto.subtle.verify('HMAC', key, sigBytes, enc.encode(parts[0])); if (!ok) return null;
-    const data = JSON.parse(safeAtob(parts[0])); if (Date.now() > data.expiresAt) return null; return data;
+    const ok = await crypto.subtle.verify('HMAC', await hmacKey(secret, 'verify'), fromB64u(parts[1]), enc.encode(parts[0]));
+    if (!ok) return null;
+    const data = JSON.parse(dec.decode(fromB64u(parts[0])));
+    if (!data.exp || Date.now() > data.exp) return null;
+    return data;
   } catch { return null; }
 }
-export function getCookie(request, name) { const c = request.headers.get('cookie') || ''; const m = c.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)')); return m ? m[1] : null; }
-export function setCookie(name, value, maxAge) { return `${name}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}; Secure`; }
+
+// So sánh chuỗi theo kiểu constant-time (hash trước rồi so từng byte)
+export async function safeEqual(a, b) {
+  const h = async (v) => new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(String(v ?? ''))));
+  const [x, y] = await Promise.all([h(a), h(b)]);
+  let d = 0;
+  for (let i = 0; i < x.length; i++) d |= x[i] ^ y[i];
+  return d === 0;
+}
+
+export function getCookie(request, name) {
+  const c = request.headers.get('cookie') || '';
+  const m = c.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
+  return m ? m[1] : null;
+}
+
+export function setCookie(name, value, maxAge) {
+  return name + '=' + value + '; Path=/; HttpOnly; SameSite=Lax; Max-Age=' + maxAge + '; Secure';
+}
+
+// IPv4 giữ nguyên, IPv6 gom về /64 (có xử lý dạng nén "::")
+export function normalizeIP(ip) {
+  if (!ip) return 'local';
+  if (!ip.includes(':')) return ip;
+  const idx = ip.indexOf('::');
+  let full;
+  if (idx === -1) full = ip.split(':');
+  else {
+    const head = ip.slice(0, idx) ? ip.slice(0, idx).split(':') : [];
+    const tail = ip.slice(idx + 2) ? ip.slice(idx + 2).split(':') : [];
+    full = [...head, ...Array(Math.max(8 - head.length - tail.length, 0)).fill('0'), ...tail];
+  }
+  return full.slice(0, 4).map((x) => (x || '0').toLowerCase().replace(/^0+(?=.)/, '')).join(':') + '::/64';
+}
+
 export async function verifyTurnstile(token, ip, env) {
-  if (!token) return { success: false, error: "Missing token" };
+  if (!token || typeof token !== 'string') return { success: false, error: 'Thiếu mã xác minh.' };
+  if (!env.TURNSTILE_SECRET_KEY) return { success: false, error: 'Máy chủ chưa cấu hình Turnstile.' };
   try {
-    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ secret: env.TURNSTILE_SECRET_KEY, response: token, remoteip: ip }) });
+    const r = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret: env.TURNSTILE_SECRET_KEY, response: token, remoteip: ip }),
+      signal: AbortSignal.timeout(8000)
+    });
     const d = await r.json();
-    if (!d.success) return { success: false, error: "Captcha không hợp lệ." };
-    return { success: true };
-  } catch { return { success: false, error: "Lỗi mạng." }; }
+    return d.success ? { success: true } : { success: false, error: 'Captcha không hợp lệ hoặc đã hết hạn. Hãy thử lại.' };
+  } catch { return { success: false, error: 'Lỗi mạng khi xác minh. Hãy thử lại.' }; }
 }

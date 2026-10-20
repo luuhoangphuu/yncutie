@@ -1,292 +1,250 @@
-import { renderCheckpoint, renderHome, renderStep, renderFAQ, renderAdmin, renderError } from './ui.js';
-import { encodeSession, decodeSession, getCookie, setCookie, verifyTurnstile } from './auth.js';
+import { renderCheckpoint, renderHome, renderStep1, renderStep2, renderSuccess, renderFAQ, renderAdmin, renderError } from './ui.js';
+import { signToken, verifyToken, getCookie, setCookie, verifyTurnstile, safeEqual, normalizeIP } from './auth.js';
+
+const SESSION_TTL = 900;      // giây
+const BOT_TTL = 600;          // giây
+const MIN_ADS_SECONDS = 15;   // thời gian tối thiểu giữa lúc mở link và lúc quay lại
+const DAILY_LIMIT = 12;
+const TIERS = { Normal: 1, VIP: 2 };
+const MESSAGES = {
+  bypass: 'Liên kết xác nhận không hợp lệ. Vui lòng bắt đầu lại.',
+  fast: 'Bạn vượt liên kết quá nhanh. Hãy hoàn thành đầy đủ trang quảng cáo rồi thử lại.',
+  quota: 'Bạn đã hết lượt nhận key hôm nay. Vui lòng quay lại vào ngày mai!',
+  issuer: 'Máy chủ cấp key đang bận. Vui lòng thử lại sau ít phút.'
+};
+const DEFAULT_NOTICE = { enabled: true, title: 'THÔNG BÁO QUAN TRỌNG', content: '© Bản quyền thuộc về GETKEYDPICONFIG.SITE.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n🔥 IB Tele: @Anmaster18\n✅ Hoặc: @Mityangho\n👤 Để mua key.' };
 
 const getSecret = (env, key) => {
-  if (!env[key]) throw new Error(`Thiếu biến: ${key}. Chạy: wrangler secret put ${key}`);
+  if (!env[key]) throw new Error('MISSING_ENV:' + key);
   return env[key];
 };
+const rawIP = (req) => req.headers.get('cf-connecting-ip') || 'local';
+const getIP = (req) => normalizeIP(rawIP(req));
+const makeNonce = () => btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
 
-const DEFAULT_NOTICE = { enabled: true, title: "THÔNG BÁO", content: "© Bản quyền thuộc về GETKEYDPICONFIG.SITE." };
-
-// FIX: IPv6 /64 expand properly
-function getIP(req) {
-  let ip = req.headers.get('cf-connecting-ip') || 'local';
-  if (ip.includes(':')) {
-    // Expand compressed IPv6
-    if (ip.includes('::')) {
-      const parts = ip.split('::');
-      const left = parts[0] ? parts[0].split(':') : [];
-      const right = parts[1] ? parts[1].split(':') : [];
-      const missing = 8 - left.length - right.length;
-      const full = [...left, ...Array(missing).fill('0'), ...right];
-      return full.slice(0, 4).map(p => p.padStart(4, '0')).join(':');
-    }
-    return ip.split(':').slice(0, 4).map(p => p.padStart(4, '0')).join(':');
-  }
-  return ip;
+function secHeaders(nonce) {
+  return {
+    'Content-Security-Policy': "default-src 'none'; script-src 'nonce-" + nonce + "' https://challenges.cloudflare.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; frame-src https://challenges.cloudflare.com; connect-src 'self' https://challenges.cloudflare.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
+  };
 }
+const htmlRes = (body, nonce, status = 200, cookie) => {
+  const h = new Headers({ 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', ...secHeaders(nonce) });
+  if (cookie) h.append('Set-Cookie', cookie);
+  return new Response(body, { status, headers: h });
+};
+const jsonRes = (obj, status = 200, cookie) => {
+  const h = new Headers({ 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+  if (cookie) h.append('Set-Cookie', cookie);
+  return new Response(JSON.stringify(obj), { status, headers: h });
+};
+const redirect = (loc, cookie) => {
+  const h = new Headers({ Location: loc, 'Cache-Control': 'no-store' });
+  if (cookie) h.append('Set-Cookie', cookie);
+  return new Response(null, { status: 302, headers: h });
+};
 
-// Constant-time compare
-function timingSafeEqual(a, b) {
-  if (a.length !== b.length) return false;
-  let r = 0;
-  for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return r === 0;
-}
-
+// ---------- SESSION (lưu trong KV, cookie chỉ giữ ID) ----------
 async function getSession(req, env) {
   const sid = getCookie(req, 'sid');
-  if (!sid) return null;
-  const raw = await env.ANNOUNCEMENT_KV.get(`session:${sid}`);
+  if (!sid || !/^[0-9a-f-]{36}$/.test(sid)) return null;
+  const raw = await env.ANNOUNCEMENT_KV.get('session:' + sid);
   if (!raw) return null;
-  const s = JSON.parse(raw);
-  if (s.ip !== getIP(req)) return null;
-  if (Date.now() > s.expiresAt) return null;
+  let s; try { s = JSON.parse(raw); } catch { return null; }
+  if (s.ip !== getIP(req) || Date.now() > s.exp) return null;
+  s.sid = sid;
   return s;
 }
-
-async function saveSession(req, env, data) {
-  const sid = data.sid || crypto.randomUUID();
-  data.sid = sid;
-  data.expiresAt = Date.now() + 600000;
-  data.ip = getIP(req);
-  await env.ANNOUNCEMENT_KV.put(`session:${sid}`, JSON.stringify(data), { expirationTtl: 600 });
-  return setCookie('sid', sid, 600);
+async function saveSession(req, env, s) {
+  s.sid = s.sid || crypto.randomUUID();
+  s.exp = Date.now() + SESSION_TTL * 1000;
+  s.ip = getIP(req);
+  await env.ANNOUNCEMENT_KV.put('session:' + s.sid, JSON.stringify(s), { expirationTtl: SESSION_TTL + 60 });
+  return setCookie('sid', s.sid, SESSION_TTL);
 }
 
-async function checkQuota(req, env) {
-  const ip = getIP(req);
-  const dateStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
-  const key = `quota:${ip}:${dateStr}`;
-  const countStr = await env.ANNOUNCEMENT_KV.get(key);
-  const count = countStr ? parseInt(countStr) : 0;
-  if (count >= 12) return { ok: false, count, limit: 12 };
-  return { ok: true, count, limit: 12 };
+// ---------- QUOTA ----------
+const quotaKey = (req) => 'quota:' + getIP(req) + ':' + new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
+async function getQuota(req, env) {
+  const c = parseInt((await env.ANNOUNCEMENT_KV.get(quotaKey(req))) || '0', 10) || 0;
+  return { ok: c < DAILY_LIMIT, count: c, limit: DAILY_LIMIT };
+}
+async function incQuota(req, env) {
+  const k = quotaKey(req);
+  const c = parseInt((await env.ANNOUNCEMENT_KV.get(k)) || '0', 10) || 0;
+  await env.ANNOUNCEMENT_KV.put(k, String(c + 1), { expirationTtl: 90000 });
 }
 
-async function incrementQuota(req, env) {
-  const ip = getIP(req);
-  const dateStr = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
-  const key = `quota:${ip}:${dateStr}`;
-  const countStr = await env.ANNOUNCEMENT_KV.get(key);
-  const count = countStr ? parseInt(countStr) : 0;
-  await env.ANNOUNCEMENT_KV.put(key, (count + 1).toString(), { expirationTtl: 86400 });
+// ---------- ADMIN ----------
+async function adminLocked(ip, env) { return (parseInt((await env.ANNOUNCEMENT_KV.get('admin_fail:' + ip)) || '0', 10) || 0) >= 5; }
+async function adminFail(ip, env) {
+  const n = (parseInt((await env.ANNOUNCEMENT_KV.get('admin_fail:' + ip)) || '0', 10) || 0) + 1;
+  await env.ANNOUNCEMENT_KV.put('admin_fail:' + ip, String(n), { expirationTtl: 3600 });
+}
+const cleanNotice = (n) => ({ enabled: !!(n && n.enabled), title: String((n && n.title) || '').slice(0, 100), content: String((n && n.content) || '').slice(0, 1000) });
+async function getNotice(env) {
+  try { const raw = await env.ANNOUNCEMENT_KV.get('notice_json'); if (raw) return cleanNotice(JSON.parse(raw)); } catch {}
+  return DEFAULT_NOTICE;
+}
+async function saveNotice(env, n) {
+  try { await env.ANNOUNCEMENT_KV.put('notice_json', JSON.stringify(cleanNotice(n))); return true; } catch { return false; }
 }
 
-async function checkAdminFailLimit(ip, env) {
-  const key = `admin_fail:${ip}`;
-  const countStr = await env.ANNOUNCEMENT_KV.get(key);
-  return countStr ? parseInt(countStr) >= 5 : false;
+// ---------- ISSUER ----------
+async function issueKey(env, tier) {
+  try {
+    const res = await fetch(env.KEY_ISSUER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': getSecret(env, 'KEY_ISSUER_API_KEY') },
+      body: JSON.stringify({ tier }),
+      signal: AbortSignal.timeout(10000)
+    });
+    if (!res.ok) return null;
+    const d = await res.json();
+    return d && d.success && typeof d.key === 'string' ? d : null;
+  } catch { return null; }
 }
 
-async function recordAdminFail(ip, env) {
-  const key = `admin_fail:${ip}`;
-  const countStr = await env.ANNOUNCEMENT_KV.get(key);
-  const count = countStr ? parseInt(countStr) : 0;
-  await env.ANNOUNCEMENT_KV.put(key, (count + 1).toString(), { expirationTtl: 3600 });
+async function shortenLink(env, target) {
+  try {
+    const api = 'https://link4m.co/api-shorten/v2?api=' + encodeURIComponent(getSecret(env, 'LINK4M_API_TOKEN')) + '&url=' + encodeURIComponent(target);
+    const d = await (await fetch(api, { signal: AbortSignal.timeout(8000) })).json();
+    if (d && d.status === 'success' && /^https:\/\//.test(d.shortenedUrl || '')) return d.shortenedUrl;
+  } catch {}
+  return null;
 }
-
-const html = (s) => new Response(s, { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' } });
-const redirect = (loc, cookie) => { const h = { 'Location': loc }; if(cookie) h['Set-Cookie'] = cookie; return new Response('', { status: 302, headers: h }); };
 
 export default {
   async fetch(request, env) {
-    const url = new URL(request.url); const p = url.pathname; const m = request.method;
+    const url = new URL(request.url);
+    const p = url.pathname, m = request.method;
+    const nonce = makeNonce();
+    const html = (body, status = 200, cookie) => htmlRes(body, nonce, status, cookie);
+    const sameOrigin = () => { const o = request.headers.get('origin'); return !o || o === url.origin; };
 
     try {
       const SECRET = getSecret(env, 'SESSION_SECRET');
       const ip = getIP(request);
 
-      // ADMIN ROUTE (Không cần bot_passed)
-      if (p === '/ynsociuu/lhp' && m === 'GET') return html(renderAdmin());
-
+      // --- Admin ---
+      if (p === '/ynsociuu/lhp' && m === 'GET') return html(renderAdmin(nonce));
       if (p === '/api/admin/notice' && m === 'POST') {
-        // FIX: rate limit CHỈ tính lần sai
-        if (await checkAdminFailLimit(ip, env)) {
-          return new Response(JSON.stringify({ success: false, error: 'Quá nhiều lần sai. Thử lại sau 1 giờ.' }), { status: 429 });
+        if (!sameOrigin()) return jsonRes({ success: false, error: 'Forbidden' }, 403);
+        if (await adminLocked(ip, env)) return jsonRes({ success: false, error: 'Quá nhiều lần thử sai. Thử lại sau 1 giờ.' }, 429);
+        let body; try { body = await request.json(); } catch { return jsonRes({ success: false, error: 'Dữ liệu không hợp lệ.' }, 400); }
+        if (!(await safeEqual(body && body.password, getSecret(env, 'ADMIN_PASSWORD')))) {
+          await adminFail(ip, env);
+          return jsonRes({ success: false, error: 'Sai mật khẩu!' }, 401);
         }
-        const body = await request.json();
-        const adminPass = getSecret(env, 'ADMIN_PASSWORD');
-        
-        // Constant-time compare
-        if (!timingSafeEqual(body.password || '', adminPass)) {
-          await recordAdminFail(ip, env);  // chỉ ghi khi sai
-          return new Response(JSON.stringify({ success: false, error: 'Sai mật khẩu!' }), { status: 401 });
-        }
-        
-        if (body.action === 'get') return new Response(JSON.stringify({ success: true, notice: await getNotice(env) }));
-        if (body.action === 'save') {
-          if (await saveNotice(env, body.notice)) return new Response(JSON.stringify({ success: true }));
-          return new Response(JSON.stringify({ success: false, error: 'Lỗi KV.' }), { status: 500 });
-        }
-        return new Response(JSON.stringify({ success: false, error: 'Invalid action' }), { status: 400 });
+        await env.ANNOUNCEMENT_KV.delete('admin_fail:' + ip);
+        if (body.action === 'get') return jsonRes({ success: true, notice: await getNotice(env) });
+        if (body.action === 'save') return (await saveNotice(env, body.notice)) ? jsonRes({ success: true }) : jsonRes({ success: false, error: 'Lỗi lưu dữ liệu.' }, 500);
+        return jsonRes({ success: false, error: 'Hành động không hợp lệ.' }, 400);
       }
 
-      // CHECK BOT
+      // --- Turnstile ---
       if (p === '/api/verify-bot' && m === 'POST') {
-        const { token } = await request.json();
-        const v = await verifyTurnstile(token, ip, env);
-        if(!v.success) return new Response(JSON.stringify({ success: false, error: v.error }), { status: 400 });
-        // FIX: tăng TTL lên 600s (bằng session)
-        const bData = { ip, expiresAt: Date.now() + 600000 };
-        const bToken = await encodeSession(bData, SECRET);
-        return new Response(JSON.stringify({ success: true }), { headers: { 'Set-Cookie': setCookie('bot_passed', bToken, 600) } });
+        if (!sameOrigin()) return jsonRes({ success: false, error: 'Forbidden' }, 403);
+        let body; try { body = await request.json(); } catch { return jsonRes({ success: false, error: 'Dữ liệu không hợp lệ.' }, 400); }
+        const v = await verifyTurnstile(body && body.token, rawIP(request), env);
+        if (!v.success) return jsonRes({ success: false, error: v.error }, 400);
+        const tok = await signToken({ ip, exp: Date.now() + BOT_TTL * 1000 }, SECRET);
+        return jsonRes({ success: true }, 200, setCookie('bot_passed', tok, BOT_TTL));
       }
 
-      // FIX: /ads-return được phép đi qua nếu có session hợp lệ (không cần bot_passed)
-      const isAdsReturn = (p === '/ads-return' && m === 'GET');
-      
-      if (!isAdsReturn) {
-        const botToken = getCookie(request, 'bot_passed');
-        const botData = botToken ? await decodeSession(botToken, SECRET) : null;
-        const botPassed = botData && botData.ip === ip && Date.now() < botData.expiresAt;
-        if (!botPassed) return html(renderCheckpoint(env));
+      const bot = await verifyToken(getCookie(request, 'bot_passed'), SECRET);
+      if (!bot || bot.ip !== ip) {
+        const next = p === '/ads-return' && m === 'GET' ? p + url.search : '/';
+        return html(renderCheckpoint(env, nonce, next));
       }
 
-      const quota = await checkQuota(request, env);
-      if (!quota.ok && !isAdsReturn) return html(renderError(429, 'Bạn đã hết 12 lượt lấy Key hôm nay!'));
+      if (p === '/faq' && m === 'GET') return html(renderFAQ(nonce));
+
+      const quota = await getQuota(request, env);
+      if (!quota.ok) return html(renderError(429, MESSAGES.quota, nonce), 429);
 
       const s = await getSession(request, env);
+      const errMsg = MESSAGES[url.searchParams.get('e')] || null;
 
-      if (p === '/' && m === 'GET') return html(renderHome(env, url.searchParams.get('error'), await getNotice(env), quota));
-      if (p === '/faq' && m === 'GET') return html(renderFAQ());  // FIX: Khôi phục route
+      if (p === '/' && m === 'GET') return html(renderHome(env, errMsg, await getNotice(env), quota, nonce));
 
       if (p === '/start' && m === 'POST') {
+        if (!sameOrigin()) return redirect('/');
         const form = await request.formData();
-        let tier = form.get('tier') || 'Normal';
-        if (tier !== 'Normal' && tier !== 'VIP') tier = 'Normal';
-        const session = { sub: false, ads: 0, key: null, tier, adsToken: null, adsStartTime: null };
+        const t = form.get('tier');
+        const tier = typeof t === 'string' && Object.prototype.hasOwnProperty.call(TIERS, t) ? t : 'Normal';
+        const session = { sub: false, ads: 0, key: null, tier, adsToken: null, adsStartTime: null, adsLink: null };
         return redirect('/step1', await saveSession(request, env, session));
       }
 
       if (p === '/step1' && m === 'GET') {
-        if(!s) return redirect('/');
-        return html(renderStep('Ủng hộ', 1, `
-          <h2 style="text-align:center; color:#fff;">Ủng hộ Kênh YouTube</h2>
-          <a href="${env.YOUTUBE_CHANNEL_URL}" target="_blank" class="btn btn-primary" style="background:#ff0000;color:#fff;margin-top:20px;">Mở YouTube</a>
-          <form method="POST" action="/verify/sub"><button type="submit" class="btn btn-primary" style="margin-top:10px;">Xác nhận</button></form>
-        `));
+        if (!s) return redirect('/?e=bypass');
+        return html(renderStep1(env, nonce));
       }
 
       if (p === '/verify/sub' && m === 'POST') {
-        if(!s) return redirect('/');
+        if (!sameOrigin() || !s) return redirect('/');
         s.sub = true;
         return redirect('/step2', await saveSession(request, env, s));
       }
 
       if (p === '/step2' && m === 'GET') {
-        if(!s || !s.sub) return redirect('/');
-        const required = s.tier === 'VIP' ? 2 : 1;
-        if (s.ads >= required) return redirect('/success');
+        if (!s || !s.sub) return redirect('/');
+        const required = TIERS[s.tier] || 1;
+        if (s.key) return redirect('/success');
+        if (s.ads >= required) return redirect('/');
 
-        const currentStep = s.ads + 1;
-        const adsToken = crypto.randomUUID();
-        s.adsToken = adsToken;
-        s.adsStartTime = Date.now();
-        const cookie = await saveSession(request, env, s);
-
-        const returnUrl = new URL('/ads-return', request.url);
-        returnUrl.searchParams.set('token', adsToken);
-
-        // FIX: FAIL CLOSED nếu Link4M lỗi
-        let link4mUrl = null;
-        try {
-          const token4m = getSecret(env, 'LINK4M_API_TOKEN');
-          const api = `https://link4m.co/api-shorten/v2?api=${token4m}&url=${encodeURIComponent(returnUrl.toString())}`;
-          const res = await fetch(api);
-          const data = await res.json();
-          if (data.status === 'success') link4mUrl = data.shortenedUrl;
-        } catch (e) { console.error('Link4M error:', e.message); }
-
-        if (!link4mUrl) {
-          return html(renderError(503, 'Không tạo được link quảng cáo. Vui lòng thử lại sau.'));
+        let cookie;
+        if (!s.adsToken || !s.adsLink) {
+          const token = crypto.randomUUID();
+          const returnUrl = new URL('/ads-return', url.origin);
+          returnUrl.searchParams.set('token', token);
+          const link = await shortenLink(env, returnUrl.toString());
+          if (!link) return html(renderError(503, 'Không tạo được liên kết quảng cáo. Vui lòng thử lại sau.', nonce), 503);
+          s.adsToken = token; s.adsLink = link; s.adsStartTime = Date.now();
+          cookie = await saveSession(request, env, s);
         }
-
-        return html(renderStep('Vượt Ads', 2, `
-          <h2 style="text-align:center; color:#fff;">Vượt Quảng Cáo (${currentStep}/${required})</h2>
-          <a href="${link4mUrl}" target="_blank" class="btn btn-primary" style="background:#f59e0b;color:#fff;margin-top:20px;">Mở Link4M</a>
-        `), { 'Set-Cookie': cookie });
+        return html(renderStep2({ link: s.adsLink, current: s.ads + 1, required, error: errMsg }, nonce), 200, cookie);
       }
 
-      // CALLBACK VƯỢT LINK4M
       if (p === '/ads-return' && m === 'GET') {
-        if(!s || !s.sub) return redirect('/');
-        const reqToken = url.searchParams.get('token');
-        if (!reqToken || !s.adsToken || reqToken !== s.adsToken) {
-          return redirect('/?error=' + encodeURIComponent('Cảnh báo: Bypass Ads!'));
+        if (!s || !s.sub) return redirect('/?e=bypass');
+        if (s.key) return redirect('/success');
+        const tok = url.searchParams.get('token');
+        if (!tok || !s.adsToken || !(await safeEqual(tok, s.adsToken))) return redirect('/?e=bypass');
+        if (Date.now() - (s.adsStartTime || 0) < MIN_ADS_SECONDS * 1000) return redirect('/step2?e=fast');
+
+        const required = TIERS[s.tier] || 1;
+        s.ads += 1; s.adsToken = null; s.adsStartTime = null; s.adsLink = null;
+        if (s.ads < required) return redirect('/step2', await saveSession(request, env, s));
+
+        const q = await getQuota(request, env);
+        if (!q.ok) return redirect('/?e=quota');
+
+        await saveSession(request, env, s);               // tiêu thụ token TRƯỚC khi gọi issuer
+        const issued = await issueKey(env, s.tier);
+        if (!issued) {
+          s.ads = required - 1;                            // hoàn lại lượt khi issuer lỗi
+          return redirect('/step2?e=issuer', await saveSession(request, env, s));
         }
-        const timeTaken = (Date.now() - s.adsStartTime) / 1000;
-        if (timeTaken < 15) {
-          return redirect('/?error=' + encodeURIComponent('Vượt Ads quá nhanh! Chờ tối thiểu 15s.'));
-        }
-
-        s.ads += 1;
-        s.adsToken = null;
-        s.adsStartTime = null;
-        const required = s.tier === 'VIP' ? 2 : 1;
-
-        if (s.ads < required) {
-          return redirect('/step2', await saveSession(request, env, s));
-        }
-
-        // FIX: Tiêu thụ token TRƯỚC khi gọi issuer (chống replay parallel)
-        await saveSession(request, env, s);
-
-        const res = await fetch(env.KEY_ISSUER_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-API-Key': env.KEY_ISSUER_API_KEY },
-          body: JSON.stringify({ tier: s.tier })
-        });
-        const data = await res.json();
-
-        if (!data.success) {
-          // FIX: hoàn lại nếu issuer fail
-          s.ads -= 1;
-          await saveSession(request, env, s);
-          return redirect('/?error=' + encodeURIComponent('Lỗi API nhà cung cấp. Thử lại không mất lượt.'));
-        }
-
-        // FIX: Chỉ tăng quota khi thành công
-        await incrementQuota(request, env);
-        s.key = data.key;
-        s.duration = data.duration_hours;
+        await incQuota(request, env);
+        s.key = issued.key; s.duration = issued.duration_hours || null;
         return redirect('/success', await saveSession(request, env, s));
       }
 
       if (p === '/success' && m === 'GET') {
-        if(!s || !s.key) return redirect('/');
-        return html(renderStep('Nhận Key', 3, `
-          <h2 style="text-align:center; color:#fff;">Lấy Key Thành Công!</h2>
-          <div class="key-box" style="background:#111; border:2px dashed #555; padding:20px; text-align:center;">
-            <span id="keyText" style="color:#fff; font-size:20px;">${s.key}</span>
-          </div>
-          <button class="btn btn-primary" data-copy="keyText" style="margin-top:20px;">Copy Key</button>
-          <p style="text-align:center; color:#a1a1aa; margin-top:15px;">Hạn: <b>${s.duration || 8} giờ</b></p>
-        `));
+        if (!s || !s.key) return redirect('/');
+        return html(renderSuccess(s.key, s.duration, nonce));
       }
 
-      return html(renderError(404, 'Không tìm thấy trang'));
+      return html(renderError(404, 'Không tìm thấy trang', nonce), 404);
     } catch (e) {
-      console.error('FATAL:', e);
-      return html(renderError(500, e.message.includes('Thiếu biến') ? 'Hệ thống chưa cấu hình Secret' : 'Hệ thống đang bảo trì'));
+      console.error(e);
+      const missing = String(e && e.message).startsWith('MISSING_ENV:');
+      return html(renderError(500, missing ? 'Hệ thống chưa cấu hình đủ Secret' : 'Hệ thống đang bảo trì', nonce), 500);
     }
   }
 };
-
-// FIX: getNotice KHÔNG escape (lưu raw, escape lúc render)
-async function getNotice(env) {
-  if (env.ANNOUNCEMENT_KV) {
-    try {
-      const data = await env.ANNOUNCEMENT_KV.get('notice_json');
-      if (data) return JSON.parse(data);
-    } catch (e) {}
-  }
-  return DEFAULT_NOTICE;
-}
-async function saveNotice(env, noticeData) {
-  if (!env.ANNOUNCEMENT_KV) return false;
-  try {
-    await env.ANNOUNCEMENT_KV.put('notice_json', JSON.stringify(noticeData));
-    return true;
-  } catch (e) { return false; }
-}
