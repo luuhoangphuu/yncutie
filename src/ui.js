@@ -82,7 +82,10 @@ export function renderHome(env, error, notice, quota, nonce) {
     <div class="modal-content">
       <div class="modal-header"><span>${esc(notice.title || 'Thông báo')}</span><button class="modal-close" aria-label="Đóng">×</button></div>
       <div class="modal-body">${esc(notice.content || '')}</div>
-      <button class="modal-btn">Đã hiểu</button>
+      <div class="modal-actions">
+        <button class="modal-btn">Đã hiểu</button>
+        <button class="modal-btn modal-btn-ghost modal-snooze" type="button">Ẩn trong 1 giờ</button>
+      </div>
     </div>
   </div>` : '';
 

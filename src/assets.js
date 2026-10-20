@@ -184,6 +184,10 @@ h3{font-weight:700;letter-spacing:-.01em}
 .modal-close{background:rgba(255,255,255,.06);border:1px solid var(--border);width:32px;height:32px;border-radius:50%;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
 .modal-close:hover{color:var(--text);background:rgba(255,255,255,.12)}
 .modal-body{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:24px;white-space:pre-wrap}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
+.modal-actions .modal-btn{flex:1 1 140px}
+.modal-btn-ghost{background:rgba(255,255,255,.06)!important;color:var(--text)!important;border:1px solid var(--border-strong)!important}
+.modal-btn-ghost:hover{background:rgba(255,255,255,.11)!important}
 .modal-btn{width:100%;padding:14px;border-radius:12px;background:var(--metal);color:#0b0c0e;font-weight:800;font-family:inherit;font-size:14px;border:1px solid rgba(255,255,255,.7);cursor:pointer}
 
 /* ============ FOOTER / MOTION ============ */
@@ -286,15 +290,27 @@ document.addEventListener('DOMContentLoaded', function() {
       }, { passive: true });
     }
 
-    // Thông báo
+    // Thông báo: có thể ẩn 1 giờ (lưu theo nội dung, thông báo mới vẫn hiện ngay)
     var modal = document.getElementById('noticeModal');
     if (modal) {
-      setTimeout(function() { modal.classList.add('show'); }, 700);
+      var sig = (modal.textContent || '').replace(/\s+/g, ' ').trim(), h = 5381;
+      for (var i = 0; i < sig.length; i++) h = ((h << 5) + h + sig.charCodeAt(i)) | 0;
+      var KEY = 'zwic_notice_snooze_' + (h >>> 0).toString(36);
+      var until = 0;
+      try { until = parseInt(localStorage.getItem(KEY) || '0', 10) || 0; } catch (e) {}
       var hide = function() { modal.classList.remove('show'); };
+      if (Date.now() >= until) setTimeout(function() { modal.classList.add('show'); }, 700);
+
       var closeBtn = modal.querySelector('.modal-close');
       var actionBtn = modal.querySelector('.modal-btn');
+      var snoozeBtn = modal.querySelector('.modal-snooze');
       if (closeBtn) closeBtn.onclick = hide;
       if (actionBtn) actionBtn.onclick = hide;
+      if (snoozeBtn) snoozeBtn.onclick = function() {
+        try { localStorage.setItem(KEY, String(Date.now() + 3600000)); } catch (e) {}
+        hide();
+        window.__toast('Đã ẩn thông báo trong 1 giờ');
+      };
       modal.addEventListener('click', function(e) { if (e.target === modal) hide(); });
       document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hide(); });
     }
