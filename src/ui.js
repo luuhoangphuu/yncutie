@@ -1,5 +1,17 @@
 import { CSS_CHECKPOINT, CSS_APP, JS, CSS_MOBILE, CSS_MODAL, JS_MODAL, CSS_ADMIN, CSS_PREMIUM, JS_PREMIUM } from './assets.js';
 
+
+// Chống XSS: Escape tất cả user input trước khi render
+function esc(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const head = (title) => `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${title}</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
@@ -124,11 +136,11 @@ export function renderHome(env, error, notice, quota) {
   <div id="customModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title"><i data-lucide="alert-triangle" style="width:20px;"></i> ${notice.title || 'THÔNG BÁO'}</div>
+        <div class="modal-title"><i data-lucide="alert-triangle" style="width:20px;"></i> ${esc(notice.title) || 'THÔNG BÁO'}</div>
         <button class="modal-close-icon" onclick="closeModal(false)"><i data-lucide="x" style="width:18px;"></i></button>
       </div>
       <div class="modal-content">
-        <div style="white-space: pre-wrap;">${notice.content || ''}</div>
+        <div style="white-space: pre-wrap;">${esc(notice.content) || ''}</div>
       </div>
       <div class="modal-actions">
         <button class="btn-snooze" onclick="closeModal(true)"><i data-lucide="clock" style="width:18px;"></i> Tắt 1 giờ</button>
@@ -166,7 +178,7 @@ export function renderHome(env, error, notice, quota) {
             <label class="tier-option" data-tier="VIP"><input type="radio" name="tier" value="VIP"><i data-lucide="crown" style="width:18px;"></i> VIP <span class="tier-badge">2H</span></label>
           </div>
 
-          ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600; text-align:center; animation: slideDown 0.3s ease-out;">${error}</div>` : ''}
+          ${error ? `<div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; color:#ef4444; padding:12px; border-radius:12px; margin-bottom:20px; font-size:14px; font-weight:600; text-align:center; animation: slideDown 0.3s ease-out;">${esc(error)}</div>` : ''}
 
           <form method="POST" action="/start" id="startForm">
             <input type="hidden" name="tier" id="tierInput" value="Normal">
