@@ -352,7 +352,7 @@ h1.hero-title{display:block;position:relative;background:none;-webkit-background
 @keyframes sweepx{0%{left:-40%}35%,100%{left:140%}}
 
 /* màn mở đầu (chỉ 1 lần mỗi phiên, trang chủ) */
-.intro{display:none;position:fixed;inset:0;z-index:200000;flex-direction:column;align-items:center;justify-content:center;gap:20px;clip-path:inset(0);background:radial-gradient(700px 420px at 50% 42%,rgba(205,212,224,.13),transparent 70%),#07080a}
+.intro{display:none;position:fixed;inset:0;min-height:100vh;min-height:100dvh;z-index:200000;flex-direction:column;align-items:center;justify-content:center;gap:20px;clip-path:inset(0);background:radial-gradient(700px 420px at 50% 42%,rgba(205,212,224,.13),transparent 70%),#07080a}
 html.intro-on .intro{display:flex}
 html.intro-out .intro{pointer-events:none;animation:introOut .9s var(--ease) forwards}
 @keyframes introOut{to{clip-path:inset(0 0 100% 0)}}
@@ -390,6 +390,7 @@ html.leaving .wrap,html.leaving .foot{opacity:0;transform:translateY(-10px);tran
   .console{padding:16px}
   .metric b{font-size:15px}
 }
+@media(max-width:600px){.intro svg{width:50px;height:50px}.intro i{width:110px}}
 @media(max-width:360px){
   .nav-links a{padding:0 9px;font-size:12.5px}
   .logo-text{font-size:14px}
