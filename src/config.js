@@ -8,3 +8,4 @@ export const TIERS = { Normal: 1, VIP: 2 };
 
 // Chỉ chấp nhận link rút gọn trả về từ domain của Link4M. Chỉnh lại nếu Link4M dùng domain khác.
 export const ADS_HOST_RE = /^https:\/\/([a-z0-9-]+\.)*link4m\.(co|com)\//i;
+export const APP_DOWNLOAD_URL = 'https://www.mediafire.com/file/bimuah51pzdpms3/Zwic_Apex_v3.1.apk/file';
