@@ -182,7 +182,8 @@ h3{font-weight:700;letter-spacing:-.01em}
 .cp.is-fail .cp-icon svg{stroke:var(--danger)}
 .cp-title{font-size:clamp(24px,3.2vw,30px);font-weight:800;line-height:1.15;letter-spacing:-.035em;margin-bottom:10px}
 .cp-sub{color:var(--muted);font-size:14.5px;max-width:380px;margin-bottom:20px}
-.ts-box{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:96px;padding:16px;margin-bottom:16px;background:var(--field);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-md);box-shadow:inset 0 2px 8px rgba(0,0,0,.45);transition:border-color .3s;overflow:hidden}
+.ts-box{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:96px;padding:16px;margin-bottom:16px;background:var(--field);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-md);box-shadow:inset 0 2px 8px rgba(0,0,0,.45);transition:border-color .3s}
+#tsMount{width:100%;min-height:65px;display:flex;justify-content:center}
 .cp.is-verifying .ts-box{border-color:rgba(255,255,255,.35)}
 .cp.is-ok .ts-box{border-color:rgba(134,216,170,.5)}
 .cp-status{font-size:14px;color:var(--muted);min-height:22px}
@@ -318,8 +319,8 @@ h1.hero-title{animation:titleIn 1.5s var(--ease) .1s backwards,sheenLoop 8s ease
 .cp-icon .shield{stroke-dasharray:70;stroke-dashoffset:70;animation:draw 1.4s var(--ease) .3s forwards}
 @keyframes draw{to{stroke-dashoffset:0}}
 .ts-box{position:relative}
-.cp.is-verifying .ts-box::after{content:'';position:absolute;left:0;right:0;top:-60px;height:60px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.16),transparent);animation:scan 1.3s linear infinite;pointer-events:none}
-@keyframes scan{to{top:100%}}
+.cp.is-verifying .ts-box::after{content:'';position:absolute;left:0;right:0;top:0;height:60px;border-radius:var(--r-md);background:linear-gradient(180deg,transparent,rgba(255,255,255,.16),transparent);animation:scan 1.3s linear infinite alternate;pointer-events:none}
+@keyframes scan{to{top:calc(100% - 60px)}}
 
 .rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:rip .65s ease-out forwards;pointer-events:none}
 @keyframes rip{to{transform:scale(1);opacity:0}}
@@ -345,8 +346,8 @@ h1.hero-title{display:block;position:relative;background:none;-webkit-background
 @keyframes titleSweep{0%{background-position:130% 0}40%,100%{background-position:-60% 0}}
 
 /* lấp lánh + vệt sáng quét trên mặt titanium */
-.gl{position:absolute;pointer-events:none;opacity:0;background:linear-gradient(#fff,#fff) 50% 50%/1.5px 100% no-repeat,linear-gradient(#fff,#fff) 50% 50%/100% 1.5px no-repeat,radial-gradient(circle,rgba(255,255,255,.85),transparent 55%);animation:twinkle var(--du,4s) ease-in-out var(--dl,0s) infinite}
-@keyframes twinkle{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:.85;transform:scale(1) rotate(45deg)}}
+.gl{position:absolute;z-index:-1;pointer-events:none;opacity:0;background:radial-gradient(circle,rgba(255,255,255,.75) 0,transparent 42%),linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent) 50% 50%/100% 1px no-repeat,linear-gradient(0deg,transparent,rgba(255,255,255,.85),transparent) 50% 50%/1px 100% no-repeat;animation:twinkle var(--du,4s) ease-in-out var(--dl,0s) infinite}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.35)}50%{opacity:.6;transform:scale(1)}}
 .sweep{position:absolute;top:0;bottom:0;left:-40%;width:30%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.1),transparent);transform:skewX(-18deg);animation:sweepx 7s ease-in-out 2.5s infinite}
 @keyframes sweepx{0%{left:-40%}35%,100%{left:140%}}
 
@@ -365,6 +366,35 @@ html.intro-on:not(.intro-out) .wrap *,html.intro-on:not(.intro-out) .wrap *::bef
 
 /* chuyển trang mượt */
 html.leaving .wrap,html.leaving .foot{opacity:0;transform:translateY(-10px);transition:opacity .22s,transform .22s}
+
+/* ============ TỐI ƯU CHO CẢM ỨNG / MOBILE ============ */
+@media(hover:none),(pointer:coarse){
+  .tilt{transform:none!important;will-change:auto}
+  .btn-primary::after{display:none}
+}
+@media(max-width:600px){
+  .aurora i{mix-blend-mode:normal;filter:blur(40px);opacity:.8}
+  .bg-glow::after{display:none}
+  .gl:nth-of-type(n+4){display:none}
+  .sweep{display:none}
+  .foot{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(8,9,11,.9)}
+  .nav{padding:4px 4px 4px 14px;width:calc(100% - 20px)}
+  .logo-text{font-size:15px;gap:6px}
+  .logo-text svg{width:16px;height:16px}
+  .nav-links a{padding:0 12px;font-size:13px}
+  h1.hero-title{font-size:clamp(44px,14vw,64px)}
+  .hero-sub{max-width:300px}
+  .kc-head{margin-bottom:10px}
+  .trust small{font-size:12px}
+  .ti{box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(0,0,0,.5),0 24px 40px -24px rgba(0,0,0,.9)}
+  .console{padding:16px}
+  .metric b{font-size:15px}
+}
+@media(max-width:360px){
+  .nav-links a{padding:0 9px;font-size:12.5px}
+  .logo-text{font-size:14px}
+  .step span{font-size:10.5px}
+}
 
 /* ============ MOBILE ============ */
 @media(max-width:600px){
@@ -614,12 +644,15 @@ export const CHECKPOINT_JS = `(function(){
   function renderWidget() {
     try {
       turnstile.render(mount, {
-        sitekey: mount.getAttribute('data-sitekey'), theme: 'dark',
+        sitekey: mount.getAttribute('data-sitekey'), theme: 'dark', size: 'flexible',
         callback: function(t) { window.onTurnstileSuccess(t); },
         'error-callback': function() { window.onTurnstileError(); },
         'expired-callback': function() { log('Token hết hạn, hãy xác nhận lại', 'warn'); }
       });
       log('Đã tải Cloudflare Turnstile', 'ok'); log('Đang chờ bạn xác nhận');
+      setTimeout(function() {
+        if (!busy && !mount.querySelector('iframe')) loadFail('Captcha không hiển thị. Kiểm tra CSP (frame-src challenges.cloudflare.com), site key và tên miền đã khai báo trong Cloudflare.');
+      }, 4000);
     } catch (err) { loadFail('Không hiển thị được captcha: ' + ((err && err.message) || err)); }
   }
   var ts = document.createElement('script');
@@ -708,6 +741,8 @@ export const JS_FX = `(function(){
       { k: 0.32, r: [1.4, 2.8], v: [0.5, 1.0],  a: [0.4, 0.75],  par: 20, imgs: [SHARP, CRYS], wind: 0.8, tw: 0, land: 1, front: 0 },
       { k: 0.12, r: [4, 8],     v: [1.1, 2.1],  a: [0.1, 0.24],  par: 44, imgs: [SOFT],        wind: 1.4, tw: 0, land: 0, front: 1 }
     ];
+    // Màn nhỏ: bông mờ lớn ở tầng gần dễ thành "vệt bẩn" đè lên chữ, nên thu nhỏ + giảm bớt; tuyết đọng mỏng hơn
+    if (window.innerWidth < 600) { LAYERS[2].r = [2.4, 4.4]; LAYERS[2].a = [.07, .16]; LAYERS[2].k = .06; MAXH = 4; }
     var flakes = [];
 
     function make(L, anywhere) {
