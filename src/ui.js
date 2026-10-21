@@ -10,11 +10,17 @@ function layout(title, body, nonce, head = '') {
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <style>${CSS}</style>${head}</head><body>
 <a class="skip" href="#main">Bỏ qua điều hướng</a>
-<div class="bg-glow"></div><div class="bg-grid"></div>
+<div class="bg-glow"></div><div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div><div class="bg-grid"></div>
 <canvas id="snow-canvas" aria-hidden="true"></canvas>
 ${body}
 <script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
 }
+
+const heroTitle = (txt) => `<h1 class="hero-title" data-t="${esc(txt)}" aria-label="${esc(txt)}">${[...txt].map((c, i) => c === ' ' ? '<span class="sp" aria-hidden="true"></span>' : `<span class="ch" aria-hidden="true" style="--i:${i}">${esc(c)}</span>`).join('')}</h1>`;
+
+// Màn mở đầu: chỉ chạy 1 lần mỗi phiên, tự tắt sau ~2.5s kể cả khi JS lỗi
+const introHead = (nonce) => `<script nonce="${nonce}">try{var d=document.documentElement,s=sessionStorage;if(!s.getItem('zwic_i')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){s.setItem('zwic_i','1');d.classList.add('intro-on');setTimeout(function(){d.classList.add('intro-out')},1500);setTimeout(function(){d.classList.remove('intro-on','intro-out')},2600)}}catch(e){}</script>`;
+const introHtml = `<div class="intro" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg><b>Zwic Apex</b><i></i></div>`;
 
 const logoHtml = `<a class="logo-text" href="/" aria-label="Zwic Apex"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>Zwic Apex</a>`;
 const nav = (active = '') => `<header class="nav">${logoHtml}<nav class="nav-links" aria-label="Điều hướng chính"><a href="/" class="${active==='home'?'on':''}"${active==='home'?' aria-current="page"':''}>Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}"${active==='faq'?' aria-current="page"':''}>FAQ</a></nav></header>`;
@@ -41,7 +47,7 @@ const dlBtn = (url) => url
 export function renderCheckpoint(env, nonce, next = '/') {
   const body = `${nav('')}<main id="main" class="wrap"><div class="cp-grid reveal">
 
-  <section class="ti cp" id="app" data-next="${esc(next)}">
+  <section class="ti cp spin" id="app" data-next="${esc(next)}">
     <div class="cp-icon">${shieldIcon}</div>
     <h1 class="cp-title">Kiểm tra bảo mật kết nối</h1>
     <p class="cp-sub">Hệ thống đang xác nhận bạn là người thật để chặn bot, spam và truy cập bất thường.</p>
@@ -107,11 +113,11 @@ export function renderHome(env, error, notice, quota, nonce) {
   ${errorBox(error)}
 
   <section class="hero reveal">
-    <h1 class="hero-title">Zwic Apex</h1>
+    ${heroTitle('Zwic Apex')}
     <p class="hero-sub">Nhận key miễn phí trong vài bước. Tự động, bảo mật, không cần đăng ký.</p>
   </section>
 
-  <section class="ti keycard reveal" style="--d:.12s">
+  <section class="ti keycard spin tilt reveal" style="--d:.12s">
     <div class="kc-head">
       <h2>Lấy key miễn phí</h2>
       <span class="kc-quota"><b>${left}</b>lượt còn lại hôm nay</span>
@@ -198,14 +204,14 @@ export function renderHome(env, error, notice, quota, nonce) {
       </div>
     </div>
   </section>`;
-  return layout('Trang chủ', shell('home', inner), nonce);
+  return layout('Trang chủ', introHtml + shell('home', inner), nonce, introHead(nonce));
 }
 
 export function renderStep({ link, current, required, error }, nonce) {
   const isVip = required > 1;
   const pips = Array.from({ length: Math.max(1, Number(required) || 1) }, (_, i) => `<i class="${i < Number(current) ? 'on' : ''}"></i>`).join('');
   const inner = `${errorBox(error)}
-<section class="ti panel reveal">
+<section class="ti panel spin reveal">
   ${stepper(['done', 'active', '', ''])}
   <div class="pips" role="img" aria-label="Đã xong ${esc(Math.max(0, Number(current) - 1))} trên ${esc(required)} bước">${pips}</div>
   <h2 style="font-size:clamp(24px,5vw,28px);font-weight:800;letter-spacing:-.035em;margin-bottom:10px">${isVip ? 'Vượt link VIP' : 'Vượt link'} (${esc(current)}/${esc(required)})</h2>
@@ -217,12 +223,12 @@ export function renderStep({ link, current, required, error }, nonce) {
 
 export function renderSuccess(key, duration, tier, nonce) {
   const chips = [tier && `Key ${tier}`, duration].filter(Boolean).map((c) => `<span>${esc(c)}</span>`).join('');
-  const inner = `<section class="ti panel reveal">
+  const inner = `<section class="ti panel spin tilt reveal">
   ${stepper(['done', 'done', 'done', 'done'])}
   <h2 style="font-size:clamp(24px,5.4vw,30px);font-weight:800;letter-spacing:-.035em;margin-bottom:10px">Nhận key thành công</h2>
   <p style="color:var(--muted);margin-bottom:20px">Key của bạn đã sẵn sàng. Bấm vào key để sao chép.</p>
   ${chips ? `<div class="chips">${chips}</div>` : ''}
-  <div class="keybox" id="keyText" data-copy="keyText" role="button" tabindex="0" aria-label="Sao chép key">${esc(key)}</div>
+  <div class="keybox" id="keyText" data-key="${esc(key)}" data-copy="keyText" role="button" tabindex="0" aria-label="Sao chép key">${esc(key)}</div>
   <button class="btn btn-primary" type="button" data-copy="keyText">Sao chép key</button>
   <a href="/" class="back-link">Quay lại trang chủ</a>
 </section>`;

@@ -272,9 +272,99 @@ h3{font-weight:700;letter-spacing:-.01em}
 
 /* ============ FOOTER / CHUYỂN ĐỘNG ============ */
 .foot{position:relative;z-index:10;margin-top:auto;padding:26px;text-align:center;font-size:13px;color:var(--dim);border-top:1px solid var(--border);background:rgba(8,9,11,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
-.reveal{animation:fadeIn .8s var(--ease) var(--d,0s) both}
+.reveal{animation:fadeIn .8s var(--ease) var(--d,0s) backwards}
 @keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}h1.hero-title{background-position:0 0}}
+
+/* ============ HIỆU ỨNG NÂNG CAO ============ */
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+.aurora{position:fixed;inset:-18% -10% auto;height:82vh;z-index:0;pointer-events:none;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;filter:blur(72px);will-change:transform;mix-blend-mode:screen}
+.aurora i:nth-child(1){width:46vw;height:46vw;max-width:640px;max-height:640px;left:4%;top:-6%;background:radial-gradient(circle,rgba(205,214,228,.3),transparent 68%);animation:drift1 22s ease-in-out infinite alternate}
+.aurora i:nth-child(2){width:38vw;height:38vw;max-width:520px;max-height:520px;right:2%;top:8%;background:radial-gradient(circle,rgba(150,166,192,.26),transparent 68%);animation:drift2 27s ease-in-out infinite alternate}
+.aurora i:nth-child(3){width:30vw;height:30vw;max-width:420px;max-height:420px;left:38%;top:-16%;background:radial-gradient(circle,rgba(255,255,255,.17),transparent 68%);animation:drift3 31s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate3d(16vw,12vh,0) scale(1.18)}}
+@keyframes drift2{to{transform:translate3d(-14vw,9vh,0) scale(1.12)}}
+@keyframes drift3{to{transform:translate3d(-10vw,16vh,0) scale(1.25)}}
+
+/* viền ánh sáng chạy quanh khối titanium */
+.ti.spin::after{padding:1.5px;background:conic-gradient(from var(--ang),rgba(255,255,255,.07) 0deg,rgba(255,255,255,.07) 205deg,rgba(255,255,255,.95) 265deg,rgba(255,255,255,.07) 325deg);animation:spin 7s linear infinite}
+@keyframes spin{to{--ang:360deg}}
+
+/* nghiêng 3D theo con trỏ (desktop) */
+.tilt{transform:perspective(1200px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .45s var(--ease);will-change:transform}
+.tilt.hot{transition:transform .08s linear}
+
+/* tiêu đề: hiện mờ -> nét, rồi vệt sáng kim loại chạy lặp */
+h1.hero-title{animation:titleIn 1.5s var(--ease) .1s backwards,sheenLoop 8s ease-in-out 1.8s infinite alternate}
+@keyframes titleIn{from{opacity:0;filter:blur(14px);letter-spacing:.09em;transform:translateY(10px)}}
+@keyframes sheenLoop{from{background-position:100% 0}to{background-position:0 0}}
+
+/* cuộn tới đâu hiện tới đó (JS thêm class, không có JS vẫn thấy đủ) */
+.rv{opacity:0;transform:translateY(22px) scale(.985);transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--rd,0s)}
+.rv.in{opacity:1;transform:none}
+
+/* thanh lượt: đổ đầy + vệt sáng */
+.meter i{position:relative;overflow:hidden;transform-origin:left;animation:fillIn 1.3s var(--ease) .6s backwards}
+.meter i::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent,rgba(255,255,255,.95),transparent);transform:translateX(-100%);animation:glint 3.4s ease-in-out 2s infinite}
+@keyframes fillIn{from{transform:scaleX(0)}}
+@keyframes glint{60%,100%{transform:translateX(100%)}}
+
+.step.active .step-num{animation:ring 2.4s ease-out infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(255,255,255,.38)}100%{box-shadow:0 0 0 12px rgba(255,255,255,0)}}
+.logo-text svg{animation:logoGlow 4.5s ease-in-out infinite}
+@keyframes logoGlow{50%{filter:drop-shadow(0 0 6px rgba(255,255,255,.75))}}
+
+.cp-icon .shield{stroke-dasharray:70;stroke-dashoffset:70;animation:draw 1.4s var(--ease) .3s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.ts-box{position:relative}
+.cp.is-verifying .ts-box::after{content:'';position:absolute;left:0;right:0;top:-60px;height:60px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.16),transparent);animation:scan 1.3s linear infinite;pointer-events:none}
+@keyframes scan{to{top:100%}}
+
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:rip .65s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+
+/* ============ ĐỜI TIẾP THEO: HIỆU ỨNG NẶNG ============ */
+/* nền: đèn theo chuột + tia sáng quét từ trên xuống */
+.bg-glow{overflow:hidden;background:
+  radial-gradient(560px circle at var(--cx,50%) var(--cy,-30%),rgba(255,255,255,.075),transparent 65%),
+  radial-gradient(900px 520px at 50% -10%,rgba(205,211,221,.14),transparent 70%),
+  radial-gradient(700px 480px at 100% 100%,rgba(140,150,165,.09),transparent 70%),
+  radial-gradient(520px 380px at -10% 70%,rgba(120,130,148,.06),transparent 70%)}
+.bg-glow::before,.bg-glow::after{content:'';position:absolute;left:50%;top:-30%;width:150%;height:100%;margin-left:-75%;transform-origin:50% 0;-webkit-mask-image:linear-gradient(#000,transparent 80%);mask-image:linear-gradient(#000,transparent 80%)}
+.bg-glow::before{background:conic-gradient(from 180deg at 50% 0%,transparent 0deg,rgba(255,255,255,.058) 9deg,transparent 20deg,transparent 340deg,rgba(255,255,255,.058) 351deg,transparent 360deg);animation:sway 16s ease-in-out infinite alternate}
+.bg-glow::after{background:conic-gradient(from 180deg at 50% 0%,transparent 0deg,rgba(255,255,255,.04) 26deg,transparent 40deg,transparent 320deg,rgba(255,255,255,.04) 334deg,transparent 360deg);animation:sway 23s ease-in-out infinite alternate-reverse}
+@keyframes sway{from{transform:rotate(-7deg)}to{transform:rotate(7deg)}}
+
+/* tiêu đề: từng chữ lật vào, vệt sáng quét lặp */
+h1.hero-title{display:block;position:relative;background:none;-webkit-background-clip:border-box;background-clip:border-box;color:inherit;animation:none;perspective:700px}
+.hero-title .ch{display:inline-block;background:var(--metal-text);-webkit-background-clip:text;background-clip:text;color:transparent;transform-origin:50% 100%;animation:chIn 1.1s var(--ease) calc(.15s + var(--i) * .08s) backwards}
+.hero-title .sp{display:inline-block;width:.3em}
+@keyframes chIn{from{opacity:0;transform:translateY(55%) rotateX(-80deg);filter:blur(12px)}}
+.hero-title::after{content:attr(data-t);position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.95) 50%,transparent 58%) 130% 0/250% 100% no-repeat;-webkit-background-clip:text;background-clip:text;color:transparent;animation:titleSweep 6.5s ease-in-out 2s infinite}
+@keyframes titleSweep{0%{background-position:130% 0}40%,100%{background-position:-60% 0}}
+
+/* lấp lánh + vệt sáng quét trên mặt titanium */
+.gl{position:absolute;pointer-events:none;opacity:0;background:linear-gradient(#fff,#fff) 50% 50%/1.5px 100% no-repeat,linear-gradient(#fff,#fff) 50% 50%/100% 1.5px no-repeat,radial-gradient(circle,rgba(255,255,255,.85),transparent 55%);animation:twinkle var(--du,4s) ease-in-out var(--dl,0s) infinite}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:.85;transform:scale(1) rotate(45deg)}}
+.sweep{position:absolute;top:0;bottom:0;left:-40%;width:30%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.1),transparent);transform:skewX(-18deg);animation:sweepx 7s ease-in-out 2.5s infinite}
+@keyframes sweepx{0%{left:-40%}35%,100%{left:140%}}
+
+/* màn mở đầu (chỉ 1 lần mỗi phiên, trang chủ) */
+.intro{display:none;position:fixed;inset:0;z-index:200000;flex-direction:column;align-items:center;justify-content:center;gap:20px;clip-path:inset(0);background:radial-gradient(700px 420px at 50% 42%,rgba(205,212,224,.13),transparent 70%),#07080a}
+html.intro-on .intro{display:flex}
+html.intro-out .intro{pointer-events:none;animation:introOut .9s var(--ease) forwards}
+@keyframes introOut{to{clip-path:inset(0 0 100% 0)}}
+.intro svg{width:58px;height:58px;fill:rgba(230,233,238,0);stroke:#e6e9ee;stroke-width:1.1;stroke-linejoin:round;stroke-dasharray:130;stroke-dashoffset:130;animation:draw 1.2s var(--ease) .1s forwards,introFill .7s ease 1s forwards}
+@keyframes introFill{to{fill:rgba(230,233,238,.95)}}
+.intro b{font-size:clamp(30px,6vw,46px);font-weight:800;letter-spacing:-.04em;background:var(--metal-text);-webkit-background-clip:text;background-clip:text;color:transparent;opacity:0;animation:introTxt 1s var(--ease) .5s forwards}
+@keyframes introTxt{from{opacity:0;transform:translateY(12px);letter-spacing:.12em;filter:blur(8px)}to{opacity:1;transform:none;letter-spacing:-.04em;filter:none}}
+.intro i{display:block;width:140px;height:1px;background:linear-gradient(90deg,transparent,#fff,transparent);transform:scaleX(0);animation:introLine 1s var(--ease) .7s forwards}
+@keyframes introLine{to{transform:scaleX(1)}}
+html.intro-on:not(.intro-out) .wrap *,html.intro-on:not(.intro-out) .wrap *::before,html.intro-on:not(.intro-out) .wrap *::after{animation-play-state:paused!important}
+
+/* chuyển trang mượt */
+html.leaving .wrap,html.leaving .foot{opacity:0;transform:translateY(-10px);transition:opacity .22s,transform .22s}
 
 /* ============ MOBILE ============ */
 @media(max-width:600px){
@@ -286,6 +376,7 @@ h3{font-weight:700;letter-spacing:-.01em}
   .stepper-wrap{margin-bottom:22px}
   .step{font-size:11.5px}
   .app{padding:18px}
+  .aurora i{filter:blur(48px)}
   .foot{padding-bottom:max(26px,env(safe-area-inset-bottom))}
 }
 `;
@@ -300,10 +391,107 @@ document.addEventListener('DOMContentLoaded', function() {
       window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
     }
 
+    var fine = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+    var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Nghiêng 3D theo con trỏ
+    if (fine && !calm) [].forEach.call(document.querySelectorAll('.tilt'), function(el) {
+      el.addEventListener('pointermove', function(e) {
+        var r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        el.classList.add('hot');
+        el.style.setProperty('--ry', (x * 6).toFixed(2) + 'deg'); el.style.setProperty('--rx', (-y * 5).toFixed(2) + 'deg');
+      });
+      el.addEventListener('pointerleave', function() {
+        el.classList.remove('hot'); el.style.setProperty('--rx', '0deg'); el.style.setProperty('--ry', '0deg');
+      });
+    });
+
+    // Cuộn tới đâu hiện tới đó
+    if ('IntersectionObserver' in window && !calm) {
+      var io = new IntersectionObserver(function(es) {
+        es.forEach(function(en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { threshold: .12, rootMargin: '0px 0px -6% 0px' });
+      [].forEach.call(document.querySelectorAll('.support,.trust,.info>div,.app,.faq details'), function(el, i) {
+        el.classList.add('rv'); el.style.setProperty('--rd', ((i % 3) * 0.09) + 's'); io.observe(el);
+      });
+    }
+
+    // Gợn sóng khi bấm nút
+    document.addEventListener('pointerdown', function(e) {
+      var b = e.target.closest && e.target.closest('.btn');
+      if (!b || b.getAttribute('aria-disabled') === 'true') return;
+      var r = b.getBoundingClientRect(), s = Math.max(r.width, r.height) * 2.2, d = document.createElement('span');
+      d.className = 'rip';
+      d.style.cssText = 'width:' + s + 'px;height:' + s + 'px;left:' + (e.clientX - r.left - s / 2) + 'px;top:' + (e.clientY - r.top - s / 2) + 'px';
+      b.appendChild(d); setTimeout(function() { d.remove(); }, 700);
+    });
+
+    // Số lượt đếm lên
+    var qb = document.querySelector('.kc-quota b');
+    if (qb && !calm) {
+      var to = parseInt(qb.textContent, 10), q0 = performance.now();
+      if (to > 0) (function s(n) {
+        var p = Math.max(0, Math.min(1, (n - q0 - 500) / 900));
+        qb.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
+        if (p < 1) requestAnimationFrame(s);
+      })(q0);
+    }
+
+    // Giải mã key + bắn tuyết khi nhận key
+    var kb = document.querySelector('.keybox[data-key]');
+    if (kb && !calm) {
+      var real = kb.getAttribute('data-key'), set = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', k0 = performance.now();
+      (function d(n) {
+        var p = (n - k0 - 300) / 1100, out = '';
+        for (var i = 0; i < real.length; i++) {
+          var ch = real.charAt(i);
+          out += (p >= i / real.length || !/[A-Za-z0-9]/.test(ch)) ? ch : set.charAt((Math.random() * set.length) | 0);
+        }
+        kb.textContent = p < 1 ? out : real;
+        if (p < 1) requestAnimationFrame(d);
+      })(k0);
+      setTimeout(function() { window.dispatchEvent(new Event('snowburst')); }, 500);
+    }
+
+    // Đèn nền bám theo con trỏ
+    // (gắn trong paint bên dưới)
+
+    // Lấp lánh + vệt quét trên mặt titanium
+    if (!calm) [].forEach.call(document.querySelectorAll('.keycard,.panel,.cp,.admin'), function(el) {
+      for (var i = 0; i < 6; i++) {
+        var g = document.createElement('span'), sz = 8 + Math.random() * 10;
+        g.className = 'gl'; g.setAttribute('aria-hidden', 'true');
+        g.style.cssText = 'left:' + (6 + Math.random() * 88) + '%;top:' + (4 + Math.random() * 90) + '%;width:' + sz + 'px;height:' + sz + 'px;--dl:' + (Math.random() * 5).toFixed(2) + 's;--du:' + (3 + Math.random() * 3).toFixed(1) + 's';
+        el.appendChild(g);
+      }
+      if (el.classList.contains('keycard')) { var sw = document.createElement('span'); sw.className = 'sweep'; sw.setAttribute('aria-hidden', 'true'); el.appendChild(sw); }
+    });
+
+    // Nút chính hút nhẹ về phía con trỏ
+    if (fine && !calm) [].forEach.call(document.querySelectorAll('.btn-primary'), function(b) {
+      b.addEventListener('pointermove', function(e) {
+        var r = b.getBoundingClientRect();
+        b.style.transform = 'translate(' + ((e.clientX - r.left - r.width / 2) * .08).toFixed(1) + 'px,' + ((e.clientY - r.top - r.height / 2) * .22).toFixed(1) + 'px)';
+      });
+      b.addEventListener('pointerleave', function() { b.style.transform = ''; });
+    });
+
+    // Chuyển trang mượt (chỉ link nội bộ cùng tab)
+    document.addEventListener('click', function(e) {
+      var a = e.target.closest && e.target.closest('a[href]');
+      if (!a || calm || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0 || a.target === '_blank' || a.hasAttribute('download')) return;
+      var u; try { u = new URL(a.href, location.href); } catch (x) { return; }
+      if (u.origin !== location.origin || (u.pathname === location.pathname && u.search === location.search)) return;
+      e.preventDefault(); document.documentElement.classList.add('leaving');
+      setTimeout(function() { location.href = u.href; }, 230);
+    });
+    window.addEventListener('pageshow', function() { document.documentElement.classList.remove('leaving'); });
+
     // Ánh sáng phản chiếu trên mặt titanium: theo con trỏ (desktop) hoặc độ nghiêng máy (mobile)
     var tis = [].slice.call(document.querySelectorAll('.ti')), raf = 0, last = null;
     function paint() {
       raf = 0; if (!last) return;
+      document.documentElement.style.setProperty('--cx', last[0] + 'px'); document.documentElement.style.setProperty('--cy', last[1] + 'px');
       tis.forEach(function(el) {
         var r = el.getBoundingClientRect();
         el.style.setProperty('--mx', ((last[0] - r.left) / r.width * 100) + '%');
@@ -357,7 +545,7 @@ window.__toast = function(msg) {
 };
 function __copy(c) {
   var el = document.getElementById(c.getAttribute('data-copy')); if (!el) return;
-  var txt = el.textContent.trim();
+  var txt = (el.getAttribute('data-key') || el.textContent).trim();
   function ok() {
     el.classList.add('copied'); window.__toast('Đã sao chép key');
     setTimeout(function() { el.classList.remove('copied'); }, 1600);
@@ -472,18 +660,23 @@ export const CHECKPOINT_JS = `(function(){
   };
 })();`;
 
-// Tuyết 3 tầng. Mỗi bông tự đổi hướng ngẫu nhiên, có gió giật bất định, né con trỏ, lấp lánh nhẹ.
-// Chuyển động tính theo thời gian thực (không phụ thuộc FPS), tự giảm số lượng trên máy yếu.
+// Tuyết 3 tầng + tuyết ĐỌNG trên mép thẻ titanium + bụi sáng theo chuột + pháo tuyết.
+// Tầng gần (bông mờ lớn) và tuyết đọng vẽ ở canvas phía trước nội dung để có chiều sâu.
 export const JS_FX = `(function(){
   try {
     var c = document.getElementById('snow-canvas');
     if (!c) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    var ctx = c.getContext('2d');
+    var f2 = document.createElement('canvas');
+    f2.setAttribute('aria-hidden', 'true');
+    f2.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;z-index:60;pointer-events:none';
+    document.body.appendChild(f2);
+    var ctx = c.getContext('2d'), fx = f2.getContext('2d');
     var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
     var weak = (navigator.hardwareConcurrency || 4) <= 4 || window.innerWidth < 600;
     var wind = 0, windTarget = 0, nextGust = 0, running = true, last = performance.now();
-    var px = 0, py = 0, tx = 0, ty = 0, mx = -9999, my = -9999;
+    var px = 0, py = 0, tx = 0, ty = 0, mx = -9999, my = -9999, dust = [], lastTrail = 0;
+    var BW = 6, MAXH = 6.5, piles = new WeakMap(), surfEls = [];
     var rnd = function(a, b) { return a + Math.random() * (b - a); };
 
     function dot(soft) {
@@ -511,9 +704,9 @@ export const JS_FX = `(function(){
     var SHARP = dot(false), SOFT = dot(true), CRYS = crystal();
 
     var LAYERS = [
-      { k: 0.58, r: [0.7, 1.4], v: [0.2, 0.5],  a: [0.22, 0.45], par: 8,  imgs: [SHARP],       wind: 0.4, tw: 1 },
-      { k: 0.32, r: [1.4, 2.8], v: [0.5, 1.0],  a: [0.4, 0.75],  par: 20, imgs: [SHARP, CRYS], wind: 0.8, tw: 0 },
-      { k: 0.10, r: [3.8, 7],   v: [1.1, 2.0],  a: [0.12, 0.28], par: 44, imgs: [SOFT],        wind: 1.4, tw: 0 }
+      { k: 0.56, r: [0.7, 1.4], v: [0.2, 0.5],  a: [0.22, 0.45], par: 8,  imgs: [SHARP],       wind: 0.4, tw: 1, land: 0, front: 0 },
+      { k: 0.32, r: [1.4, 2.8], v: [0.5, 1.0],  a: [0.4, 0.75],  par: 20, imgs: [SHARP, CRYS], wind: 0.8, tw: 0, land: 1, front: 0 },
+      { k: 0.12, r: [4, 8],     v: [1.1, 2.1],  a: [0.1, 0.24],  par: 44, imgs: [SOFT],        wind: 1.4, tw: 0, land: 0, front: 1 }
     ];
     var flakes = [];
 
@@ -526,18 +719,69 @@ export const JS_FX = `(function(){
     }
     function resize() {
       W = window.innerWidth; H = window.innerHeight;
-      c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var total = Math.round(Math.min(weak ? 85 : 160, Math.max(45, W / 9)));
+      [c, f2].forEach(function(cv) { cv.width = W * dpr; cv.height = H * dpr; });
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); fx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var total = Math.round(Math.min(weak ? 95 : 180, Math.max(50, W / 8)));
       flakes = [];
       LAYERS.forEach(function(L) { for (var i = 0, n = Math.round(total * L.k); i < n; i++) flakes.push(make(L, true)); });
+      surfEls = [].slice.call(document.querySelectorAll('.ti'));
     }
 
-    window.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; tx = e.clientX / W - .5; ty = e.clientY / H - .5; }, { passive: true });
+    function spawn(x, y, n, pow) {
+      for (var i = 0; i < n && dust.length < 260; i++) {
+        var an = rnd(0, 6.28), sp = rnd(.3, 1) * pow;
+        dust.push({ x: x, y: y, vx: Math.cos(an) * sp, vy: Math.sin(an) * sp - .4, life: 1, dec: rnd(.011, .024), r: rnd(.9, 2.3) });
+      }
+    }
+    window.addEventListener('mousemove', function(e) {
+      mx = e.clientX; my = e.clientY; tx = e.clientX / W - .5; ty = e.clientY / H - .5;
+      var t = performance.now(); if (t - lastTrail > 42) { lastTrail = t; spawn(mx, my, 1, .55); }
+    }, { passive: true });
     window.addEventListener('mouseout', function() { mx = my = -9999; });
+    window.addEventListener('pointerdown', function(e) {
+      if (e.target.closest && e.target.closest('.btn,.keybox')) spawn(e.clientX, e.clientY, 16, 2.4);
+    });
+    window.addEventListener('snowburst', function() { spawn(W / 2, H * .42, 120, 5.2); });
     window.addEventListener('deviceorientation', function(e) {
       if (e.gamma == null) return;
       tx = Math.max(-.5, Math.min(.5, e.gamma / 60)); ty = Math.max(-.5, Math.min(.5, ((e.beta || 45) - 45) / 90));
     }, { passive: true });
+
+    function surfaces() {
+      var out = [];
+      for (var s = 0; s < surfEls.length; s++) {
+        var r = surfEls[s].getBoundingClientRect();
+        if (r.width < 200 || r.top < 0 || r.top > H) continue;
+        var n = Math.floor((r.width - 60) / BW); if (n < 8) continue;
+        var o = piles.get(surfEls[s]);
+        if (!o || o.p.length !== n) {
+          o = { p: new Float32Array(n) };
+          for (var k = 0; k < n; k++) o.p[k] = .8 + Math.random() * 1.2;
+          piles.set(surfEls[s], o);
+        }
+        out.push({ l: r.left + 30, r: r.right - 30, t: r.top, p: o.p });
+      }
+      return out;
+    }
+    function relax(p, dt) {
+      for (var i = 0; i < p.length; i++) {
+        var nb = ((i > 0 ? p[i - 1] : p[i]) + (i < p.length - 1 ? p[i + 1] : p[i])) * .5;
+        p[i] += (nb - p[i]) * .05 * dt;
+        p[i] = Math.max(.5, p[i] - .0002 * dt);
+      }
+    }
+    function drawPile(sf) {
+      var p = sf.p, n = p.length, t = sf.t + 1.5;
+      fx.beginPath(); fx.moveTo(sf.l, t);
+      for (var i = 0; i < n; i++) {
+        var ed = Math.min(1, i / 7, (n - 1 - i) / 7);
+        fx.lineTo(sf.l + i * BW + BW / 2, t - p[i] * ed);
+      }
+      fx.lineTo(sf.l + n * BW, t); fx.closePath();
+      var g = fx.createLinearGradient(0, t - MAXH, 0, t);
+      g.addColorStop(0, 'rgba(255,255,255,.96)'); g.addColorStop(1, 'rgba(206,213,226,.6)');
+      fx.fillStyle = g; fx.globalAlpha = 1; fx.fill();
+    }
 
     function frame(now) {
       if (!running) return;
@@ -545,9 +789,10 @@ export const JS_FX = `(function(){
       if (now > nextGust) { windTarget = rnd(-1.7, 1.7); nextGust = now + rnd(2500, 7000); }
       wind += (windTarget - wind) * .015 * dt;
       px += (tx - px) * .05; py += (ty - py) * .05;
-      ctx.clearRect(0, 0, W, H);
+      ctx.clearRect(0, 0, W, H); fx.clearRect(0, 0, W, H);
+      var surf = surfaces();
       for (var i = 0; i < flakes.length; i++) {
-        var f = flakes[i], L = f.L, size = f.r * 2.6;
+        var f = flakes[i], L = f.L, size = f.r * 2.6, cx = L.front ? fx : ctx, oy = f.y;
         if (now > f.nt) { f.tvx = rnd(-.35, .35); f.nt = now + rnd(800, 3500); }
         f.vx += (f.tvx - f.vx) * .02 * dt;
         f.p1 += f.f1 * dt; f.p2 += f.f2 * dt; f.rot += f.rs * dt;
@@ -558,17 +803,39 @@ export const JS_FX = `(function(){
           if (d2 < 14400 && d2 > 1) { var d = Math.sqrt(d2), k = (1 - d / 120) * 1.6 * (L.par / 20 + .4); dx += ex / d * k; dy += ey / d * k * .4; }
         }
         f.x += dx * dt; f.y += dy * dt;
+        if (L.land) {
+          var hit = false;
+          for (var q = 0; q < surf.length; q++) {
+            var sf = surf[q];
+            if (f.x > sf.l && f.x < sf.r && oy < sf.t && f.y >= sf.t && Math.random() < .8) {
+              var bi = ((f.x - sf.l) / BW) | 0, add = f.r * .9, pp = sf.p;
+              for (var w = -2; w <= 2; w++) {
+                var bj = bi + w; if (bj < 0 || bj >= pp.length) continue;
+                pp[bj] = Math.min(MAXH, pp[bj] + add * (w === 0 ? 1 : Math.abs(w) === 1 ? .6 : .3));
+              }
+              flakes[i] = make(L, false); hit = true; break;
+            }
+          }
+          if (hit) continue;
+        }
         if (f.y > H + size * 2) { flakes[i] = make(L, false); continue; }
         if (f.x < -size * 3) f.x = W + size * 2; else if (f.x > W + size * 3) f.x = -size * 2;
-        var a = f.a * (L.tw ? .72 + .28 * Math.sin(f.p1 * 3) : 1);
-        ctx.globalAlpha = a;
+        cx.globalAlpha = f.a * (L.tw ? .72 + .28 * Math.sin(f.p1 * 3) : 1);
         var X = f.x - px * L.par, Y = f.y - py * L.par * .6;
         if (f.crys) {
-          ctx.save(); ctx.translate(X, Y); ctx.rotate(f.rot);
-          ctx.drawImage(f.img, -size, -size, size * 2, size * 2); ctx.restore();
-        } else ctx.drawImage(f.img, X - size, Y - size, size * 2, size * 2);
+          cx.save(); cx.translate(X, Y); cx.rotate(f.rot);
+          cx.drawImage(f.img, -size, -size, size * 2, size * 2); cx.restore();
+        } else cx.drawImage(f.img, X - size, Y - size, size * 2, size * 2);
       }
-      ctx.globalAlpha = 1;
+      for (var s = 0; s < surf.length; s++) { relax(surf[s].p, dt); drawPile(surf[s]); }
+      for (var j = dust.length - 1; j >= 0; j--) {
+        var p = dust[j];
+        p.vx *= Math.pow(.985, dt); p.vy += .022 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= p.dec * dt;
+        if (p.life <= 0) { dust.splice(j, 1); continue; }
+        var ds = p.r * 3.2; fx.globalAlpha = Math.min(1, p.life) * .85;
+        fx.drawImage(SHARP, p.x - ds, p.y - ds, ds * 2, ds * 2);
+      }
+      ctx.globalAlpha = 1; fx.globalAlpha = 1;
       requestAnimationFrame(frame);
     }
     document.addEventListener('visibilitychange', function() {
