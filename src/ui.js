@@ -1,4 +1,5 @@
 import { CSS, COMMON_JS, CHECKPOINT_JS, JS_FX } from './assets.js';
+import { INTRO_CSS, INTRO_JS, introHead, introHtml } from './intro.js';
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function layout(title, body, nonce, head = '') {
@@ -8,19 +9,15 @@ function layout(title, body, nonce, head = '') {
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23e2e8f0' d='M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
-  <style>${CSS}</style>${head}</head><body>
+  <style>${CSS}${INTRO_CSS}</style>${head}</head><body>
 <a class="skip" href="#main">Bỏ qua điều hướng</a>
 <div class="bg-glow"></div><div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div><div class="bg-grid"></div>
 <canvas id="snow-canvas" aria-hidden="true"></canvas>
 ${body}
-<script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script></body></html>`;
+<script nonce="${nonce}">${COMMON_JS}</script><script nonce="${nonce}">${JS_FX}</script><script nonce="${nonce}">${INTRO_JS}</script></body></html>`;
 }
 
 const heroTitle = (txt) => `<h1 class="hero-title" data-t="${esc(txt)}" aria-label="${esc(txt)}">${[...txt].map((c, i) => c === ' ' ? '<span class="sp" aria-hidden="true"></span>' : `<span class="ch" aria-hidden="true" style="--i:${i}">${esc(c)}</span>`).join('')}</h1>`;
-
-// Màn mở đầu: chỉ chạy 1 lần mỗi phiên, tự tắt sau ~2.5s kể cả khi JS lỗi
-const introHead = (nonce) => `<script nonce="${nonce}">try{var d=document.documentElement,s=sessionStorage;if(!s.getItem('zwic_i')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){s.setItem('zwic_i','1');d.classList.add('intro-on');setTimeout(function(){d.classList.add('intro-out')},1500);setTimeout(function(){d.classList.remove('intro-on','intro-out')},2600)}}catch(e){}</script>`;
-const introHtml = `<div class="intro" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg><b>Zwic Apex</b><i></i></div>`;
 
 const logoHtml = `<a class="logo-text" href="/" aria-label="Zwic Apex"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>Zwic Apex</a>`;
 const nav = (active = '') => `<header class="nav">${logoHtml}<nav class="nav-links" aria-label="Điều hướng chính"><a href="/" class="${active==='home'?'on':''}"${active==='home'?' aria-current="page"':''}>Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}"${active==='faq'?' aria-current="page"':''}>FAQ</a></nav></header>`;
