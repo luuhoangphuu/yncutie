@@ -1,5 +1,6 @@
 import { CSS, COMMON_JS, CHECKPOINT_JS, JS_FX } from './assets.js';
 import { INTRO_CSS, INTRO_JS, introHead, introHtml, liteHead } from './intro.js';
+import { LOGO_WEBP_B64 } from './logo.js';
 export const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function layout(title, body, nonce, head = '') {
@@ -19,7 +20,7 @@ ${body}
 
 const heroTitle = (txt) => `<h1 class="hero-title" data-t="${esc(txt)}" aria-label="${esc(txt)}">${[...txt].map((c, i) => c === ' ' ? '<span class="sp" aria-hidden="true"></span>' : `<span class="ch" aria-hidden="true" style="--i:${i}">${esc(c)}</span>`).join('')}</h1>`;
 
-const logoHtml = `<a class="logo-text" href="/" aria-label="Zwic Apex"><img src="/logo.webp" alt="" width="32" height="32" decoding="async" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none;display:inline-block;vertical-align:middle;margin-right:8px">Zwic Apex</a>`;
+const logoHtml = `<a class="logo-text" href="/" aria-label="Zwic Apex"><img src="${LOGO_WEBP_B64}" alt="Zwic Apex" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:8px;vertical-align:middle">Zwic Apex</a>`;
 const nav = (active = '') => `<header class="nav">${logoHtml}<nav class="nav-links" aria-label="Điều hướng chính"><a href="/" class="${active==='home'?'on':''}"${active==='home'?' aria-current="page"':''}>Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}"${active==='faq'?' aria-current="page"':''}>FAQ</a></nav></header>`;
 const foot = () => `<footer class="foot">© 2026 Zwic Apex · Bảo mật bởi HoangPhu</footer>`;
 const fab = `<a class="fab" href="https://zalo.me/0996492296" target="_blank" rel="noopener noreferrer" aria-label="Hỗ trợ qua Zalo"><i>Zalo</i><span>Hỗ trợ Zalo</span></a>`;
@@ -68,7 +69,18 @@ export function renderCheckpoint(env, nonce, next = '/') {
       <span class="con-pill">Đang bảo vệ</span>
     </div>
 
-    <div class="con-metrics">
+    
+      <div class="radar-wrap">
+        <div class="radar-text">
+          <b>Quét lưu lượng</b>
+          <small>WAF · Chống Bot · DDoS</small>
+        </div>
+        <div class="dial" aria-hidden="true">
+          <span class="sweep"></span>
+          <i class="blip one"></i><i class="blip two"></i><i class="blip three"></i><i class="blip four"></i>
+        </div>
+      </div>
+      <div class="con-metrics">
       <div class="metric"><p>Thời gian xác minh</p><b id="timer">0.00<small>s</small></b></div>
       <div class="metric"><p>Phản hồi máy chủ</p><b id="mTtfb">—</b></div>
       <div class="metric"><p>Giao thức</p><b id="mProto">—</b></div>
@@ -176,7 +188,7 @@ export function renderHome(env, error, notice, quota, nonce) {
       <div class="app">
         <div class="app-top">
           <div class="app-icon" aria-hidden="true" style="padding:0; overflow:hidden; background:transparent; border:1px solid rgba(255,255,255,0.2); box-shadow:0 0 15px rgba(255,255,255,0.15);">
-            <img src="/logo.png" alt="Zwic Apex Logo" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">
+            <img src="${LOGO_WEBP_B64}" alt="Zwic Apex Logo" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">
           </div>
           <div><h3 style="font-size:16px">Zwic Apex</h3><p class="app-warning">Fix Lag & Tối ưu</p></div>
         </div>

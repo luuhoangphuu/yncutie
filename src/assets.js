@@ -170,6 +170,44 @@ h3{font-weight:700;letter-spacing:-.01em}
 .trust small{font-size:12.5px;color:var(--muted);line-height:1.45}
 @media(max-width:700px){.trust{grid-template-columns:1fr 1fr}.trust>div:nth-child(3){border-left:0}.trust>div:nth-child(n+3){border-top:1px solid var(--border)}}
 
+
+/* ============ 3D RADAR ============ */
+.radar-wrap {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--field); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,.35);
+}
+.radar-text { display: flex; flex-direction: column; gap: 4px; }
+.radar-text b { font-size: 14px; color: var(--text); font-weight: 700; letter-spacing: -.01em;}
+.radar-text small { font-size: 12px; color: var(--ok); font-weight: 600; }
+.dial {
+  position: relative; width: 64px; height: 64px; border-radius: 50%;
+  overflow: hidden;
+  background:
+    radial-gradient(circle, transparent 31%, rgba(255,255,255,.15) 32%, transparent 33.5%, transparent 64%, rgba(255,255,255,.15) 65%, transparent 66.5%),
+    linear-gradient(rgba(255,255,255,.08), rgba(255,255,255,.08)) center / 1px 100% no-repeat,
+    linear-gradient(rgba(255,255,255,.08), rgba(255,255,255,.08)) center / 100% 1px no-repeat,
+    radial-gradient(circle, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.4) 72%);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.15), 0 0 20px -4px rgba(134,216,170,0.45);
+}
+.sweep {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(134,216,170,.6), rgba(134,216,170,0) 28%);
+  animation: radar-spin 3.6s linear infinite;
+}
+.blip {
+  position: absolute; width: 4px; height: 4px; margin: -2px 0 0 -2px; border-radius: 50%;
+  background: var(--ok); box-shadow: 0 0 8px 1px rgba(134,216,170,.8);
+  opacity: 0; animation: radar-blip 3.6s linear infinite;
+}
+.blip.one { top: 30%; left: 64%; animation-delay: 0.45s; }
+.blip.two { top: 70%; left: 72%; animation-delay: 1.35s; }
+.blip.three { top: 62%; left: 26%; animation-delay: 2.4s; }
+.blip.four { top: 24%; left: 34%; animation-delay: 3.1s; }
+@keyframes radar-spin { to { transform: rotate(360deg); } }
+@keyframes radar-blip { 0%, 10% { opacity: 0; transform: scale(0.4); } 14% { opacity: 1; transform: scale(1); } 46% { opacity: 0; } 100% { opacity: 0; } }
+
 /* ============ CHECK BOT ============ */
 .cp{padding:32px clamp(20px,4vw,40px) 28px;text-align:center;display:flex;flex-direction:column;align-items:center}
 .cp-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;margin-bottom:16px;background:rgba(0,0,0,.3);box-shadow:inset 0 2px 8px rgba(0,0,0,.5),0 1px 0 rgba(255,255,255,.12);transition:box-shadow .4s}
