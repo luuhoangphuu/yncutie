@@ -126,7 +126,7 @@ export function renderHome(env, error, notice, quota, nonce) {
     <form method="POST" action="/start">
       <div class="radio-group" role="radiogroup" aria-label="Loại key">
         <label class="radio-label"><input type="radio" name="tier" value="Normal" checked><span><b>Key Normal</b><small>Cơ bản, vượt ít bước</small></span></label>
-        <label class="radio-label"><input type="radio" name="tier" value="VIP"><span><b>Key VIP</b><small>Ưu tiên, thời hạn dài hơn</small><em>VIP</em></span></label>
+        <label class="radio-label"><input type="radio" name="tier" value="VIP"><span><b>Key VIP</b><small>Ưu tiên, thời hạn dài hơn</small></span><em class="vip-tag">VIP</em></label>
       </div>
       <button type="submit" class="btn btn-primary">Lấy key</button>
     </form>
@@ -172,32 +172,22 @@ export function renderHome(env, error, notice, quota, nonce) {
 
   <section class="apps">
     <h3 class="sec-title">Tải ứng dụng</h3>
-    <div class="app-grid">
+    <div class="app-grid" style="grid-template-columns: 1fr; max-width: 600px; margin: 0 auto;">
       <div class="app">
         <div class="app-top">
-          <div class="app-icon" aria-hidden="true">PR</div>
-          <div><h3 style="font-size:16px">App Proxy V1.3 🍎</h3><p class="app-warning">Lưu ý trước khi dùng</p></div>
+          <div class="app-icon" aria-hidden="true" style="padding:0; overflow:hidden; background:transparent; border:1px solid rgba(255,255,255,0.2); box-shadow:0 0 15px rgba(255,255,255,0.15);">
+            <img src="/logo.png" alt="Zwic Apex Logo" style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">
+          </div>
+          <div><h3 style="font-size:16px">Zwic Apex</h3><p class="app-warning">Fix Lag & Tối ưu</p></div>
         </div>
         <ul class="app-list">
-          <li>– Sử dụng Free Fire Max / Normal CHPlay</li>
-          <li>– Sử dụng một cách thông minh</li>
-          <li>– Không lạm dụng chức năng quá đà</li>
-          <li>– Sử dụng duy nhất ESP sẽ anti hơn</li>
-          <li>– Tự thêm domain block nếu cảm thấy nó sẽ anti hơn</li>
+          <li>– Fix Lag, Khóa FPS, HZ,...</li>
+          <li>– Nhẹ Tâm, Bám Đầu, Fix Rung,...</li>
+          <li>– Tối ưu máy, all adr, FFTH và FFMAX.</li>
         </ul>
-        ${dlBtn(env.APP_PROXY_URL)}
-      </div>
-      <div class="app">
-        <div class="app-top">
-          <div class="app-icon" aria-hidden="true">EX</div>
-          <div><h3 style="font-size:16px">App External · Root · Fix</h3><p class="app-warning">Đã fix lỗi "Ứng dụng chưa cài đặt"</p></div>
-        </div>
-        <ul class="app-list">
-          <li>– Sử dụng Free Fire Max CHPlay ver 2.132.x</li>
-          <li>– Menu root</li>
-          <li>– Dùng chức năng cẩn thận, đặc biệt là Aim</li>
-        </ul>
-        ${dlBtn(env.APP_EXTERNAL_URL)}
+        <a href="https://www.mediafire.com/file/bimuah51pzdpms3/Zwic_Apex_v3.1.apk/file" class="btn btn-download" style="margin-top:auto" target="_blank" rel="noopener noreferrer">
+          ${dlIcon} Tải xuống
+        </a>
       </div>
     </div>
   </section>`;
