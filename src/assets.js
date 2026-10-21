@@ -279,7 +279,7 @@ h3{font-weight:700;letter-spacing:-.01em}
 
 /* ============ HIỆU ỨNG NÂNG CAO ============ */
 @property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
-.aurora{position:fixed;inset:-18% -10% auto;height:82vh;z-index:0;pointer-events:none;overflow:hidden}
+.aurora{position:fixed;inset:-18% -10% auto;height:82vh;z-index:0;pointer-events:none;overflow:hidden;-webkit-mask-image:linear-gradient(#000 40%,transparent 100%);mask-image:linear-gradient(#000 40%,transparent 100%)}
 .aurora i{position:absolute;border-radius:50%;filter:blur(72px);will-change:transform;mix-blend-mode:screen}
 .aurora i:nth-child(1){width:46vw;height:46vw;max-width:640px;max-height:640px;left:4%;top:-6%;background:radial-gradient(circle,rgba(205,214,228,.3),transparent 68%);animation:drift1 22s ease-in-out infinite alternate}
 .aurora i:nth-child(2){width:38vw;height:38vw;max-width:520px;max-height:520px;right:2%;top:8%;background:radial-gradient(circle,rgba(150,166,192,.26),transparent 68%);animation:drift2 27s ease-in-out infinite alternate}
@@ -547,7 +547,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var until = 0;
       try { until = parseInt(localStorage.getItem(KEY) || '0', 10) || 0; } catch (e) {}
       var hide = function() { modal.classList.remove('show'); };
-      if (Date.now() >= until) setTimeout(function() { modal.classList.add('show'); }, 700);
+      if (Date.now() >= until) setTimeout(function() { modal.classList.add('show'); }, document.documentElement.classList.contains('intro-on') ? 2900 : 700);
 
       var closeBtn = modal.querySelector('.modal-close');
       var actionBtn = modal.querySelector('.modal-btn');
@@ -651,7 +651,7 @@ export const CHECKPOINT_JS = `(function(){
       });
       log('Đã tải Cloudflare Turnstile', 'ok'); log('Đang chờ bạn xác nhận');
       setTimeout(function() {
-        if (!busy && !mount.querySelector('iframe')) loadFail('Captcha không hiển thị. Kiểm tra CSP (frame-src challenges.cloudflare.com), site key và tên miền đã khai báo trong Cloudflare.');
+        if (!busy && !mount.hasChildNodes()) loadFail('Captcha không hiển thị. Kiểm tra CSP (frame-src challenges.cloudflare.com), site key và tên miền đã khai báo trong Cloudflare.');
       }, 4000);
     } catch (err) { loadFail('Không hiển thị được captcha: ' + ((err && err.message) || err)); }
   }
@@ -791,7 +791,8 @@ export const JS_FX = `(function(){
         var o = piles.get(surfEls[s]);
         if (!o || o.p.length !== n) {
           o = { p: new Float32Array(n) };
-          for (var k = 0; k < n; k++) o.p[k] = .8 + Math.random() * 1.2;
+          var ph = Math.random() * 6.28;
+          for (var k = 0; k < n; k++) o.p[k] = Math.min(MAXH - .5, 1.7 + 1.5 * Math.abs(Math.sin(k * .17 + ph)) + Math.random() * .8);
           piles.set(surfEls[s], o);
         }
         out.push({ l: r.left + 30, r: r.right - 30, t: r.top, p: o.p });
@@ -802,20 +803,19 @@ export const JS_FX = `(function(){
       for (var i = 0; i < p.length; i++) {
         var nb = ((i > 0 ? p[i - 1] : p[i]) + (i < p.length - 1 ? p[i + 1] : p[i])) * .5;
         p[i] += (nb - p[i]) * .05 * dt;
-        p[i] = Math.max(.5, p[i] - .0002 * dt);
+        p[i] = Math.max(1.2, p[i] - .0002 * dt);
       }
     }
     function drawPile(sf) {
       var p = sf.p, n = p.length, t = sf.t + 1.5;
-      fx.beginPath(); fx.moveTo(sf.l, t);
-      for (var i = 0; i < n; i++) {
-        var ed = Math.min(1, i / 7, (n - 1 - i) / 7);
-        fx.lineTo(sf.l + i * BW + BW / 2, t - p[i] * ed);
-      }
-      fx.lineTo(sf.l + n * BW, t); fx.closePath();
+      function X(i) { return sf.l + i * BW + BW / 2; }
+      function Y(i) { return t - p[i] * Math.min(1, i / 7, (n - 1 - i) / 7); }
+      fx.beginPath(); fx.moveTo(sf.l, t); fx.lineTo(X(0), Y(0));
+      for (var i = 1; i < n - 1; i++) fx.quadraticCurveTo(X(i), Y(i), (X(i) + X(i + 1)) / 2, (Y(i) + Y(i + 1)) / 2);
+      fx.lineTo(X(n - 1), Y(n - 1)); fx.lineTo(sf.l + n * BW, t); fx.closePath();
       var g = fx.createLinearGradient(0, t - MAXH, 0, t);
       g.addColorStop(0, 'rgba(255,255,255,.96)'); g.addColorStop(1, 'rgba(206,213,226,.6)');
-      fx.fillStyle = g; fx.globalAlpha = 1; fx.fill();
+      fx.fillStyle = g; fx.globalAlpha = 1; fx.shadowColor = 'rgba(255,255,255,.35)'; fx.shadowBlur = 6; fx.fill(); fx.shadowBlur = 0;
     }
 
     function frame(now) {
@@ -825,6 +825,7 @@ export const JS_FX = `(function(){
       wind += (windTarget - wind) * .015 * dt;
       px += (tx - px) * .05; py += (ty - py) * .05;
       ctx.clearRect(0, 0, W, H); fx.clearRect(0, 0, W, H);
+      f2.style.opacity = document.querySelector('.modal-overlay.show') ? '0' : '1';
       var surf = surfaces();
       for (var i = 0; i < flakes.length; i++) {
         var f = flakes[i], L = f.L, size = f.r * 2.6, cx = L.front ? fx : ctx, oy = f.y;
