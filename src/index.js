@@ -1,6 +1,7 @@
 import { renderCheckpoint, renderHome, renderStep, renderSuccess, renderFAQ, renderAdmin, renderError } from './ui.js';
 import { signToken, verifyToken, getCookie, setCookie, verifyTurnstile, safeEqual, normalizeIP } from './auth.js';
 import { COOKIE_TTL, BOT_TTL, DAILY_LIMIT, TIERS, ADS_HOST_RE } from './config.js';
+import { LOGO_WEBP_B64 } from './logo.js';
 
 // Durable Object classes bắt buộc phải export từ file main
 export { SessionDO, IpDO } from './gate.js';
@@ -21,6 +22,12 @@ const ipStub = (env, ip) => env.IPS.get(env.IPS.idFromName(ip));
 const sessionStub = (env, sid) => env.SESSIONS.get(env.SESSIONS.idFromName(sid));
 // Số giây còn lại đến 00:00 giờ Việt Nam (UTC+7, không có DST)
 const secondsToVNMidnight = () => 86400 - Math.floor(((Date.now() + 7 * 3600e3) % 86400e3) / 1000);
+
+let LOGO_BYTES;
+const logoRes = () => {
+  LOGO_BYTES ||= Uint8Array.from(atob(LOGO_WEBP_B64), (c) => c.charCodeAt(0));
+  return new Response(LOGO_BYTES.slice(), { headers: { 'Content-Type': 'image/webp', 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff' } });
+};
 
 function secHeaders(nonce) {
   return {
@@ -53,7 +60,7 @@ async function getSession(req, env, secret, ip) {
 // ===== QUOTA =====
 async function getQuota(IP) {
   const count = await IP.peek('quota');
-  return { ok: count < DAILY_LIMIT, count, limit: DAILY_LIMIT };
+  return { ok: count < DAILY_LIMIT, count, limit: DAILY_LIMIT, remaining: Math.max(0, DAILY_LIMIT - count), success: count };
 }
 
 // ===== ADMIN NOTICE (KV) =====
@@ -120,6 +127,8 @@ export default {
       return !f || f === 'same-origin' || f === 'none';
     };
     const tooBig = (max) => (parseInt(request.headers.get('content-length') || '0', 10) || 0) > max;
+
+    if (p === '/logo.webp' && m === 'GET') return logoRes();
 
     try {
       const SECRET = getSecret(env, 'SESSION_SECRET');

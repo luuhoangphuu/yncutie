@@ -29,3 +29,4 @@ new_sqlite_classes = ["SessionDO", "IpDO"]
 TURNSTILE_SITE_KEY = "0x4AAAAAAFa3bTkpwmMAKSah"
 YOUTUBE_CHANNEL_URL = "https://youtube.com/@zwicxsharereg"
 KEY_ISSUER_URL = "https://dpi-config.vercel.app/yncutie"
+APP_EXTERNAL_URL = "https://www.mediafire.com/file/bimuah51pzdpms3/Zwic_Apex_v3.1.apk/file"

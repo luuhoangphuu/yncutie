@@ -6,7 +6,7 @@ function layout(title, body, nonce, head = '') {
   return `<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#07080a"><meta name="color-scheme" content="dark">
   <title>${esc(title)} · Zwic Apex</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23e2e8f0' d='M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z'/%3E%3C/svg%3E">
+  <link rel="icon" type="image/webp" href="/logo.webp">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
   <style>${CSS}${INTRO_CSS}</style>${liteHead(nonce)}${head}</head><body>
@@ -19,7 +19,7 @@ ${body}
 
 const heroTitle = (txt) => `<h1 class="hero-title" data-t="${esc(txt)}" aria-label="${esc(txt)}">${[...txt].map((c, i) => c === ' ' ? '<span class="sp" aria-hidden="true"></span>' : `<span class="ch" aria-hidden="true" style="--i:${i}">${esc(c)}</span>`).join('')}</h1>`;
 
-const logoHtml = `<a class="logo-text" href="/" aria-label="Zwic Apex"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>Zwic Apex</a>`;
+const logoHtml = `<a class="logo-text" href="/" aria-label="Zwic Apex"><img src="/logo.webp" alt="" width="32" height="32" decoding="async" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none;display:inline-block;vertical-align:middle;margin-right:8px">Zwic Apex</a>`;
 const nav = (active = '') => `<header class="nav">${logoHtml}<nav class="nav-links" aria-label="Điều hướng chính"><a href="/" class="${active==='home'?'on':''}"${active==='home'?' aria-current="page"':''}>Trang chủ</a><a href="/faq" class="${active==='faq'?'on':''}"${active==='faq'?' aria-current="page"':''}>FAQ</a></nav></header>`;
 const foot = () => `<footer class="foot">© 2026 Zwic Apex · Bảo mật bởi HoangPhu</footer>`;
 const fab = `<a class="fab" href="https://zalo.me/0996492296" target="_blank" rel="noopener noreferrer" aria-label="Hỗ trợ qua Zalo"><i>Zalo</i><span>Hỗ trợ Zalo</span></a>`;
