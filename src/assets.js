@@ -795,7 +795,7 @@ export const JS_FX = `(function(){
           for (var k = 0; k < n; k++) o.p[k] = Math.min(MAXH - .5, 1.7 + 1.5 * Math.abs(Math.sin(k * .17 + ph)) + Math.random() * .8);
           piles.set(surfEls[s], o);
         }
-        out.push({ l: r.left + 30, r: r.right - 30, t: r.top, p: o.p });
+        out.push({ l: r.left + 30, r: r.right - 30, t: r.top, p: o.p, el: surfEls[s], rect: r });
       }
       return out;
     }
@@ -806,16 +806,40 @@ export const JS_FX = `(function(){
         p[i] = Math.max(1.2, p[i] - .0002 * dt);
       }
     }
-    function drawPile(sf) {
-      var p = sf.p, n = p.length, t = sf.t + 1.5;
-      function X(i) { return sf.l + i * BW + BW / 2; }
-      function Y(i) { return t - p[i] * Math.min(1, i / 7, (n - 1 - i) / 7); }
-      fx.beginPath(); fx.moveTo(sf.l, t); fx.lineTo(X(0), Y(0));
-      for (var i = 1; i < n - 1; i++) fx.quadraticCurveTo(X(i), Y(i), (X(i) + X(i + 1)) / 2, (Y(i) + Y(i + 1)) / 2);
-      fx.lineTo(X(n - 1), Y(n - 1)); fx.lineTo(sf.l + n * BW, t); fx.closePath();
-      var g = fx.createLinearGradient(0, t - MAXH, 0, t);
+    // Tuyết đọng vẽ trên canvas riêng NẰM TRONG TRANG (cuộn cùng nội dung) nên không bị lệch/văng khi kéo trang
+    var caps = new WeakMap();
+    function capFor(el) {
+      var o = caps.get(el);
+      if (!o) {
+        var wrap = el.closest('.wrap') || document.body, cv = document.createElement('canvas');
+        cv.setAttribute('aria-hidden', 'true');
+        cv.style.cssText = 'position:absolute;pointer-events:none;z-index:11;opacity:0;transition:opacity 1s ease 1.4s';
+        wrap.appendChild(cv);
+        o = { cv: cv, cx: cv.getContext('2d'), wrap: wrap, w: 0, lx: '', ly: '' };
+        caps.set(el, o);
+        requestAnimationFrame(function() { cv.style.opacity = '1'; });
+      }
+      return o;
+    }
+    function drawCap(sf) {
+      var o = capFor(sf.el), r = sf.rect, w = Math.round(r.width), h = 16, wr = o.wrap.getBoundingClientRect();
+      if (o.w !== w) {
+        o.cv.width = w * dpr; o.cv.height = h * dpr; o.cv.style.width = w + 'px'; o.cv.style.height = h + 'px';
+        o.cx.setTransform(dpr, 0, 0, dpr, 0, 0); o.w = w;
+      }
+      var lx = (r.left - wr.left).toFixed(1), ly = (r.top - wr.top - 14.5).toFixed(1);
+      if (o.lx !== lx) { o.cv.style.left = lx + 'px'; o.lx = lx; }
+      if (o.ly !== ly) { o.cv.style.top = ly + 'px'; o.ly = ly; }
+      var cx = o.cx, p = sf.p, n = p.length, base = h - 1, x0 = 30;
+      function X(i) { return x0 + i * BW + BW / 2; }
+      function Y(i) { return base - p[i] * Math.min(1, i / 7, (n - 1 - i) / 7); }
+      cx.clearRect(0, 0, w, h);
+      cx.beginPath(); cx.moveTo(x0, base); cx.lineTo(X(0), Y(0));
+      for (var i = 1; i < n - 1; i++) cx.quadraticCurveTo(X(i), Y(i), (X(i) + X(i + 1)) / 2, (Y(i) + Y(i + 1)) / 2);
+      cx.lineTo(X(n - 1), Y(n - 1)); cx.lineTo(x0 + n * BW, base); cx.closePath();
+      var g = cx.createLinearGradient(0, base - MAXH, 0, base);
       g.addColorStop(0, 'rgba(255,255,255,.96)'); g.addColorStop(1, 'rgba(206,213,226,.6)');
-      fx.fillStyle = g; fx.globalAlpha = 1; fx.shadowColor = 'rgba(255,255,255,.35)'; fx.shadowBlur = 6; fx.fill(); fx.shadowBlur = 0;
+      cx.fillStyle = g; cx.shadowColor = 'rgba(255,255,255,.35)'; cx.shadowBlur = 6; cx.fill(); cx.shadowBlur = 0;
     }
 
     function frame(now) {
@@ -863,7 +887,7 @@ export const JS_FX = `(function(){
           cx.drawImage(f.img, -size, -size, size * 2, size * 2); cx.restore();
         } else cx.drawImage(f.img, X - size, Y - size, size * 2, size * 2);
       }
-      for (var s = 0; s < surf.length; s++) { relax(surf[s].p, dt); drawPile(surf[s]); }
+      for (var s = 0; s < surf.length; s++) { relax(surf[s].p, dt); drawCap(surf[s]); }
       for (var j = dust.length - 1; j >= 0; j--) {
         var p = dust[j];
         p.vx *= Math.pow(.985, dt); p.vy += .022 * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= p.dec * dt;
