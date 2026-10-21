@@ -160,3 +160,4 @@ export const INTRO_JS = `(function(){
     }, { passive: true });
   } catch (e) { console.warn('intro js failed', e); }
 })();`;export const liteHead = (nonce) => '';
+export const liteHead = (nonce) => '';
