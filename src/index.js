@@ -1,23 +1,26 @@
 import { renderCheckpoint, renderHome, renderStep, renderSuccess, renderFAQ, renderAdmin, renderError } from './ui.js';
 import { signToken, verifyToken, getCookie, setCookie, verifyTurnstile, safeEqual, normalizeIP } from './auth.js';
+import { COOKIE_TTL, BOT_TTL, DAILY_LIMIT, TIERS, ADS_HOST_RE } from './config.js';
 
-const SESSION_TTL = 900;
-const BOT_TTL = 600;
-const MIN_ADS_SECONDS = 15;
-const DAILY_LIMIT = 12;
-const TIERS = { Normal: 1, VIP: 2 };
+// Durable Object classes bắt buộc phải export từ file main
+export { SessionDO, IpDO } from './gate.js';
+
 const MESSAGES = {
   bypass: 'Liên kết xác nhận không hợp lệ. Vui lòng bắt đầu lại.',
   fast: 'Bạn vượt liên kết quá nhanh. Hãy hoàn thành đầy đủ trang quảng cáo rồi thử lại.',
   quota: 'Bạn đã hết lượt nhận key hôm nay. Vui lòng quay lại vào ngày mai!',
   issuer: 'Máy chủ cấp key đang bận. Vui lòng thử lại sau ít phút.'
 };
-const DEFAULT_NOTICE = { enabled: true, title: 'THÔNG BÁO QUAN TRỌNG', content: '© Bản quyền thuộc về GETKEYZWICAPEX.SITE.\n‼ Mọi chỗ buôn bán khác nguồn đều là giả mạo.\n🔥 Liên hệ Zalo: 0996492296\n📺 Hoặc qua kênh YouTube chính thức.' };
 
 const getSecret = (env, key) => { if (!env[key]) throw new Error('MISSING_ENV:' + key); return env[key]; };
 const rawIP = (req) => req.headers.get('cf-connecting-ip') || 'local';
 const getIP = (req) => normalizeIP(rawIP(req));
 const makeNonce = () => btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
+
+const ipStub = (env, ip) => env.IPS.get(env.IPS.idFromName(ip));
+const sessionStub = (env, sid) => env.SESSIONS.get(env.SESSIONS.idFromName(sid));
+// Số giây còn lại đến 00:00 giờ Việt Nam (UTC+7, không có DST)
+const secondsToVNMidnight = () => 86400 - Math.floor(((Date.now() + 7 * 3600e3) % 86400e3) / 1000);
 
 function secHeaders(nonce) {
   return {
@@ -25,161 +28,214 @@ function secHeaders(nonce) {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+    'Cross-Origin-Opener-Policy': 'same-origin',
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
   };
 }
+
 const htmlRes = (body, nonce, status = 200, cookie) => { const h = new Headers({ 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', ...secHeaders(nonce) }); if (cookie) h.append('Set-Cookie', cookie); return new Response(body, { status, headers: h }); };
 const jsonRes = (obj, status = 200, cookie) => { const h = new Headers({ 'Content-Type': 'application/json', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }); if (cookie) h.append('Set-Cookie', cookie); return new Response(JSON.stringify(obj), { status, headers: h }); };
 const redirect = (loc, cookie) => { const h = new Headers({ Location: loc, 'Cache-Control': 'no-store' }); if (cookie) h.append('Set-Cookie', cookie); return new Response(null, { status: 302, headers: h }); };
 
-async function getSession(req, env) {
-  const sid = getCookie(req, 'sid');
-  if (!sid || !/^[0-9a-f-]{36}$/.test(sid)) return null;
-  const raw = await env.ANNOUNCEMENT_KV.get('session:' + sid);
-  if (!raw) return null;
-  let s; try { s = JSON.parse(raw); } catch { return null; }
-  if (s.ip !== getIP(req) || Date.now() > s.exp) return null;
-  s.sid = sid;
-  return s;
-}
-async function saveSession(req, env, s) {
-  s.sid = s.sid || crypto.randomUUID();
-  s.exp = Date.now() + SESSION_TTL * 1000;
-  s.ip = getIP(req);
-  await env.ANNOUNCEMENT_KV.put('session:' + s.sid, JSON.stringify(s), { expirationTtl: SESSION_TTL + 60 });
-  return setCookie('sid', s.sid, SESSION_TTL);
+// ===== SESSION (cookie ký HMAC -> Durable Object) =====
+const sidCookie = async (sid, secret) =>
+  setCookie('__Host-sid', await signToken({ typ: 'sid', sid, exp: Date.now() + COOKIE_TTL * 1000 }, secret), COOKIE_TTL);
+
+async function getSession(req, env, secret, ip) {
+  const t = await verifyToken(getCookie(req, '__Host-sid'), secret);
+  if (!t || t.typ !== 'sid' || typeof t.sid !== 'string') return null;
+  const S = sessionStub(env, t.sid);
+  const s = await S.read(ip);
+  return s ? { S, s } : null;
 }
 
-const quotaKey = (req) => 'quota:' + getIP(req) + ':' + new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Ho_Chi_Minh' }).format(new Date());
-async function getQuota(req, env) { const c = parseInt((await env.ANNOUNCEMENT_KV.get(quotaKey(req))) || '0', 10) || 0; return { ok: c < DAILY_LIMIT, count: c, limit: DAILY_LIMIT }; }
-async function incQuota(req, env) { const k = quotaKey(req); const c = parseInt((await env.ANNOUNCEMENT_KV.get(k)) || '0', 10) || 0; await env.ANNOUNCEMENT_KV.put(k, String(c + 1), { expirationTtl: 90000 }); }
+// ===== QUOTA =====
+async function getQuota(IP) {
+  const count = await IP.peek('quota');
+  return { ok: count < DAILY_LIMIT, count, limit: DAILY_LIMIT };
+}
 
-async function adminLocked(ip, env) { return (parseInt((await env.ANNOUNCEMENT_KV.get('admin_fail:' + ip)) || '0', 10) || 0) >= 5; }
-async function adminFail(ip, env) { const n = (parseInt((await env.ANNOUNCEMENT_KV.get('admin_fail:' + ip)) || '0', 10) || 0) + 1; await env.ANNOUNCEMENT_KV.put('admin_fail:' + ip, String(n), { expirationTtl: 3600 }); }
+// ===== ADMIN NOTICE (KV) =====
 const cleanNotice = (n) => ({ enabled: !!(n && n.enabled), title: String((n && n.title) || '').slice(0, 100), content: String((n && n.content) || '').slice(0, 1000) });
-async function getNotice(env) { try { const raw = await env.ANNOUNCEMENT_KV.get('notice_json'); if (raw) return cleanNotice(JSON.parse(raw)); } catch {} return DEFAULT_NOTICE; }
+async function getNotice(env) { try { const raw = await env.ANNOUNCEMENT_KV.get('notice_json'); if (raw) return cleanNotice(JSON.parse(raw)); } catch {} return { enabled: false, title: '', content: '' }; }
 async function saveNotice(env, n) { try { await env.ANNOUNCEMENT_KV.put('notice_json', JSON.stringify(cleanNotice(n))); return true; } catch { return false; } }
 
-async function issueKey(env, tier) {
+// ===== KEY ISSUER & LINK4M =====
+// Idempotency-Key = claimId: issuer PHẢI trả lại cùng 1 key khi nhận lại cùng claimId
+async function issueKey(env, tier, claimId) {
+  const apiKey = getSecret(env, 'KEY_ISSUER_API_KEY');
   try {
-    const res = await fetch(env.KEY_ISSUER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-API-Key': getSecret(env, 'KEY_ISSUER_API_KEY') }, body: JSON.stringify({ tier }), signal: AbortSignal.timeout(10000) });
+    const res = await fetch(env.KEY_ISSUER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-API-Key': apiKey, 'Idempotency-Key': claimId },
+      body: JSON.stringify({ tier, request_id: claimId }),
+      signal: AbortSignal.timeout(10000)
+    });
     if (!res.ok) return null;
     const d = await res.json();
-    return d && d.success && typeof d.key === 'string' ? d : null;
+    return d && d.success && typeof d.key === 'string' && d.key.length > 0 && d.key.length <= 512 ? d : null;
   } catch { return null; }
 }
 
 async function shortenLink(env, target) {
+  const token = getSecret(env, 'LINK4M_API_TOKEN');
   try {
-    const api = 'https://link4m.co/api-shorten/v2?api=' + encodeURIComponent(getSecret(env, 'LINK4M_API_TOKEN')) + '&url=' + encodeURIComponent(target);
+    const api = 'https://link4m.co/api-shorten/v2?api=' + encodeURIComponent(token) + '&url=' + encodeURIComponent(target);
     const d = await (await fetch(api, { signal: AbortSignal.timeout(8000) })).json();
-    if (d && d.status === 'success' && /^https:\/\//.test(d.shortenedUrl || '')) return d.shortenedUrl;
+    if (d && d.status === 'success' && typeof d.shortenedUrl === 'string' && ADS_HOST_RE.test(d.shortenedUrl)) return d.shortenedUrl;
   } catch {}
   return null;
 }
 
+// Nhận key: khóa -> trừ quota -> gọi issuer (idempotent) -> lưu key. Lỗi thì hoàn quota.
+async function claimKey(env, ip, S, tier) {
+  const b = await S.beginClaim(ip);
+  if (b.r === 'done') return 'ok';
+  if (b.r === 'busy') return 'busy';
+  if (b.r !== 'ok') return 'none';
+
+  const IP = ipStub(env, ip);
+  const q = await IP.take('quota', DAILY_LIMIT, secondsToVNMidnight());
+  if (!q.ok) { await S.abortClaim(); return 'quota'; }
+
+  const issued = await issueKey(env, tier, b.claimId);
+  if (!issued) { await IP.give('quota'); await S.abortClaim(); return 'issuer'; }
+
+  await S.finishClaim(issued.key, issued.duration_hours || null);
+  return 'ok';
+}
+
+// ===== ROUTER =====
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const p = url.pathname, m = request.method;
     const nonce = makeNonce();
     const html = (body, status = 200, cookie) => htmlRes(body, nonce, status, cookie);
-    const sameOrigin = () => { const o = request.headers.get('origin'); return !o || o === url.origin; };
+    const sameOrigin = () => {
+      const o = request.headers.get('origin');
+      if (o) return o === url.origin;
+      const f = request.headers.get('sec-fetch-site');
+      return !f || f === 'same-origin' || f === 'none';
+    };
+    const tooBig = (max) => (parseInt(request.headers.get('content-length') || '0', 10) || 0) > max;
 
     try {
       const SECRET = getSecret(env, 'SESSION_SECRET');
       const ip = getIP(request);
+      const IP = ipStub(env, ip);
 
+      const claimResponse = (c) => {
+        if (c === 'ok') return redirect('/success');
+        if (c === 'quota') return redirect('/?e=quota');
+        if (c === 'none') return redirect('/?e=bypass');
+        return html(renderError(503, MESSAGES.issuer, nonce), 503);
+      };
+
+      // 1. ADMIN (khuyến nghị đặt thêm sau Cloudflare Access)
       if (p === '/ynsociuu/lhp' && m === 'GET') return html(renderAdmin(nonce));
       if (p === '/api/admin/notice' && m === 'POST') {
         if (!sameOrigin()) return jsonRes({ success: false, error: 'Forbidden' }, 403);
-        if (await adminLocked(ip, env)) return jsonRes({ success: false, error: 'Quá nhiều lần thử sai. Thử lại sau 1 giờ.' }, 429);
+        if (tooBig(8192)) return jsonRes({ success: false, error: 'Dữ liệu quá lớn.' }, 413);
+        const [a, g] = await Promise.all([IP.take('admin', 5, 3600), ipStub(env, '__admin__').take('admin', 30, 3600)]);
+        if (!a.ok || !g.ok) return jsonRes({ success: false, error: 'Quá nhiều lần thử. Thử lại sau 1 giờ.' }, 429);
         let body; try { body = await request.json(); } catch { return jsonRes({ success: false, error: 'Dữ liệu không hợp lệ.' }, 400); }
-        if (!(await safeEqual(body && body.password, getSecret(env, 'ADMIN_PASSWORD')))) { await adminFail(ip, env); return jsonRes({ success: false, error: 'Sai mật khẩu!' }, 401); }
-        await env.ANNOUNCEMENT_KV.delete('admin_fail:' + ip);
+        if (!(await safeEqual(body && body.password, getSecret(env, 'ADMIN_PASSWORD')))) return jsonRes({ success: false, error: 'Sai mật khẩu!' }, 401);
+        await IP.reset('admin');
         if (body.action === 'get') return jsonRes({ success: true, notice: await getNotice(env) });
         if (body.action === 'save') return (await saveNotice(env, body.notice)) ? jsonRes({ success: true }) : jsonRes({ success: false, error: 'Lỗi lưu dữ liệu.' }, 500);
         return jsonRes({ success: false, error: 'Hành động không hợp lệ.' }, 400);
       }
 
+      // 2. VERIFY BOT (Turnstile)
       if (p === '/api/verify-bot' && m === 'POST') {
         if (!sameOrigin()) return jsonRes({ success: false, error: 'Forbidden' }, 403);
+        if (tooBig(4096)) return jsonRes({ success: false, error: 'Dữ liệu quá lớn.' }, 413);
+        const rl = await IP.take('verify', 10, 60);
+        if (!rl.ok) return jsonRes({ success: false, error: 'Quá nhiều lần thử. Vui lòng đợi 1 phút.' }, 429);
+
         let body; try { body = await request.json(); } catch { return jsonRes({ success: false, error: 'Dữ liệu không hợp lệ.' }, 400); }
-        const v = await verifyTurnstile(body && body.token, rawIP(request), env);
+        const v = await verifyTurnstile(body && body.token, rawIP(request), env, url.hostname);
         if (!v.success) return jsonRes({ success: false, error: v.error }, 400);
-        const tok = await signToken({ ip, exp: Date.now() + BOT_TTL * 1000 }, SECRET);
-        return jsonRes({ success: true }, 200, setCookie('bot_passed', tok, BOT_TTL));
+
+        const tok = await signToken({ typ: 'bot', ip, exp: Date.now() + BOT_TTL * 1000 }, SECRET);
+        return jsonRes({ success: true }, 200, setCookie('__Host-bot', tok, BOT_TTL));
       }
 
-      const bot = await verifyToken(getCookie(request, 'bot_passed'), SECRET);
-      if (!bot || bot.ip !== ip) {
+      // 3. BẮT BUỘC QUA BOT CHECK
+      const bot = await verifyToken(getCookie(request, '__Host-bot'), SECRET);
+      if (!bot || bot.typ !== 'bot' || bot.ip !== ip) {
         const next = p === '/ads-return' && m === 'GET' ? p + url.search : '/';
         return html(renderCheckpoint(env, nonce, next));
       }
 
       if (p === '/faq' && m === 'GET') return html(renderFAQ(nonce));
 
-      const quota = await getQuota(request, env);
-      if (!quota.ok) return html(renderError(429, MESSAGES.quota, nonce), 429);
+      // Quota chỉ chặn ở trang chủ / bắt đầu, KHÔNG chặn /success
+      let quota = null;
+      if (p === '/' || p === '/start') {
+        quota = await getQuota(IP);
+        if (!quota.ok) return html(renderError(429, MESSAGES.quota, nonce), 429);
+      }
 
-      const s = await getSession(request, env);
+      const sess = await getSession(request, env, SECRET, ip);
       const errMsg = MESSAGES[url.searchParams.get('e')] || null;
 
       if (p === '/' && m === 'GET') return html(renderHome(env, errMsg, await getNotice(env), quota, nonce));
 
+      // 4. BẮT ĐẦU
       if (p === '/start' && m === 'POST') {
-        if (!sameOrigin()) return redirect('/');
+        if (!sameOrigin() || tooBig(2048)) return redirect('/');
+        const rl = await IP.take('start', 20, 3600);
+        if (!rl.ok) return html(renderError(429, 'Quá nhiều yêu cầu. Vui lòng thử lại sau.', nonce), 429);
+
         const form = await request.formData();
         const t = form.get('tier');
         const tier = typeof t === 'string' && Object.prototype.hasOwnProperty.call(TIERS, t) ? t : 'Normal';
-        const session = { ads: 0, key: null, tier, adsToken: null, adsStartTime: null, adsLink: null };
-        return redirect('/step', await saveSession(request, env, session));
+        const sid = crypto.randomUUID();
+        await sessionStub(env, sid).create(ip, tier);
+        return redirect('/step', await sidCookie(sid, SECRET));
       }
 
+      // 5. TRANG VƯỢT LINK
       if (p === '/step' && m === 'GET') {
-        if (!s) return redirect('/');
+        if (!sess) return redirect('/');
+        const { S, s } = sess;
         const required = TIERS[s.tier] || 1;
         if (s.key) return redirect('/success');
-        if (s.ads >= required) return redirect('/');
+        if (s.ads >= required) return claimResponse(await claimKey(env, ip, S, s.tier));
 
-        let cookie;
-        if (!s.adsToken || !s.adsLink) {
+        let link = s.link;
+        if (!s.token || !s.link) {
           const token = crypto.randomUUID();
           const returnUrl = new URL('/ads-return', url.origin);
           returnUrl.searchParams.set('token', token);
-          const link = await shortenLink(env, returnUrl.toString());
-          if (!link) return html(renderError(503, 'Không tạo được liên kết quảng cáo. Vui lòng thử lại sau.', nonce), 503);
-          s.adsToken = token; s.adsLink = link; s.adsStartTime = Date.now();
-          cookie = await saveSession(request, env, s);
+          const short = await shortenLink(env, returnUrl.toString());
+          if (!short) return html(renderError(503, 'Không tạo được liên kết quảng cáo. Vui lòng thử lại sau.', nonce), 503);
+          link = (await S.setLink(ip, token, short)).link;
+          if (!link) return redirect('/');
         }
-        return html(renderStep({ link: s.adsLink, current: s.ads + 1, required, error: errMsg }, nonce), 200, cookie);
+        return html(renderStep({ link, current: s.ads + 1, required, error: errMsg }, nonce));
       }
 
+      // 6. LINK4M QUAY VỀ
       if (p === '/ads-return' && m === 'GET') {
-        if (!s) return redirect('/?e=bypass');
-        if (s.key) return redirect('/success');
-        const tok = url.searchParams.get('token');
-        if (!tok || !s.adsToken || !(await safeEqual(tok, s.adsToken))) return redirect('/?e=bypass');
-        if (Date.now() - (s.adsStartTime || 0) < MIN_ADS_SECONDS * 1000) return redirect('/step?e=fast');
-
-        const required = TIERS[s.tier] || 1;
-        s.ads += 1; s.adsToken = null; s.adsStartTime = null; s.adsLink = null;
-        if (s.ads < required) return redirect('/step', await saveSession(request, env, s));
-
-        const q = await getQuota(request, env);
-        if (!q.ok) return redirect('/?e=quota');
-
-        await saveSession(request, env, s);
-        const issued = await issueKey(env, s.tier);
-        if (!issued) { s.ads = required - 1; return redirect('/step?e=issuer', await saveSession(request, env, s)); }
-        await incQuota(request, env);
-        s.key = issued.key; s.duration = issued.duration_hours || null;
-        return redirect('/success', await saveSession(request, env, s));
+        if (!sess) return redirect('/?e=bypass');
+        const r = await sess.S.completeAd(ip, (url.searchParams.get('token') || '').slice(0, 64));
+        console.log(JSON.stringify({ evt: 'ads_return', r: r.r, ageMs: r.age ?? null }));
+        if (r.r === 'done') return redirect('/success');
+        if (r.r === 'none' || r.r === 'bad') return redirect('/?e=bypass');
+        if (r.r === 'fast') return redirect('/step?e=fast');
+        if (r.r === 'expired') return redirect('/step?e=bypass');
+        if (r.r === 'next') return redirect('/step');
+        return claimResponse(await claimKey(env, ip, sess.S, sess.s.tier));
       }
 
+      // 7. THÀNH CÔNG
       if (p === '/success' && m === 'GET') {
-        if (!s || !s.key) return redirect('/');
-        return html(renderSuccess(s.key, s.duration, s.tier, nonce));
+        if (!sess || !sess.s.key) return redirect('/');
+        return html(renderSuccess(sess.s.key, sess.s.duration, sess.s.tier, nonce));
       }
 
       return html(renderError(404, 'Không tìm thấy trang', nonce), 404);

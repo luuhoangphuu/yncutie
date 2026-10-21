@@ -7,11 +7,25 @@ routes = [
   { pattern = "getkeydpiconfig.site", custom_domain = true }
 ]
 
+# KV chỉ còn dùng cho thông báo admin
 [[kv_namespaces]]
 binding = "ANNOUNCEMENT_KV"
 id = "3f2178f84ea2484098db8d5ab88cd23a"
 
+# Durable Objects: phiên người dùng + bộ đếm theo IP (nguyên tử)
+[[durable_objects.bindings]]
+name = "SESSIONS"
+class_name = "SessionDO"
+
+[[durable_objects.bindings]]
+name = "IPS"
+class_name = "IpDO"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SessionDO", "IpDO"]
+
 [vars]
 TURNSTILE_SITE_KEY = "0x4AAAAAAFa3bTkpwmMAKSah"
+YOUTUBE_CHANNEL_URL = "https://youtube.com/@zwicxsharereg"
 KEY_ISSUER_URL = "https://dpi-config.vercel.app/yncutie"
-YOUTUBE_CHANNEL_URL = "https://youtube.com/@zwicxsharereg?si=uxYYTwFUXLYijhmz"
